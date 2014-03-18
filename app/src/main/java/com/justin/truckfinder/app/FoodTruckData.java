@@ -145,7 +145,7 @@ public class FoodTruckData {
         distanceToPlace = Math.acos(distanceToPlace);
 
         distanceToPlace = radiansToDegrees(distanceToPlace);
-
+        // TODO include reference for why we're multiplyin' by 60, then * 1.1515
         distanceToPlace = distanceToPlace * 60 * 1.1515;
         // Statute Miles (NOT Nautical) are what we consider "miles" in non-mathematical terms. Note: Nautical = distance * 0.8684.
         String units = "Miles";

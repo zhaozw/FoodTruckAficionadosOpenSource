@@ -7,8 +7,5 @@ import android.app.Fragment;
  */
 public class FoodTruckMapsFragment extends Fragment {
 
-    protected interface OnFoodTruckListSelectedListener{
-        public void displayFoodTruckListViewFragment();
-    }
 
 }

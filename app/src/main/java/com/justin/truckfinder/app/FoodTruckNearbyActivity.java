@@ -11,7 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnMapsSelectedListener, FoodTruckMapsFragment.OnFoodTruckListSelectedListener{
+public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener{
+
+    FoodTruckDataGetter foodTruckDataGetter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +26,8 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
                 return;
             }
             FoodTruckListViewFragment foodTruckListViewFragment = new FoodTruckListViewFragment();
+
+
             foodTruckListViewFragment.setArguments(getIntent().getExtras());
 
 
@@ -75,17 +80,9 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
         }
     }
 
-    @Override
-    public void displayFoodTruckListViewFragment(){
-        Fragment mFoodTruckListViewFragment = new FoodTruckListViewFragment();
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.container, mFoodTruckListViewFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-    }
 
     @Override
-    public void displayFoodTruckMapsFragment(){
+    public void OnItemSelected(){
         Fragment mFoodTruckMapsFragment = new FoodTruckMapsFragment();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.container, mFoodTruckMapsFragment);
