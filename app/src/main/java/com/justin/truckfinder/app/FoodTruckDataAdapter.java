@@ -16,38 +16,41 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
     Context context;
     private int mLayoutResourceId;
-    private ArrayList<FoodTruckData> foodTruckData;
+    ArrayList<FoodTruckData> foodTruckDataArrayList;
+    FoodTruckData foodTruckData;
+
+//    public FoodTruckDataAdapter(ArrayList<FoodTruckData> aFoodTruckData) {
+//        super(aFoodTruckData);
+//    }
 
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckData) {
         super(aContext, aResource, aFoodTruckData);
         this.context = aContext;
         this.mLayoutResourceId = aResource;
-        this.foodTruckData = aFoodTruckData;
+        this.foodTruckDataArrayList = aFoodTruckData;
     }
 
 //    public FoodTruckDataAdapter(Context aContext, int mLayoutResourceId, ArrayList<FoodTruckData> foodTruckDataArrayList){
 //        super(aContext, 0, foodTruckDataArrayList);
 //        this.context = aContext;
-//        this.foodTruckData = foodTruckDataArrayList;
+//        this.foodTruckDataArrayList = foodTruckDataArrayList;
 //    }
 
-//    public FoodTruckDataAdapter(Context context, int resource, List<ArrayList<FoodTruckData>> objects, Context context1, int mLayoutResourceId, ArrayList<FoodTruckData> foodTruckData) {
+//    public FoodTruckDataAdapter(Context context, int resource, List<ArrayList<FoodTruckData>> objects, Context context1, int mLayoutResourceId, ArrayList<FoodTruckData> foodTruckDataArrayList) {
 //        super(context, resource, objects);
 //        this.context = context1;
 //        this.mLayoutResourceId = mLayoutResourceId;
-//        this.foodTruckData = |;
+//        this.foodTruckDataArrayList = |;
 //    }
 
 
     @Override
     public int getCount() {
-        if (foodTruckData.size() == 0) {
-            return 12;
-        }else {
-            return foodTruckData.size();
-        }
+        return foodTruckDataArrayList.toArray().length;
+//        return foodTruckDataArrayList.size();
     }
+
 
     @Override
     public int getPosition(FoodTruckData item) {
@@ -73,6 +76,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 //        public NetworkImageView placeThumbnail;
     }
 
+    @Override
     public View getView(int aPosition, View aConvertView, ViewGroup aParent){
         FoodTruckDataHolder foodTruckDataHolder;
 
@@ -99,7 +103,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder = (FoodTruckDataHolder) row.getTag();
         }
 
-        FoodTruckData foodTruck = foodTruckData.get(aPosition);
+//        FoodTruckData foodTruck = foodTruckDataArrayList.get(aPosition);
+
+        FoodTruckData foodTruck = getItem(aPosition);
 
         foodTruckDataHolder.placeNameView.setText(foodTruck.getPlaceName());
         foodTruckDataHolder.placeDistanceView.setText(foodTruck.getVicinityAddress());

@@ -112,6 +112,10 @@ public class FoodTruckData {
         return distanceToPlace;
     }
 
+    public double setDistanceToPlace(double aDistanceToPlace){
+        return this.distanceToPlace = aDistanceToPlace;
+    }
+
     private double degreesToRadians(double degree) {
         return (degree * Math.PI / 180.0);
     }
@@ -120,9 +124,8 @@ public class FoodTruckData {
         return (radians * 180 / Math.PI);
     }
 
-
-
-    public double setDistanceToPlace(double distanceToPlace) {
+    //TODO may still need to account for negative values where southern latitudes are negatives and eastern latitudes are positive
+    public double calculateDistanceToPlace() {
 
         double latitudeDoubleStart = userLocation.getLatitude();
         double longitudeDoubleStart = userLocation.getLongitude();
@@ -134,22 +137,21 @@ public class FoodTruckData {
         double theta = longitudeDoubleStart - longitudeDoubleEnd;
 
         distanceToPlace = Math.sin(degreesToRadians(latitudeDoubleStart))
-                * Math.sin(degreesToRadians(latitudeDoubleEnd))
-                + Math.cos(degreesToRadians(latitudeDoubleStart))
-                * Math.cos(degreesToRadians(latitudeDoubleEnd))
-                * Math.cos(degreesToRadians(theta));
+                            * Math.sin(degreesToRadians(latitudeDoubleEnd))
+                            + Math.cos(degreesToRadians(latitudeDoubleStart))
+                            * Math.cos(degreesToRadians(latitudeDoubleEnd))
+                            * Math.cos(degreesToRadians(theta));
 
         distanceToPlace = Math.acos(distanceToPlace);
 
         distanceToPlace = radiansToDegrees(distanceToPlace);
 
         distanceToPlace = distanceToPlace * 60 * 1.1515;
-        // Statute Miles (NOT Nautical) are what we consider "miles" in non-mathematical terms.
+        // Statute Miles (NOT Nautical) are what we consider "miles" in non-mathematical terms. Note: Nautical = distance * 0.8684.
         String units = "Miles";
         // not necessary unless people outside the USA want Kilometers.
         if (units.equals("Kilometers")) {
             distanceToPlace = distanceToPlace * 1.609344;
-            // not necessary unless people are on water which is HIGHLY UNLIKELY, but code can re-used.
         }
         return distanceToPlace;
     }

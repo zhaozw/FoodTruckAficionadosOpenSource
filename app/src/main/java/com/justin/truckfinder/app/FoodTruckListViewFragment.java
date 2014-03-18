@@ -21,7 +21,8 @@ import java.util.ArrayList;
 public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.FoodTruckReceiver {
 
 
-    ArrayList<FoodTruckData> foodTruckData;
+    ArrayList<FoodTruckData> foodTruckDataArrayList;
+    FoodTruckData foodTruckData;
     FoodTruckDataAdapter foodTruckDataAdapter;
     LocationManager locationManager;
     OnMapsSelectedListener mFoodTruckListViewCallback;
@@ -117,7 +118,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, foodTruckData);
+        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, foodTruckDataArrayList);
 
         setListAdapter(foodTruckDataAdapter);
 
@@ -129,13 +130,9 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public void onListItemClick(ListView l, View v, int position, long id) {
 
         //call back to the parent activity with the selected item
-        try {
-            FoodTruckData data1 = foodTruckData.get(position);
-            mCallback.onDataReceived();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            foodTruckData = ((FoodTruckDataAdapter)getListAdapter()).getItem(position);
+            mCallback.onDataReceived();
 
     }
 

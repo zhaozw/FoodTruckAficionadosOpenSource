@@ -227,6 +227,14 @@ public class FoodTruckDataGetter {
                         Double longitude = location.getDouble("lng");
                         foodTruckData.setLongitude(longitude.doubleValue());
 
+                        try {
+                            foodTruckData.setDistanceToPlace(foodTruckData.calculateDistanceToPlace());
+
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Log.e("Calculating distance" , "there was an error");
+                        }
+
                         String iconUrl = aResult.getString("icon");
                         foodTruckData.setIconUrl(iconUrl);
 
@@ -260,7 +268,7 @@ public class FoodTruckDataGetter {
                             e.printStackTrace();
                             Log.v("VOLLEY", "price_level error");
                         }
-                        //FoodTruckDataGetter.this.resultList.add(foodTruckData);
+                        //FoodTruckDataGetter.this.resultList.add(foodTruckDataArrayList);
                         resultList.add(foodTruckData);
                     }
                 } catch (Exception e) {
