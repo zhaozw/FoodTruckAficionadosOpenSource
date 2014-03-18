@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#4ab4ff">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placeNameView"
+        android:layout_alignParentLeft="true"
+        android:padding="10dp"
+        android:text="placeName"
+        android:textColor="#040404" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placeDistanceView"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/placeNameView"
+        android:padding="10dp"
+        android:text="placeDistance"
+        android:textColor="#040404" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placePriceRatingView"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/placePriceView"
+            android:padding="3dp"
+            android:text="placePrice"
+            android:textColor="#060850"
+
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="false"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/placeRatingView"
+            android:layout_toRightOf="@+id/placePriceView"
+            android:padding="3dp"
+            android:text="placeRating"
+            android:textColor="#ff0f00" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/placeAddressView"
+            android:layout_toRightOf="@+id/placeRatingView"
+            android:padding="3dp"
+            android:text="placeAddress"
+            android:textColor="#ff0f00" />
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/placePriceRatingView"
+        android:layout_centerInParent="true">
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:scaleType="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/placeThumbnailView"
+            android:background="@drawable/ic_launcher"
+            />
+
+    </RelativeLayout>
+</RelativeLayout>
+
+
+

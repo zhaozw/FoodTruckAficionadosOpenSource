@@ -1,30 +1,43 @@
 package com.justin.truckfinder.app;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 
 
-public class FoodTruckNearbyActivity extends Activity {
+public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnMapsSelectedListener, FoodTruckMapsFragment.OnFoodTruckListSelectedListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_truck_nearby);
-        if (savedInstanceState == null) {
+        if (findViewById(R.id.container) != null) {
+
+            if (savedInstanceState != null) {
+                return;
+            }
+            FoodTruckListViewFragment foodTruckListViewFragment = new FoodTruckListViewFragment();
+            foodTruckListViewFragment.setArguments(getIntent().getExtras());
+
+
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new FoodTruckListViewFragment())
                     .commit();
         }
+
     }
 
+
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,5 +73,23 @@ public class FoodTruckNearbyActivity extends Activity {
             View rootView = inflater.inflate(R.layout.fragment_food_truck_nearby, container, false);
             return rootView;
         }
+    }
+
+    @Override
+    public void displayFoodTruckListViewFragment(){
+        Fragment mFoodTruckListViewFragment = new FoodTruckListViewFragment();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.container, mFoodTruckListViewFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void displayFoodTruckMapsFragment(){
+        Fragment mFoodTruckMapsFragment = new FoodTruckMapsFragment();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.container, mFoodTruckMapsFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

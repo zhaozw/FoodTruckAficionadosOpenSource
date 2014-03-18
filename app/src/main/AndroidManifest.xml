@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.justin.truckfinder.app" >
 
+
+    <uses-permission android:name="android.permission.INTERNET">asdad</uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION">sd</uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION">dfs</uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">add</uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">sdf</uses-permission>
+    <uses-permission android:name="android.permission.LOCATION_HARDWARE">ads</uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
