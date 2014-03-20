@@ -37,6 +37,21 @@ import java.util.Date;
  */
 
 public class FoodTruckDataGetter {
+    //
+    // Singleton pattern here:
+    //
+//    private static FoodTruckDataGetter FOOD_GETTER_REFERENCE;
+//    private FoodTruckDataGetter(){
+//
+//    }
+//    protected static FoodTruckDataGetter getInstance()
+//    {
+//        if (FOOD_GETTER_REFERENCE == null){
+//            FOOD_GETTER_REFERENCE = new FoodTruckDataGetter();
+//        }
+//        return FOOD_GETTER_REFERENCE;
+//    }
+
 
     private ArrayList<FoodTruckData> listOfFoodTrucks;
     private ArrayList<FoodTruckData> incompleteFoodTrucks;
@@ -55,6 +70,8 @@ public class FoodTruckDataGetter {
         this.context = context;
     }
 
+
+
     public interface OnDataReceivedListener {
 
         public void onDataReceived(ArrayList<FoodTruckData> theDataReceived);
@@ -63,27 +80,26 @@ public class FoodTruckDataGetter {
 
     private String getCurrentDateString() {
         long expireTimeView = System.currentTimeMillis();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMdd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         Date resultTime = new Date(expireTimeView);
         return simpleDateFormat.format(resultTime);
     }
 
     public void performSearchRequest(OnDataReceivedListener aCallback , String aDeviceLocation) { //throws InterruptedException {
-
-
-//        String userLocation = String.valueOf(aDeviceLocation.getLatitude() + "," + aDeviceLocation.getLongitude());
+//        aDeviceLocation = String.valueOf(aDeviceLocation.getLatitude() + "," + aDeviceLocation.getLongitude());
         this.callback = aCallback;
         GPSLocation = aDeviceLocation;
         incompleteFoodTrucks = new ArrayList<FoodTruckData>();
         listOfFoodTrucks = new ArrayList<FoodTruckData>();
         performFoursquareFoodTruckRequestFoursquare();
+
     }
 
     private void notifyOfDataChanged(){
         callback.onDataReceived(listOfFoodTrucks);
     }
 
-    private static final String categoryID = "4bf58dd8d48988d1cb941735";
+    private static final String categoryID = "4bf58dd8d48988d1cb941735"; // foursquare Food Truck category ID
     private static final String clientID = "MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY";
     private static final String clientSecret = "3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2";
     private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=750&categoryId="+categoryID+"&client_id="+clientID+"&client_secret="+ clientSecret;
@@ -104,7 +120,7 @@ public class FoodTruckDataGetter {
                 e.printStackTrace();
             }
 
-            RequestQueue requestQueue = Volley.newRequestQueue();
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                     myAPIFoursquare,
@@ -133,7 +149,7 @@ public class FoodTruckDataGetter {
                     JSONObject jsonInitial = response;
                     JSONObject jsonResponse = jsonInitial.getJSONObject("response");
                     JSONArray resultArray = jsonResponse.getJSONArray("venues");
-                    listOfFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
+                    incompleteFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
 
                         FoodTruckData foodTruckData = new FoodTruckData("unknown");
@@ -147,9 +163,12 @@ public class FoodTruckDataGetter {
                             Log.v("VOLLEY", "foursquare name catch JSONException error");
                         }
 
+
                         incompleteFoodTrucks.add(foodTruckData);
                         //this is where the next thing should happen.
+                        performAdditionalGoogleSearches();
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -158,14 +177,17 @@ public class FoodTruckDataGetter {
             }
 
         };
+
     }
 
     private void performAdditionalGoogleSearches(){
-        for(FoodTruckData foodTruck : incompleteFoodTrucks){
-            String fsGPS = foodTruck.getLatitude() + "," + foodTruck.getLongitude();
-            nearbySearchGooglePlaces(foodTruck.getFourSquareName());
-            incompleteFoodTrucks.remove(foodTruck);
+
+        for(FoodTruckData foodTruckData : incompleteFoodTrucks){
+//            String fsGPS = foodTruck.getLatitude() + "," + foodTruck.getLongitude();
+            nearbySearchGooglePlaces(foodTruckData.getFourSquareName());
+            incompleteFoodTrucks.remove(foodTruckData);
         }
+
     }
 
 
@@ -182,8 +204,11 @@ public class FoodTruckDataGetter {
     // SANITY CHECK:
     // https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=truck,food
 
-    private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&keyword=truck,food";
 
+    private static final String GOOGLE_PLACES_API_KEY = "AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E";
+    private static final String SENSOR = "true";
+    private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor="+SENSOR+"&key="+ GOOGLE_PLACES_API_KEY;
+//      private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=food&name=torchys";
     private void nearbySearchGooglePlaces(String aFoursquareName) {
 
 
@@ -194,13 +219,21 @@ public class FoodTruckDataGetter {
 
         try {
             StringBuilder stringBuilder = new StringBuilder(myAPIGooglePartial);
+            stringBuilder.append("&location=" + GPSLocation);
             stringBuilder.append("&radius=750");
 //            stringBuilder.append("&keyword=" +
-            stringBuilder.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
-            stringBuilder.append("&location=" + URLEncoder.encode(GPSLocation, "utf8"));
+            stringBuilder.append("&keyword=food");
+//            stringBuilder.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
+            stringBuilder.append("&name=" + aFoursquareName);
+
 
             myAPIGoogle = stringBuilder.toString();
-        } catch (IOException e) {
+;
+//            myAPIGoogle.replace("+",",");
+//            myAPIGoogle.replace("%27","");
+//            myAPIGoogle.replace("%2","");
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -227,13 +260,13 @@ public class FoodTruckDataGetter {
                 try {
                     // Extract the Place descriptions from the results
                     //Parsing the JSON
-                    ArrayList<FoodTruckData> someFoodTrucks = null;
+                    ArrayList<FoodTruckData> someFoodTrucks;
                     JSONObject jsonInitial = response;
                     JSONArray resultArray = jsonInitial.getJSONArray("results");
                     someFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
 
-                        FoodTruckData foodTruckData = new FoodTruckData("unknown");
+                        FoodTruckData foodTruckData = new FoodTruckData();
 
                         JSONObject aResult = resultArray.getJSONObject(i);
                         JSONObject geometry = aResult.getJSONObject("geometry");

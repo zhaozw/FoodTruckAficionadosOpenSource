@@ -27,6 +27,10 @@ public class FoodTruckData {
         this.fourSquareName = fourSquareName;
     }
 
+    public FoodTruckData() {
+
+    }
+
 
     public double getLongitude() {
         return longitude;
@@ -124,7 +128,9 @@ public class FoodTruckData {
         return (radians * 180 / Math.PI);
     }
 
-    //TODO may still need to account for negative values where southern latitudes are negatives and eastern latitudes are positive
+    //TODO may still need to account for negative values where
+    // TODO southern latitudes are negatives and
+    // TODO eastern latitudes are positive
     public double calculateDistanceToPlace() {
 
         double latitudeDoubleStart = userLocation.getLatitude();
@@ -147,7 +153,8 @@ public class FoodTruckData {
         distanceToPlace = radiansToDegrees(distanceToPlace);
         // TODO include reference for why we're multiplyin' by 60, then * 1.1515
         distanceToPlace = distanceToPlace * 60 * 1.1515;
-        // Statute Miles (NOT Nautical) are what we consider "miles" in non-mathematical terms. Note: Nautical = distance * 0.8684.
+        // Statute Miles (NOT Nautical) are what we consider "miles" (i.e. mph).
+        // Note: Nautical = distance * 0.8684.
         String units = "Miles";
         // not necessary unless people outside the USA want Kilometers.
         if (units.equals("Kilometers")) {

@@ -127,9 +127,9 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         String latitudeLongitude = latitudeString + "," + longitudeString;
         Log.v("gps", latitudeLongitude);
         currentLocation = latitudeLongitude;
-        foodTruckDataGetter.performSearchRequest(this, currentLocation);
 
-        foodTruckDataGetter.
+        foodTruckDataGetter.performSearchRequest(this, currentLocation);
+//        FoodTruckDataGetter.getInstance().performSearchRequest(this, currentLocation);
     }
 
 
