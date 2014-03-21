@@ -19,6 +19,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by justindelta on 3/17/14.
@@ -37,57 +38,51 @@ import java.util.Date;
  */
 
 public class FoodTruckDataGetter {
+
+    private static ArrayList<FoodTruckData> listOfFoodTrucks;
+    private static ArrayList<FoodTruckData> incompleteFoodTrucks;
+    private static OnDataReceivedListener callback;
+    private static String myAPIGoogle;
+    private static String myAPIFoursquare;
+    private static Context context;
+    private static String GPSLocation;
+    private static RequestQueue requestQueue;
+
     //
     // Singleton pattern here:
     //
-//    private static FoodTruckDataGetter FOOD_GETTER_REFERENCE;
-//    private FoodTruckDataGetter(){
-//
-//    }
-//    protected static FoodTruckDataGetter getInstance()
-//    {
-//        if (FOOD_GETTER_REFERENCE == null){
-//            FOOD_GETTER_REFERENCE = new FoodTruckDataGetter();
-//        }
-//        return FOOD_GETTER_REFERENCE;
-//    }
+    private static FoodTruckDataGetter FOOD_GETTER_REFERENCE;
+    private FoodTruckDataGetter(){
 
-
-    private ArrayList<FoodTruckData> listOfFoodTrucks;
-    private ArrayList<FoodTruckData> incompleteFoodTrucks;
-    private OnDataReceivedListener callback;
-    private String myAPIGoogle;
-    private String myAPIFoursquare;
-    private Context context;
-    private String GPSLocation;
-
+    }
+    protected static FoodTruckDataGetter getInstance() {
+        if (FOOD_GETTER_REFERENCE == null) {
+            FOOD_GETTER_REFERENCE = new FoodTruckDataGetter();
+        }
+        return FOOD_GETTER_REFERENCE;
+    }
     // SANITY CHECK https://api.foursquare.com/v2/venues/search?ll=30.256496,-97.747128&radius=750&categoryId=4bf58dd8d48988d1cb941735&client_id=MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY&client_secret=3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2&v=20140310
 
     // SANITY CHECK 2 (placement of parameters)
     // String myAPI = "https://api.foursquare.com/v2/venues/search?&radius=750&categoryId=4bf58dd8d48988d1cb941735&client_id=MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY&client_secret=3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2&v=20140310&ll=30.256496,-97.74712";
 
-    public FoodTruckDataGetter(Context context) {
-        this.context = context;
-    }
-
-
-
     public interface OnDataReceivedListener {
-
         public void onDataReceived(ArrayList<FoodTruckData> theDataReceived);
 
     }
 
-    private String getCurrentDateString() {
+    private static String getCurrentDateString() {
         long expireTimeView = System.currentTimeMillis();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         Date resultTime = new Date(expireTimeView);
         return simpleDateFormat.format(resultTime);
     }
 
-    public void performSearchRequest(OnDataReceivedListener aCallback , String aDeviceLocation) { //throws InterruptedException {
+    public void performSearchRequest(Context aContext, OnDataReceivedListener aCallback , String aDeviceLocation) { //throws InterruptedException {
 //        aDeviceLocation = String.valueOf(aDeviceLocation.getLatitude() + "," + aDeviceLocation.getLongitude());
+        this.context = aContext;
         this.callback = aCallback;
+        requestQueue = Volley.newRequestQueue(context);
         GPSLocation = aDeviceLocation;
         incompleteFoodTrucks = new ArrayList<FoodTruckData>();
         listOfFoodTrucks = new ArrayList<FoodTruckData>();
@@ -95,7 +90,7 @@ public class FoodTruckDataGetter {
 
     }
 
-    private void notifyOfDataChanged(){
+    private static void notifyOfDataChanged(){
         callback.onDataReceived(listOfFoodTrucks);
     }
 
@@ -104,7 +99,7 @@ public class FoodTruckDataGetter {
     private static final String clientSecret = "3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2";
     private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=750&categoryId="+categoryID+"&client_id="+clientID+"&client_secret="+ clientSecret;
 
-    private void performFoursquareFoodTruckRequestFoursquare() {
+    private static void performFoursquareFoodTruckRequestFoursquare() {
 
         try {
 //"ll=30.256496,-97.74712"
@@ -120,14 +115,11 @@ public class FoodTruckDataGetter {
                 e.printStackTrace();
             }
 
-            RequestQueue requestQueue = Volley.newRequestQueue(context);
-
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                     myAPIFoursquare,
                     null,
                     createMyFoursquareReqSuccessListener(),
                     createMyFoursquareReqErrorListener());
-
 
             requestQueue.add(jsonObjectRequest); //hey go get the data
 
@@ -137,7 +129,7 @@ public class FoodTruckDataGetter {
 
     }
 
-    private Response.Listener<JSONObject> createMyFoursquareReqSuccessListener() {
+    private static Response.Listener<JSONObject> createMyFoursquareReqSuccessListener() {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -166,8 +158,9 @@ public class FoodTruckDataGetter {
 
                         incompleteFoodTrucks.add(foodTruckData);
                         //this is where the next thing should happen.
-                        performAdditionalGoogleSearches();
+
                     }
+                    performAdditionalGoogleSearches();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -180,18 +173,18 @@ public class FoodTruckDataGetter {
 
     }
 
-    private void performAdditionalGoogleSearches(){
+    private static void performAdditionalGoogleSearches(){
 
-        for(FoodTruckData foodTruckData : incompleteFoodTrucks){
-//            String fsGPS = foodTruck.getLatitude() + "," + foodTruck.getLongitude();
+        Iterator<FoodTruckData> i = incompleteFoodTrucks.iterator();
+        while (i.hasNext()){
+            FoodTruckData foodTruckData = i.next();
             nearbySearchGooglePlaces(foodTruckData.getFourSquareName());
-            incompleteFoodTrucks.remove(foodTruckData);
+            i.remove();
         }
-
     }
 
 
-    private Response.ErrorListener createMyFoursquareReqErrorListener() {
+    private static Response.ErrorListener createMyFoursquareReqErrorListener() {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -209,7 +202,7 @@ public class FoodTruckDataGetter {
     private static final String SENSOR = "true";
     private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor="+SENSOR+"&key="+ GOOGLE_PLACES_API_KEY;
 //      private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=food&name=torchys";
-    private void nearbySearchGooglePlaces(String aFoursquareName) {
+    private static void nearbySearchGooglePlaces(String aFoursquareName) {
 
 
         // &location=30.256496,-97.747128
@@ -238,7 +231,7 @@ public class FoodTruckDataGetter {
         }
 
         try {
-            RequestQueue requestQueue = Volley.newRequestQueue(context);
+
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                     myAPIGoogle,
@@ -253,7 +246,7 @@ public class FoodTruckDataGetter {
 
     }
 
-    private Response.Listener<JSONObject> createMyGooglePlacesReqSuccessListener() {
+    private static Response.Listener<JSONObject> createMyGooglePlacesReqSuccessListener() {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -330,7 +323,7 @@ public class FoodTruckDataGetter {
         };
     }
 
-    private Response.ErrorListener createGooglePlacesReqErrorListener() {
+    private static Response.ErrorListener createGooglePlacesReqErrorListener() {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {

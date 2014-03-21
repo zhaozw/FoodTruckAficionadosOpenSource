@@ -14,20 +14,24 @@ import java.util.ArrayList;
  */
 public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private static final String TAG = FoodTruckDataAdapter.class.getSimpleName();
-    Context context;
+    private Context context;
     private int mLayoutResourceId;
-    ArrayList<FoodTruckData> foodTruckDataArrayList;
-    LayoutInflater layoutInflater;
-    FoodTruckData foodTruckData;
-    FoodTruckDataGetter foodTruckDataGetter;
+    private ArrayList<FoodTruckData> foodTruckDataArrayList;
+    private LayoutInflater layoutInflater;
 
-    public FoodTruckDataAdapter(Context aContext, int aResource) {
+
+    public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
         super(aContext, aResource);
         this.context = aContext;
         this.layoutInflater = (LayoutInflater)context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         this.mLayoutResourceId = aResource;
+        this.foodTruckDataArrayList = aFoodTruckList;
     }
 
+    public void setFoodTruckDataArrayList(ArrayList<FoodTruckData> foodTruckDataArrayList) {
+        this.foodTruckDataArrayList = foodTruckDataArrayList;
+        notifyDataSetChanged();
+    }
 
     @Override
     public long getItemId(int position) {
@@ -44,6 +48,11 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     }
 
     @Override
+    public int getCount() {
+        return foodTruckDataArrayList.size();
+    }
+
+    @Override
     public View getView(int aPosition, View aConvertView, ViewGroup aParent){
         FoodTruckDataHolder foodTruckDataHolder;
 
@@ -57,7 +66,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
 
             foodTruckDataHolder = new FoodTruckDataHolder();
-
             foodTruckDataHolder.placeNameView = (TextView) row.findViewById(R.id.placeNameView);
             foodTruckDataHolder.placeDistanceView = (TextView) row.findViewById(R.id.placeAddressView);
             foodTruckDataHolder.placePriceView = (TextView) row.findViewById(R.id.placePriceView);

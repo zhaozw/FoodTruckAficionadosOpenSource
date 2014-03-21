@@ -23,19 +23,22 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     private LocationManager locationManager;
     private OnItemSelectedListener selectedListenerCallback;
     private String currentLocation;  //Format: "123.12341234,-1234.11341234"
-    private FoodTruckDataGetter foodTruckDataGetter;
-
+    private boolean gotLocation = false;
 
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
-
+        foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        setNewLocation(location);
-        // Remove the listener you previously added
-        locationManager.removeUpdates(this);
+        if(gotLocation){
+            gotLocation = true;
+            Log.e("NEWLOC", "Got new location");
+            setNewLocation(location);
+            // Remove the listener you previously added
+            locationManager.removeUpdates(this);
+        }
     }
 
     @Override
@@ -77,7 +80,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows);
+        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
     }
 
@@ -108,7 +111,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        foodTruckDataGetter = new FoodTruckDataGetter(getActivity());
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
     }
@@ -128,8 +130,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         Log.v("gps", latitudeLongitude);
         currentLocation = latitudeLongitude;
 
-        foodTruckDataGetter.performSearchRequest(this, currentLocation);
-//        FoodTruckDataGetter.getInstance().performSearchRequest(this, currentLocation);
+        FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(),this, currentLocation);
     }
 
 

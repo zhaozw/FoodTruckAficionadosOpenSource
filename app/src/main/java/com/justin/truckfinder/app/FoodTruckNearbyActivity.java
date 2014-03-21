@@ -39,11 +39,6 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
     }
 
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
