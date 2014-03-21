@@ -119,14 +119,13 @@ public class FoodTruckDataGetter {
                     myAPIFoursquare,
                     null,
                     createMyFoursquareReqSuccessListener(),
-                    createMyFoursquareReqErrorListener());
+                    errorListener);
 
             requestQueue.add(jsonObjectRequest); //hey go get the data
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private static Response.Listener<JSONObject> createMyFoursquareReqSuccessListener() {
@@ -165,8 +164,6 @@ public class FoodTruckDataGetter {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-
             }
 
         };
@@ -183,16 +180,6 @@ public class FoodTruckDataGetter {
         }
     }
 
-
-    private static Response.ErrorListener createMyFoursquareReqErrorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.v("VOLLEY", "FOURSQUARE RESPONSE ERROR");
-            }
-        };
-    }
-
     //        class GoogleAPI {
     // SANITY CHECK:
     // https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=truck,food
@@ -201,6 +188,7 @@ public class FoodTruckDataGetter {
     private static final String GOOGLE_PLACES_API_KEY = "AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E";
     private static final String SENSOR = "true";
     private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor="+SENSOR+"&key="+ GOOGLE_PLACES_API_KEY;
+    private static StringBuilder stringBuilder = new StringBuilder(myAPIfoursquarePartial);
 //      private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=food&name=torchys";
     private static void nearbySearchGooglePlaces(String aFoursquareName) {
 
@@ -211,7 +199,7 @@ public class FoodTruckDataGetter {
 
 
         try {
-            StringBuilder stringBuilder = new StringBuilder(myAPIGooglePartial);
+//            StringBuilder stringBuilder = new StringBuilder(myAPIGooglePartial);
             stringBuilder.append("&location=" + GPSLocation);
             stringBuilder.append("&radius=750");
 //            stringBuilder.append("&keyword=" +
@@ -221,7 +209,7 @@ public class FoodTruckDataGetter {
 
 
             myAPIGoogle = stringBuilder.toString();
-;
+
 //            myAPIGoogle.replace("+",",");
 //            myAPIGoogle.replace("%27","");
 //            myAPIGoogle.replace("%2","");
@@ -237,7 +225,7 @@ public class FoodTruckDataGetter {
                     myAPIGoogle,
                     null,
                     createMyGooglePlacesReqSuccessListener(),
-                    createGooglePlacesReqErrorListener());
+                    errorListener);
 
             requestQueue.add(jsonObjectRequest); //hey go get the data
         } catch (Exception e) {
@@ -323,14 +311,16 @@ public class FoodTruckDataGetter {
         };
     }
 
-    private static Response.ErrorListener createGooglePlacesReqErrorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.v("VOLLEY", "GOOGLE PLACES RESPONSE ERROR");
-            }
-        };
-    }
+
+
+    protected static Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.v("VOLLEY", error.getMessage());
+        }
+    };
+
+
 
 
 }
