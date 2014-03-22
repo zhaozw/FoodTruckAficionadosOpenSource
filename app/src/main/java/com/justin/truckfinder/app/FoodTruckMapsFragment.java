@@ -1,7 +1,5 @@
 package com.justin.truckfinder.app;
 
-import android.app.Fragment;
-
 import com.google.android.gms.maps.MapFragment;
 
 /*
@@ -9,7 +7,7 @@ import com.google.android.gms.maps.MapFragment;
  */
 public class FoodTruckMapsFragment extends MapFragment {
 
-    AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E
+//    AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E
 
 
 
