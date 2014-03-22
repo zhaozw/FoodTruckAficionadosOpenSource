@@ -1,7 +1,5 @@
 package com.justin.truckfinder.app;
 
-import android.location.Location;
-
 /**
  * Created by justindelta on 3/17/14.
  */
@@ -13,24 +11,65 @@ public class FoodTruckData {
 
     private double latitude = 0.0;
     private double longitude = 0.0;
-    private String iconUrl = "insert string or drawable reference";
-    private String placeName = "Unavailable";
-    private String fourSquareName = "Unknown";
+    private String iconUrl = "unavailable";
+    private String placeName = "unavailable";
+    private String fourSquareName = "unavailable";
     private boolean openNow = true;
     private int priceLevel = 0;
     private double rating = 0.0;
-    private String vicinityAddress = "Unknown address";
-    private double distanceToPlace;
-    private Location userLocation;
+    private String vicinityAddress = "unavailable";
+    private double distanceToPlaceFoursquare = 0;
+    private double distanceCalculated;
+    private String postalCode = "unavailable";
+    private String phoneNumberFormatted = "unavailable";
+    private double userLatitude = 0.0;
+    private double userLongitude = 0.0;
 
-    public FoodTruckData(String fourSquareName) {
-        this.fourSquareName = fourSquareName;
-    }
+    private double calculateDistance;
 
     public FoodTruckData() {
 
     }
 
+    public double getUserLatitude() {
+        return userLatitude;
+    }
+
+    public void setUserLatitude(double userLatitude) {
+        this.userLatitude = userLatitude;
+    }
+
+    public double getUserLongitude() {
+        return userLongitude;
+    }
+
+    public void setUserLongitude(double userLongitude) {
+        this.userLongitude = userLongitude;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public double getDistanceCalculated() {
+        return calculateDistance;
+    }
+
+    public void setDistanceCalculated(double aCalculateDistance) {
+        this.calculateDistance = aCalculateDistance;
+    }
+
+    public String getPhoneNumberFormatted() {
+        return phoneNumberFormatted;
+    }
+
+    public void setPhoneNumberFormatted(String phoneNumberFormatted) {
+        this.phoneNumberFormatted = phoneNumberFormatted;
+    }
 
     public double getLongitude() {
         return longitude;
@@ -72,7 +111,7 @@ public class FoodTruckData {
         this.fourSquareName = fourSquareName;
     }
 
-    public boolean isOpenNow() {
+    public boolean getIsOpenNow() {
         return openNow;
     }
 
@@ -104,20 +143,12 @@ public class FoodTruckData {
         this.vicinityAddress = vicinityAddress;
     }
 
-    public Location getLocation() {
-        return userLocation;
+    public double getDistanceToPlaceFourSquare() {
+        return distanceToPlaceFoursquare;
     }
 
-    public void setLocation(Location aUserlocation) {
-        this.userLocation = aUserlocation;
-    }
-
-    public double getDistanceToPlace() {
-        return distanceToPlace;
-    }
-
-    public double setDistanceToPlace(double aDistanceToPlace){
-        return this.distanceToPlace = aDistanceToPlace;
+    public double setDistanceToPlaceFourSquare(double aDistanceToPlace){
+        return this.distanceToPlaceFoursquare = aDistanceToPlace;
     }
 
     private double degreesToRadians(double degree) {
@@ -131,36 +162,38 @@ public class FoodTruckData {
     //TODO may still need to account for negative values where
     // TODO southern latitudes are negatives and
     // TODO eastern latitudes are positive
-    public double calculateDistanceToPlace() {
+    public double setCalculatedDistanceToPlace(double aLatitude, double aLongitude) {
 
-        double latitudeDoubleStart = userLocation.getLatitude();
-        double longitudeDoubleStart = userLocation.getLongitude();
+        double latitudeDoubleStart = aLatitude;
+        double longitudeDoubleStart = aLongitude;
 
         // Location of Destination in GPS coordinates
         double latitudeDoubleEnd = getLatitude();
         double longitudeDoubleEnd = getLongitude();
 
+
+
         double theta = longitudeDoubleStart - longitudeDoubleEnd;
 
-        distanceToPlace = Math.sin(degreesToRadians(latitudeDoubleStart))
+        calculateDistance = Math.sin(degreesToRadians(latitudeDoubleStart))
                             * Math.sin(degreesToRadians(latitudeDoubleEnd))
                             + Math.cos(degreesToRadians(latitudeDoubleStart))
                             * Math.cos(degreesToRadians(latitudeDoubleEnd))
                             * Math.cos(degreesToRadians(theta));
 
-        distanceToPlace = Math.acos(distanceToPlace);
+        calculateDistance = Math.acos(calculateDistance);
 
-        distanceToPlace = radiansToDegrees(distanceToPlace);
+        calculateDistance = radiansToDegrees(calculateDistance);
         // TODO include reference for why we're multiplyin' by 60, then * 1.1515
-        distanceToPlace = distanceToPlace * 60 * 1.1515;
+        calculateDistance = calculateDistance * 60 * 1.1515;
         // Statute Miles (NOT Nautical) are what we consider "miles" (i.e. mph).
         // Note: Nautical = distance * 0.8684.
         String units = "Miles";
         // not necessary unless people outside the USA want Kilometers.
         if (units.equals("Kilometers")) {
-            distanceToPlace = distanceToPlace * 1.609344;
+            calculateDistance = calculateDistance * 1.609344;
         }
-        return distanceToPlace;
+        return calculateDistance;
     }
 
 }

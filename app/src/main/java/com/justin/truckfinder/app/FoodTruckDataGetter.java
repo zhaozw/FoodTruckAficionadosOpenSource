@@ -143,8 +143,9 @@ public class FoodTruckDataGetter {
                     incompleteFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
 
-                        FoodTruckData foodTruckData = new FoodTruckData("unknown");
+                        FoodTruckData foodTruckData = new FoodTruckData();
                         JSONObject aResult = resultArray.getJSONObject(i);
+
 
                         try {
                             String fourSquareName = aResult.getString("name");
@@ -154,11 +155,88 @@ public class FoodTruckDataGetter {
                             Log.v("VOLLEY", "foursquare name catch JSONException error");
                         }
 
+                        try {
+                            String fourSquareName = aResult.getString("name");
+                            foodTruckData.setFourSquareName(fourSquareName);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "foursquare name catch JSONException error");
+                        }
+
+                        try {
+                            JSONObject contact = aResult.getJSONObject("contact");
+                            String formattedPhone = contact.getString("formattedPhone");
+                            foodTruckData.setPhoneNumberFormatted(formattedPhone);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "phoneNumber catch JSONException error");
+                            foodTruckData.setPhoneNumberFormatted("Phone Unavailable");
+                        }
+
+                        try {
+                            JSONObject location = aResult.getJSONObject("location");
+                            Double latitude = location.getDouble("lat");
+                            foodTruckData.setLatitude(latitude.doubleValue());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "Latitude catch JSONException error");
+                            foodTruckData.setLatitude(0);
+                        }
+
+                        try {
+                            JSONObject location = aResult.getJSONObject("location");
+                            Double longitude = location.getDouble("lng");
+                            foodTruckData.setLongitude(longitude.doubleValue());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "Longitude catch JSONException error");
+                            foodTruckData.setLongitude(0);
+                        }
+
+                        try {
+                            foodTruckData.setCalculatedDistanceToPlace(foodTruckData.getUserLatitude(), foodTruckData.getUserLongitude());
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Log.e("Calculating distance" , "there was an error");
+
+                        }
+
+                        try {
+                            JSONObject location = aResult.getJSONObject("location");
+                            Integer distance = location.getInt("distance");
+                            foodTruckData.setDistanceToPlaceFourSquare(distance);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "distanceInMeters catch JSONException error");
+                            foodTruckData.setDistanceToPlaceFourSquare(0);
+                        }
+
+                        try {
+                            JSONObject location = aResult.getJSONObject("location");
+                            String postalCode = location.getString("postalCode");
+                            foodTruckData.setPostalCode(postalCode);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "PostalCode catch JSONException error");
+                            foodTruckData.setPostalCode("78701");
+                        }
+
+                        try {
+                            JSONObject location = aResult.getJSONObject("location");
+                            String address = location.getString("address");
+                            foodTruckData.setVicinityAddress(address);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "Address catch JSONException error");
+                            foodTruckData.setVicinityAddress("See Map");
+                        }
 
                         incompleteFoodTrucks.add(foodTruckData);
                         //this is where the next thing should happen.
 
                     }
+                    incompleteFoodTrucks.addAll(listOfFoodTrucks);
+                    notifyOfDataChanged();
                     performAdditionalGoogleSearches();
 
                 } catch (Exception e) {
@@ -188,7 +266,7 @@ public class FoodTruckDataGetter {
     private static final String GOOGLE_PLACES_API_KEY = "AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E";
     private static final String SENSOR = "true";
     private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor="+SENSOR+"&key="+ GOOGLE_PLACES_API_KEY;
-    private static StringBuilder stringBuilder = new StringBuilder(myAPIfoursquarePartial);
+    private static final StringBuilder stringBuilderGoog = new StringBuilder(myAPIGooglePartial);
 //      private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=food&name=torchys";
     private static void nearbySearchGooglePlaces(String aFoursquareName) {
 
@@ -200,15 +278,15 @@ public class FoodTruckDataGetter {
 
         try {
 //            StringBuilder stringBuilder = new StringBuilder(myAPIGooglePartial);
-            stringBuilder.append("&location=" + GPSLocation);
-            stringBuilder.append("&radius=750");
+            stringBuilderGoog.append("&location=" + GPSLocation);
+            stringBuilderGoog.append("&radius=750");
 //            stringBuilder.append("&keyword=" +
-            stringBuilder.append("&keyword=food");
+            stringBuilderGoog.append("&keyword=food");
 //            stringBuilder.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
-            stringBuilder.append("&name=" + aFoursquareName);
+            stringBuilderGoog.append("&name=" + aFoursquareName);
 
 
-            myAPIGoogle = stringBuilder.toString();
+            myAPIGoogle = stringBuilderGoog.toString();
 
 //            myAPIGoogle.replace("+",",");
 //            myAPIGoogle.replace("%27","");
@@ -252,25 +330,37 @@ public class FoodTruckDataGetter {
                         JSONObject aResult = resultArray.getJSONObject(i);
                         JSONObject geometry = aResult.getJSONObject("geometry");
                         JSONObject location = geometry.getJSONObject("location");
-                        Double latitude = location.getDouble("lat");
-                        foodTruckData.setLatitude(latitude.doubleValue());
-
-                        Double longitude = location.getDouble("lng");
-                        foodTruckData.setLongitude(longitude.doubleValue());
 
                         try {
-                            foodTruckData.setDistanceToPlace(foodTruckData.calculateDistanceToPlace());
-                        }catch (Exception e){
+                            Double latitude = location.getDouble("lat");
+                            foodTruckData.setLatitude(latitude.doubleValue());
+                        }catch (JSONException e){
                             e.printStackTrace();
-                            Log.e("Calculating distance" , "there was an error");
+                            Log.v("VOLLEY", "google latitude exception");
                         }
 
-                        String iconUrl = aResult.getString("icon");
-                        foodTruckData.setIconUrl(iconUrl);
+                        try {
+                            Double longitude = location.getDouble("lng");
+                            foodTruckData.setLongitude(longitude.doubleValue());
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "google longitude exception");
+                        }
 
-                        String placeName = aResult.getString("name");
-                        foodTruckData.setPlaceName(placeName);
-
+                        try {
+                            String iconUrl = aResult.getString("icon");
+                            foodTruckData.setIconUrl(iconUrl);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "Icon URL exception");
+                        }
+                        try {
+                            String placeName = aResult.getString("name");
+                            foodTruckData.setPlaceName(placeName);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "placeName FS error");
+                        }
                         try {
                             JSONObject openingHours = aResult.getJSONObject("opening_hours");
                             boolean openNowBool = openingHours.getBoolean("open_now");
@@ -288,9 +378,13 @@ public class FoodTruckDataGetter {
                             Log.v("VOLLEY", "rating error");
                         }
 
-                        String vicinityAddress = aResult.getString("vicinity");
-                        foodTruckData.setVicinityAddress(vicinityAddress);
-
+                        try {
+                            String vicinityAddress = aResult.getString("vicinity");
+                            foodTruckData.setVicinityAddress(vicinityAddress);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "vicinity address error");
+                        }
                         try {
                             int priceLevelInt = aResult.getInt("price_level");
                             foodTruckData.setPriceLevel(priceLevelInt);
