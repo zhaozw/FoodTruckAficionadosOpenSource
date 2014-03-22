@@ -7,8 +7,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION">sd</uses-permission>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION">dfs</uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">add</uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">sdf</uses-permission>
     <uses-permission android:name="android.permission.LOCATION_HARDWARE">ads</uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
 
     <application
         android:allowBackup="true"
@@ -24,6 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>
