@@ -22,7 +22,6 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/placeNameView"
         android:padding="10dp"
-        android:text="placeDistance"
         android:textColor="#040404" />
 
     <RelativeLayout

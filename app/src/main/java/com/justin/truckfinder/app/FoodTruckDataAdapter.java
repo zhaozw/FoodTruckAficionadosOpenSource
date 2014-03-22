@@ -18,6 +18,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private int mLayoutResourceId;
     private ArrayList<FoodTruckData> foodTruckDataArrayList;
     private LayoutInflater layoutInflater;
+    private FoodTruckData foodTruckData;
 
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
@@ -81,9 +82,11 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(aPosition);
 
 //        FoodTruckData foodTruck = getItem(aPosition);
+        String distance;
+        distance = Double.valueOf(foodTruck.getDistanceCalculated()) + "miles";
 
         foodTruckDataHolder.placeNameView.setText(foodTruck.getPlaceName());
-        foodTruckDataHolder.placeDistanceView.setText(foodTruck.getVicinityAddress());
+        foodTruckDataHolder.placeDistanceView.setText(distance);
         foodTruckDataHolder.placePriceView.setText(String.valueOf(foodTruck.getPriceLevel()));
         foodTruckDataHolder.placeRatingView.setText(String.valueOf(foodTruck.getRating()));
         foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());

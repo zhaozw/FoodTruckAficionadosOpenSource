@@ -25,8 +25,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     private String currentLocation;  //Format: "123.12341234,-1234.11341234"
     private boolean gotLocation = false;
     private FoodTruckData foodTruckData;
-    public double mUserLatitudeDouble;
-    public double mUserLongitudeDouble;
 
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
@@ -123,22 +121,16 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
             return;
         }
 
-        mUserLatitudeDouble = location.getLatitude();
-        mUserLongitudeDouble = location.getLongitude();
+        double userLatitudeDouble = location.getLatitude();
+        double userLongitudeDouble = location.getLongitude();
 
-        String latitudeString = String.valueOf(mUserLatitudeDouble);
-        String longitudeString = String.valueOf(mUserLongitudeDouble);
+        String latitudeString = String.valueOf(userLatitudeDouble);
+        String longitudeString = String.valueOf(userLongitudeDouble);
 
         String latitudeLongitude = latitudeString + "," + longitudeString;
         Log.v("gps", latitudeLongitude);
         currentLocation = latitudeLongitude;
 
-        foodTruckData.setUserLatitude(mUserLatitudeDouble);
-        foodTruckData.setUserLongitude(mUserLongitudeDouble);
-
-        FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(),this, currentLocation);
+        FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
     }
-
-
-
 }

@@ -9,26 +9,26 @@ public class FoodTruckData {
     //This is the data i want to display. Encapsulating only the data that I need.
 
 
-    private double latitude = 0.0;
-    private double longitude = 0.0;
+    private double latitude = 0;
+    private double longitude = 0;
     private String iconUrl = "unavailable";
-    private String placeName = "unavailable";
-    private String fourSquareName = "unavailable";
+    private String placeName;
+    private String fourSquareName;
     private boolean openNow = true;
     private int priceLevel = 0;
-    private double rating = 0.0;
+    private double rating = 0;
     private String vicinityAddress = "unavailable";
-    private double distanceToPlaceFoursquare = 0;
+    private double distanceToPlaceFoursquare;
     private double distanceCalculated;
     private String postalCode = "unavailable";
     private String phoneNumberFormatted = "unavailable";
-    private double userLatitude = 0.0;
-    private double userLongitude = 0.0;
+    private double userLatitude;
+    private double userLongitude;
 
-    private double calculateDistance;
+    private double calculateDistanceTotal;
 
-    public FoodTruckData() {
-
+    public FoodTruckData(String fourSquareName) {
+        this.fourSquareName = fourSquareName;
     }
 
     public double getUserLatitude() {
@@ -55,13 +55,7 @@ public class FoodTruckData {
         this.postalCode = postalCode;
     }
 
-    public double getDistanceCalculated() {
-        return calculateDistance;
-    }
 
-    public void setDistanceCalculated(double aCalculateDistance) {
-        this.calculateDistance = aCalculateDistance;
-    }
 
     public String getPhoneNumberFormatted() {
         return phoneNumberFormatted;
@@ -148,7 +142,7 @@ public class FoodTruckData {
     }
 
     public double setDistanceToPlaceFourSquare(double aDistanceToPlace){
-        return this.distanceToPlaceFoursquare = aDistanceToPlace;
+        return this.distanceToPlaceFoursquare = aDistanceToPlace * 3.2808;
     }
 
     private double degreesToRadians(double degree) {
@@ -162,23 +156,20 @@ public class FoodTruckData {
     //TODO may still need to account for negative values where
     // TODO southern latitudes are negatives and
     // TODO eastern latitudes are positive
-    public double setCalculatedDistanceToPlace(double aLatitude, double aLongitude) {
-
-        double latitudeDoubleStart = aLatitude;
-        double longitudeDoubleStart = aLongitude;
+    public void setCalculatedDistanceToPlace(double aUserLatitudeStart, double aUserLongitudeStart) {
 
         // Location of Destination in GPS coordinates
-        double latitudeDoubleEnd = getLatitude();
-        double longitudeDoubleEnd = getLongitude();
+        double placeLatitudeEnd = getLatitude();
+        double placeLongitudeEnd = getLongitude();
 
+        double calculateDistance;
 
+        double theta = aUserLongitudeStart - placeLongitudeEnd;
 
-        double theta = longitudeDoubleStart - longitudeDoubleEnd;
-
-        calculateDistance = Math.sin(degreesToRadians(latitudeDoubleStart))
-                            * Math.sin(degreesToRadians(latitudeDoubleEnd))
-                            + Math.cos(degreesToRadians(latitudeDoubleStart))
-                            * Math.cos(degreesToRadians(latitudeDoubleEnd))
+        calculateDistance = Math.sin(degreesToRadians(aUserLatitudeStart))
+                            * Math.sin(degreesToRadians(placeLatitudeEnd))
+                            + Math.cos(degreesToRadians(aUserLatitudeStart))
+                            * Math.cos(degreesToRadians(placeLatitudeEnd))
                             * Math.cos(degreesToRadians(theta));
 
         calculateDistance = Math.acos(calculateDistance);
@@ -193,7 +184,16 @@ public class FoodTruckData {
         if (units.equals("Kilometers")) {
             calculateDistance = calculateDistance * 1.609344;
         }
-        return calculateDistance;
+       setDistanceCalculated(calculateDistance);
+
+    }
+
+    public void setDistanceCalculated(double aCalculateDistance) {
+        this.calculateDistanceTotal = aCalculateDistance;
+    }
+
+    public double getDistanceCalculated() {
+        return calculateDistanceTotal;
     }
 
 }
