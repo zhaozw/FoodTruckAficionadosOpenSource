@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +50,7 @@ public class FoodTruckDataGetter {
     private static RequestQueue requestQueue;
     private static double userLatitude;
     private static double userLongitude;
-
+    private static LatLng userLatLng;
     //
     // Singleton pattern here:
     //
@@ -90,6 +91,7 @@ public class FoodTruckDataGetter {
         GPSLocation = aDeviceLocation;
         incompleteFoodTrucks = new ArrayList<FoodTruckData>();
         listOfFoodTrucks = new ArrayList<FoodTruckData>();
+        userLatLng = new LatLng(userLatitude, userLongitude);
         performFoursquareFoodTruckRequestFoursquare();
 
     }
@@ -233,7 +235,21 @@ public class FoodTruckDataGetter {
                             foodTruckData.setCalculatedDistanceToPlace(userLatitude, userLongitude);
                         }catch (Exception e) {
                             e.printStackTrace();
-                            Log.e("Calculating distance", "there was an error");
+                            Log.e("Calculatingdistance", "there was an error");
+                        }
+
+                        try {
+                            foodTruckData.setUserLatitude(userLatitude);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("USERLAT", "there was an error with USerLat");
+                        }
+
+                        try {
+                            foodTruckData.setUserLongitude(userLongitude);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("USERLONG", "there was an error with USerLong");
                         }
 
                         incompleteFoodTrucks.add(foodTruckData);
@@ -329,11 +345,36 @@ public class FoodTruckDataGetter {
                     someFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
 
-                        FoodTruckData foodTruckData = new FoodTruckData("00000");
+                        FoodTruckData foodTruckData = new FoodTruckData();
 
                         JSONObject aResult = resultArray.getJSONObject(i);
                         JSONObject geometry = aResult.getJSONObject("geometry");
                         JSONObject location = geometry.getJSONObject("location");
+
+
+                        try {
+                            foodTruckData.setUserLatitude(userLatitude);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("USERLAT", "there was an error with USerLat");
+                        }
+
+                        try {
+                            foodTruckData.setUserLongitude(userLongitude);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("USERLONG", "there was an error with USerLong");
+                        }
+
+                        try {
+
+                            foodTruckData.setUserLatLng(userLatLng);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("USERLAT", "there was an error with USerLat");
+                        }
+
+
 
                         try {
                             Double latitude = location.getDouble("lat");
@@ -359,6 +400,7 @@ public class FoodTruckDataGetter {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Log.v("VOLLEY", "Icon URL exception");
+                                foodTruckData.setIconUrl("not available");
                             }
                         }
 
@@ -406,7 +448,7 @@ public class FoodTruckDataGetter {
                         someFoodTrucks.add(foodTruckData);
 
                         try {
-                            foodTruckData.setCalculatedDistanceToPlace(foodTruckData.getUserLatitude(), foodTruckData.getUserLongitude());
+                            foodTruckData.setCalculatedDistanceToPlace(userLatitude, userLongitude);
                         }catch (Exception e) {
                             e.printStackTrace();
                             Log.e("Calculating distance", "there was an error");
@@ -414,7 +456,7 @@ public class FoodTruckDataGetter {
 
                     }
                     listOfFoodTrucks.addAll(someFoodTrucks);
-
+                    FoodTruckStorage.saveMyData(context, listOfFoodTrucks);
                     notifyOfDataChanged();
                 } catch (Exception e) {
                     e.printStackTrace();

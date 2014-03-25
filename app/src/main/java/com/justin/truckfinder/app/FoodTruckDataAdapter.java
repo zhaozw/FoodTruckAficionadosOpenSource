@@ -45,6 +45,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placeRatingView;
         public TextView placePriceView;
         public TextView placeAddressView;
+        public TextView placePhoneView;
+        public TextView placeOpenNowView;
+        public TextView placePostalView;
 //        public NetworkImageView placeThumbnail;
     }
 
@@ -68,10 +71,13 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             foodTruckDataHolder = new FoodTruckDataHolder();
             foodTruckDataHolder.placeNameView = (TextView) row.findViewById(R.id.placeNameView);
-            foodTruckDataHolder.placeDistanceView = (TextView) row.findViewById(R.id.placeAddressView);
+            foodTruckDataHolder.placeDistanceView = (TextView) row.findViewById(R.id.placeDistanceView);
             foodTruckDataHolder.placePriceView = (TextView) row.findViewById(R.id.placePriceView);
             foodTruckDataHolder.placeRatingView = (TextView) row.findViewById(R.id.placeRatingView);
             foodTruckDataHolder.placeAddressView = (TextView) row.findViewById(R.id.placeAddressView);
+            foodTruckDataHolder.placeOpenNowView = (TextView) row.findViewById(R.id.placeOpenNowView);
+            foodTruckDataHolder.placePhoneView = (TextView) row.findViewById(R.id.placePhoneView);
+            foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
 //            foodTruckDataHolder.placeThumbnailView = (NetworkImageView) row.findViewById(R.id.placeThumbnailView);
             row.setTag(foodTruckDataHolder);
 
@@ -82,14 +88,19 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(aPosition);
 
 //        FoodTruckData foodTruck = getItem(aPosition);
-        String distance;
-        distance = Double.valueOf(foodTruck.getDistanceCalculated()) + "miles";
+
 
         foodTruckDataHolder.placeNameView.setText(foodTruck.getPlaceName());
-        foodTruckDataHolder.placeDistanceView.setText(distance);
-        foodTruckDataHolder.placePriceView.setText(String.valueOf(foodTruck.getPriceLevel()));
-        foodTruckDataHolder.placeRatingView.setText(String.valueOf(foodTruck.getRating()));
+        foodTruckDataHolder.placeDistanceView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + "mi (" + Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft)");
+
+
+        foodTruckDataHolder.placePriceView.setText(String.valueOf("Price: " + foodTruck.getPriceLevel()));
+        foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating: " + foodTruck.getRating()));
         foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
+
+        foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
+        foodTruckDataHolder.placeOpenNowView.setText("Open: " + String.valueOf(foodTruck.getIsOpenNow()));
+        foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
 //        foodTruckDataHolder.placeThumbnail.setImageUrl(foodTruck.getIconUrl(),imageLoader);
 
 

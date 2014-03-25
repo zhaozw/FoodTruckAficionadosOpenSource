@@ -87,11 +87,11 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-            FoodTruckData foodTruckData;
-        //call back to the parent activity with the selected item
-            // put callback code --> map fragment
-            selectedListenerCallback.OnItemSelected();
-            foodTruckData = ((FoodTruckDataAdapter)getListAdapter()).getItem(position);
+//            FoodTruckData foodTruckData;
+//        //call back to the parent activity with the selected item
+//            // put callback code --> map fragment
+//            selectedListenerCallback.OnItemSelected();
+//            foodTruckData = ((FoodTruckDataAdapter)getListAdapter()).getItem(position);
 
 
     }
@@ -112,6 +112,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
     }

@@ -1,9 +1,16 @@
 package com.justin.truckfinder.app;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 /**
  * Created by justindelta on 3/17/14.
  */
-public class FoodTruckData {
+public class FoodTruckData implements Serializable{
 
 
     //This is the data i want to display. Encapsulating only the data that I need.
@@ -13,22 +20,35 @@ public class FoodTruckData {
     private double longitude = 0;
     private String iconUrl = "unavailable";
     private String placeName;
-    private String fourSquareName;
+    private String fourSquareName = "unavailable";
     private boolean openNow = true;
     private int priceLevel = 0;
     private double rating = 0;
     private String vicinityAddress = "unavailable";
     private double distanceToPlaceFoursquare;
-    private double distanceCalculated;
+    private LatLng userLatLng;
     private String postalCode = "unavailable";
     private String phoneNumberFormatted = "unavailable";
     private double userLatitude;
     private double userLongitude;
 
-    private double calculateDistanceTotal;
+    private double calculateDistanceFeet;
+    private double calculateDistanceMiles;
 
     public FoodTruckData(String fourSquareName) {
         this.fourSquareName = fourSquareName;
+    }
+
+    public FoodTruckData() {
+
+    }
+
+    public LatLng getUserLatLng() {
+        return userLatLng;
+    }
+
+    public void setUserLatLng(LatLng userLatLng) {
+        this.userLatLng = userLatLng;
     }
 
     public double getUserLatitude() {
@@ -162,38 +182,71 @@ public class FoodTruckData {
         double placeLatitudeEnd = getLatitude();
         double placeLongitudeEnd = getLongitude();
 
-        double calculateDistance;
+        double calculateDistanceMiles;
+
+        double calculateDistanceFeet;
+
+        double calculateDistanceKilometers;
 
         double theta = aUserLongitudeStart - placeLongitudeEnd;
 
-        calculateDistance = Math.sin(degreesToRadians(aUserLatitudeStart))
+        calculateDistanceMiles = Math.sin(degreesToRadians(aUserLatitudeStart))
                             * Math.sin(degreesToRadians(placeLatitudeEnd))
                             + Math.cos(degreesToRadians(aUserLatitudeStart))
                             * Math.cos(degreesToRadians(placeLatitudeEnd))
                             * Math.cos(degreesToRadians(theta));
 
-        calculateDistance = Math.acos(calculateDistance);
+        calculateDistanceMiles = Math.acos(calculateDistanceMiles);
 
-        calculateDistance = radiansToDegrees(calculateDistance);
-        // TODO include reference for why we're multiplyin' by 60, then * 1.1515
-        calculateDistance = calculateDistance * 60 * 1.1515;
+        calculateDistanceMiles = radiansToDegrees(calculateDistanceMiles);
+
+        calculateDistanceMiles = calculateDistanceMiles * 60 * 1.1515;
         // Statute Miles (NOT Nautical) are what we consider "miles" (i.e. mph).
         // Note: Nautical = distance * 0.8684.
         String units = "Miles";
         // not necessary unless people outside the USA want Kilometers.
         if (units.equals("Kilometers")) {
-            calculateDistance = calculateDistance * 1.609344;
+            calculateDistanceKilometers = calculateDistanceMiles * 1.609344;
         }
-       setDistanceCalculated(calculateDistance);
+
+        setDistanceCalculatedMiles(calculateDistanceMiles);
+        //convert to feet 1 mile = 5280 feet
+        calculateDistanceFeet = calculateDistanceMiles * 5280;
+
+       setDistanceCalculatedFeet(calculateDistanceFeet);
 
     }
 
-    public void setDistanceCalculated(double aCalculateDistance) {
-        this.calculateDistanceTotal = aCalculateDistance;
+    public void setDistanceCalculatedFeet(double aCalculateDistance) {
+        this.calculateDistanceFeet = aCalculateDistance;
     }
 
-    public double getDistanceCalculated() {
-        return calculateDistanceTotal;
+    public double getDistanceCalculatedFeet() {
+        return calculateDistanceFeet;
+    }
+
+    public void setDistanceCalculatedMiles(double aCalculateDistance) {
+        this.calculateDistanceMiles = aCalculateDistance;
+    }
+
+    public double getDistanceCalculatedMiles() {
+        return calculateDistanceMiles;
+    }
+
+
+    private void readObject(ObjectInputStream anInputStream)
+            throws ClassNotFoundException, IOException {
+        // always perform the default de-serialization first
+        anInputStream.defaultReadObject();
+    }
+
+    /**
+     * This is the default implementation of writeObject. Customise if necessary.
+     */
+    private void writeObject(ObjectOutputStream anOutputStream)
+            throws IOException {
+        // perform the default serialization for all non-transient, non-static fields
+        anOutputStream.defaultWriteObject();
     }
 
 }

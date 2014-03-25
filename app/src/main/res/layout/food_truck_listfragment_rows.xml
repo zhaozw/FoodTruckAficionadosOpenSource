@@ -21,6 +21,7 @@
         android:id="@+id/placeDistanceView"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/placeNameView"
+        android:text="place distance"
         android:padding="10dp"
         android:textColor="#040404" />
 
@@ -50,13 +51,22 @@
             android:padding="3dp"
             android:text="placeRating"
             android:textColor="#ff0f00" />
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placeExtraInfo"
+
+        android:layout_below="@id/placePriceRatingView">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/placeAddressView"
-            android:layout_toRightOf="@+id/placeRatingView"
+            android:id="@+id/placeOpenNowView"
             android:padding="3dp"
-            android:text="placeAddress"
+            android:text="openNow?"
             android:textColor="#ff0f00" />
 
 
@@ -76,6 +86,37 @@
             />
 
     </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placePhoneView"
+        android:padding="3dp"
+        android:text="placePhone"
+        android:textColor="#060850"
+
+        android:layout_below="@+id/placeExtraInfo"
+        android:layout_toRightOf="@+id/placeDistanceView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placePostalView"
+        android:padding="3dp"
+        android:text="placePostal"
+        android:textColor="#ff0f00"
+        android:layout_alignTop="@+id/placePhoneView"
+        android:layout_toRightOf="@+id/placePhoneView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placeAddressView"
+        android:padding="3dp"
+        android:text="placeAddress"
+        android:textColor="#ff0f00"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
 
 
