@@ -83,6 +83,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onViewCreated(view, savedInstanceState);
         foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
+
     }
 
     @Override
