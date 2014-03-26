@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -71,10 +70,11 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
 
 
-            MyCompassView mycomapssView = new MyCompassView;
-            //new class that draws something (line point or square) to screen FIRST. then add
-            // how I want it to draw
-            ((RelativeLayout)row).addView(mycomapssView);
+
+//            MyCompassView myCompassView = new MyCompassView(context);
+//            //new class that draws something (line point or square) to screen FIRST. then add
+//            // how I want it to draw
+//            ((RelativeLayout)row).addView(myCompassView);
 
 
             foodTruckDataHolder = new FoodTruckDataHolder();

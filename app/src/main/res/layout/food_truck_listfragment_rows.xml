@@ -6,7 +6,10 @@
     android:padding="10dp"
     android:background="#f2f6cd"
     android:layout_alignParentLeft="true">
-
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/placeNameOpenView">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,12 +28,12 @@
         android:layout_below="@id/placeNameView"
         android:text="openNow?"
         android:textColor="#7da4b3" />
-
+</RelativeLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/placePriceRatingView"
-        android:layout_below="@id/placeOpenNowView"
+        android:layout_below="@id/placeNameOpenView"
         android:layout_centerInParent="true">
 
         <TextView
@@ -39,7 +42,7 @@
             android:id="@+id/placePriceView"
             android:padding="3dp"
             android:text="placePrice"
-            android:textColor="#060850"
+            android:textColor="#7da4b3"
 
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
@@ -52,7 +55,7 @@
             android:layout_toRightOf="@+id/placePriceView"
             android:padding="3dp"
             android:text="placeRating"
-            android:textColor="#ff0f00" />
+            android:textColor="#7da4b3" />
 
 
     </RelativeLayout>
@@ -64,41 +67,43 @@
         android:layout_centerInParent="true"
         android:id="@+id/placeImageDistance">
 
+
         <com.android.volley.toolbox.NetworkImageView
-            android:scaleType="fitCenter"
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
+            android:scaleType="fitEnd"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:id="@+id/placeThumbnailView"
             android:background="@drawable/newcompass"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true" />
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/placeDistanceView"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/placeThumbnailView"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/placeThumbnailView"
             android:text="place distance"
-            android:padding="10dp"
-            android:textColor="#040404" />
+            android:paddingTop="3dp"
+            android:textColor="#15576b" />
 
     </RelativeLayout>
+
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/placeExtraInfo"
         android:layout_toStartOf="@id/placePriceRatingView"
-        android:layout_below="@id/placePriceRatingView">
+        android:layout_below="@id/placePriceRatingView"
+        android:layout_alignParentLeft="true">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/placePhoneView"
         android:padding="3dp"
         android:text="placePhone"
-        android:textColor="#060850"
-
-        android:layout_below="@+id/placePriceRatingView"
-        android:layout_toRightOf="@id/placePhoneView" />
+        android:textColor="#7da4b3"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -106,19 +111,29 @@
         android:id="@+id/placePostalView"
         android:padding="3dp"
         android:text="placePostal"
-        android:textColor="#ff0f00"
-        android:layout_below="@id/placePriceRatingView"
+        android:textColor="#7da4b3"
+        android:layout_below="@id/placePhoneView"
         />
 
 </RelativeLayout>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_alignStart="@+id/placePriceRatingView"
+    android:layout_alignBottom="@+id/placeNameOpenView"
+    android:layout_toLeftOf="@+id/placeImageDistance">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/placeAddressView"
-        android:padding="3dp"
+
+        android:paddingTop="20dp"
         android:text="placeAddress"
-        android:textColor="#ff0f00"
-        android:layout_alignParentTop="true"
+        android:textColor="#15576b"
+
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
 
+</RelativeLayout>
