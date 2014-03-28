@@ -22,7 +22,7 @@ public class SecondaryActivityToBeParsedOut extends Activity implements Location
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_food_truck_nearby); // // LAYOUT HERE MAY CAUSE ERRORS IF RUN
         if (gotLocation) {
             gotLocation = true;
             Log.e("NEWLOC", "Got new location");
@@ -53,7 +53,7 @@ public class SecondaryActivityToBeParsedOut extends Activity implements Location
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.food_truck_nearby, menu); // LAYOUT HERE MAY CAUSE ERRORS IF RUN
         return true;
     }
 
@@ -71,7 +71,7 @@ public class SecondaryActivityToBeParsedOut extends Activity implements Location
 
 
     public double determineDirection() {
-
+        //location of Torchy's
         placeLatitude = 30.25306507248696;
         placeLongitude = -97.74808133834131;
 
@@ -95,6 +95,13 @@ public class SecondaryActivityToBeParsedOut extends Activity implements Location
         double destinationX = (userLocation.getLatitude() - placeLatitude);
         double destinationY = (userLocation.getLongitude() - placeLongitude);
 
+        destinationX = Math.cos(destinationX);
+        destinationY = Math.sin(destinationY);
+
+
+
+
+
         double theta = y1 - y2;
         double calculateDistance = Math.sin(degreesToRadians(x1));
         calculateDistance = calculateDistance * Math.sin(degreesToRadians(x2));
@@ -106,9 +113,8 @@ public class SecondaryActivityToBeParsedOut extends Activity implements Location
 
         calculateDistance = radiansToDegrees(calculateDistance);
 
-        r = calculateDistance;
-
-
+        //TODO use this is the degree Value from a 0'ed location on a circle relative to North CW on circle
+        double directionInDegreesOnCircle = calculateDistance;
 
         return 0;
 

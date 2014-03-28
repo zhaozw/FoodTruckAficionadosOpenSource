@@ -1,12 +1,11 @@
 package com.justin.truckfinder.app;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,8 +20,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private int mLayoutResourceId;
     private ArrayList<FoodTruckData> foodTruckDataArrayList;
     private LayoutInflater layoutInflater;
-    private FoodTruckData foodTruckData;
-    public FoodTruckData mFoodTruckNew;
     public int mPosition;
 
 
@@ -53,7 +50,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placePhoneView;
         public TextView placeOpenNowView;
         public TextView placePostalView;
-//        public MyCompassView myCompassView;
+        public MyCompassView myCompassView;
 //        public NetworkImageView placeThumbnail;
     }
 
@@ -73,18 +70,41 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 //        LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         if(aConvertView == null){
-            row = layoutInflater.inflate(mLayoutResourceId, aParent, true);
+            row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
+
+            RelativeLayout aRelativeLayout = (RelativeLayout) row;
+            //row.addView
+
+
+           // ((RelativeLayout)row).addView
+
+
+
+            /*
+                        android:scaleType="fitEnd"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:id="@+id/placeThumbnailView"
+            android:background="@drawable/newcompass"
+            android:layout_alignParentEnd="true"
+
+             */
+
+            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, context.getResources().getDisplayMetrics());
+
 
             MyCompassView myCompassView;
-
             myCompassView = new MyCompassView(context);
-            myCompassView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-            myCompassView.setBackgroundColor(Color.BLACK);
+            RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize,boxSize);
+            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_END);
+            myCompassView.setLayoutParams(compassLayout);
+            myCompassView.setBackgroundResource(R.drawable.newcompass);
 
-            myCompassView.addViewInLayout
+            aRelativeLayout.addView(myCompassView);
 
-            View.addViewInLayout(myCompassView);
+
+
+
 
 //            //new class that draws something (line point or square) to screen FIRST. then add
 //            // how I want it to draw
@@ -101,7 +121,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeOpenNowView = (TextView) row.findViewById(R.id.placeOpenNowView);
             foodTruckDataHolder.placePhoneView = (TextView) row.findViewById(R.id.placePhoneView);
             foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
-//            foodTruckDataHolder.myCompassView = (MyCompassView) row.findViewWithTag(myCompassView);
+            foodTruckDataHolder.myCompassView = myCompassView;
+
 //            foodTruckDataHolder.placeThumbnailView = (NetworkImageView) row.findViewById(R.id.placeThumbnailView);
             row.setTag(foodTruckDataHolder);
 
@@ -129,6 +150,12 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
         foodTruckDataHolder.placeOpenNowView.setText("Open: " + String.valueOf(foodTruck.getIsOpenNow()));
         foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
+        foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLongitude(), FoodTruckData.getUserLatitude(), foodTruck.getLongitude(), foodTruck.getLatitude());
+        //todo: give myCompassView the sensor data to do the calculation (you already gave it the vectors)
+
+
+
+
 //        foodTruckDataHolder.placeThumbnail.setImageUrl(foodTruck.getIconUrl(),imageLoader);
 
 
@@ -138,4 +165,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         FoodTruckData foodTruckNew = getFoodTruckData();
         return foodTruckNew;
     }
+
+
+
 }

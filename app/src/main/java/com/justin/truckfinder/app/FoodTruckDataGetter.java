@@ -51,6 +51,7 @@ public class FoodTruckDataGetter {
     private static double userLatitude;
     private static double userLongitude;
     private static LatLng userLatLng;
+
     //
     // Singleton pattern here:
     //
@@ -457,6 +458,7 @@ public class FoodTruckDataGetter {
                     }
                     listOfFoodTrucks.addAll(someFoodTrucks);
                     FoodTruckStorage.saveMyData(context, listOfFoodTrucks);
+
                     notifyOfDataChanged();
                 } catch (Exception e) {
                     e.printStackTrace();

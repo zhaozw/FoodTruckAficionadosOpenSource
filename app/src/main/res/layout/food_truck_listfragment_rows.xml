@@ -67,21 +67,12 @@
         android:layout_centerInParent="true"
         android:id="@+id/placeImageDistance">
 
-
-        <com.android.volley.toolbox.NetworkImageView
-            android:scaleType="fitEnd"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:id="@+id/placeThumbnailView"
-            android:background="@drawable/newcompass"
-            android:layout_alignParentEnd="true"
-            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/placeDistanceView"
             android:layout_alignParentEnd="true"
-            android:layout_below="@id/placeThumbnailView"
+
             android:text="place distance"
             android:paddingTop="3dp"
             android:textColor="#15576b" />

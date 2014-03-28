@@ -29,8 +29,8 @@ public class FoodTruckData implements Serializable{
     private LatLng userLatLng;
     private String postalCode = "unavailable";
     private String phoneNumberFormatted = "unavailable";
-    private double userLatitude;
-    private double userLongitude;
+    private static double userLatitude;
+    private static double userLongitude;
 
     private double calculateDistanceFeet;
     private double calculateDistanceMiles;
@@ -51,20 +51,20 @@ public class FoodTruckData implements Serializable{
         this.userLatLng = userLatLng;
     }
 
-    public double getUserLatitude() {
+    public static double getUserLatitude() {
         return userLatitude;
     }
 
-    public void setUserLatitude(double userLatitude) {
-        this.userLatitude = userLatitude;
+    public static void  setUserLatitude(double userlat) {
+        userLatitude = userlat;
     }
 
-    public double getUserLongitude() {
+    public static double getUserLongitude() {
         return userLongitude;
     }
 
-    public void setUserLongitude(double userLongitude) {
-        this.userLongitude = userLongitude;
+    public static void setUserLongitude(double userLong) {
+        userLongitude = userLong;
     }
 
     public String getPostalCode() {
