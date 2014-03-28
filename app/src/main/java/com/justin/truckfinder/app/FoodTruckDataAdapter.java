@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -49,6 +48,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placePhoneView;
         public TextView placeOpenNowView;
         public TextView placePostalView;
+//        public MyCompassView placeCompassView;
 //        public NetworkImageView placeThumbnail;
     }
 
@@ -70,11 +70,12 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         if(aConvertView == null){
             row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
 
+//            MyCompassView myCompassView = new MyCompassView(context);
+//
+//            //new class that draws something (line point or square) to screen FIRST. then add
+//            // how I want it to draw
+//            ((RelativeLayout)row).addView(myCompassView);
 
-            MyCompassView mycomapssView = new MyCompassView;
-            //new class that draws something (line point or square) to screen FIRST. then add
-            // how I want it to draw
-            ((RelativeLayout)row).addView(mycomapssView);
 
 
             foodTruckDataHolder = new FoodTruckDataHolder();
@@ -86,6 +87,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeOpenNowView = (TextView) row.findViewById(R.id.placeOpenNowView);
             foodTruckDataHolder.placePhoneView = (TextView) row.findViewById(R.id.placePhoneView);
             foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
+//            foodTruckDataHolder.placeCompassView = (MyCompassView) row.findViewById(R.id.placeThumbnailView);
 //            foodTruckDataHolder.placeThumbnailView = (NetworkImageView) row.findViewById(R.id.placeThumbnailView);
             row.setTag(foodTruckDataHolder);
 
@@ -109,6 +111,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
         foodTruckDataHolder.placeOpenNowView.setText("Open: " + String.valueOf(foodTruck.getIsOpenNow()));
         foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
+//        foodTruckDataHolder.placeCompassView.setBackgroundResource(R.drawable.newcompass);
+
+
 //        foodTruckDataHolder.placeThumbnail.setImageUrl(foodTruck.getIconUrl(),imageLoader);
 
 

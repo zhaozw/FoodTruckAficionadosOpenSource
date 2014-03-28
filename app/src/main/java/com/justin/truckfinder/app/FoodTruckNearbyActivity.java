@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 
 public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener{
@@ -21,17 +20,17 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_truck_nearby);
-        setContentView(android.R.layout.simple_expandable_list_item_2);
+//        setContentView(android.R.layout.simple_expandable_list_item_2);
+//
+//        RelativeLayout r = new RelativeLayout(this);
+//
+//
+//        LayoutInflater myLayoutInflater = LayoutInflater.from(this);
+//
+//        View myView = myLayoutInflater.inflate(R.layout.map_fragment_food_truck,null);
 
-        RelativeLayout r = new RelativeLayout(this);
-
-
-        LayoutInflater myLayoutInflater = LayoutInflater.from(this);
-
-        View myView = myLayoutInflater.inflate(R.layout.map_fragment_food_truck,null);
-
-
-        myView.set
+//
+//        myView.set
 
         if (findViewById(R.id.container) != null) {
 
