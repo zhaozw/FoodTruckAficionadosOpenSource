@@ -15,7 +15,7 @@ import java.util.ArrayList;
 /**
  * Created by justindelta on 3/26/14.
  */
-public class MyCompassView extends View implements View.OnTouchListener{
+public class MyCompassView extends View implements View.OnFocusChangeListener{
 
         private float x;//instantiated at 0.0
         private float y;
@@ -72,11 +72,6 @@ public class MyCompassView extends View implements View.OnTouchListener{
                 growStroke = !growStroke;
             }
 
-
-
-
-
-
             for (Path path : pathCoordinates){
                 paint.setColor(Color.argb(200, 50, 200, 50));
                 paint.setStrokeWidth(4);
@@ -131,7 +126,47 @@ public class MyCompassView extends View implements View.OnTouchListener{
 
             return true;
         }
-        private class PointCoordinator {
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        Path currentPath;
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:{
+                currentPath = new Path();
+                currentPath.moveTo(event.getX(), event.getY());
+                pathCoordinates.add(currentPath);
+                break;
+            }
+            case MotionEvent.ACTION_MOVE:{
+                int lastPath = pathCoordinates.size()-1;
+                if(lastPath < 0){
+                    break;
+                }
+                pathCoordinates.get(lastPath).lineTo(event.getX(), event.getY());
+                break;
+            }
+            default:
+                break;
+        }
+
+
+//        x = event.getX();
+//        y = event.getY();
+//        invalidate();
+//
+//        Path p = new Path();
+//        int lastCoord = drawnCoordinates.size()-1;
+//        p.moveTo(drawnCoordinates.get(lastCoord).x,drawnCoordinates.get(lastCoord).y);
+//        p.lineTo(x,y);
+//        pathCoordinates.add(p);
+//
+//        drawnCoordinates.add(new PointCoordinator(x, y));
+
+        return true;
+    }
+
+
+    private class PointCoordinator {
 
             public float x;
             public float y;

@@ -1,10 +1,13 @@
 package com.justin.truckfinder.app;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,6 +22,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private ArrayList<FoodTruckData> foodTruckDataArrayList;
     private LayoutInflater layoutInflater;
     private FoodTruckData foodTruckData;
+    public FoodTruckData mFoodTruckNew;
+    public int mPosition;
 
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
@@ -48,6 +53,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placePhoneView;
         public TextView placeOpenNowView;
         public TextView placePostalView;
+//        public MyCompassView myCompassView;
 //        public NetworkImageView placeThumbnail;
     }
 
@@ -67,14 +73,23 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 //        LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         if(aConvertView == null){
-            row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
+            row = layoutInflater.inflate(mLayoutResourceId, aParent, true);
 
+            MyCompassView myCompassView;
 
+            myCompassView = new MyCompassView(context);
+            myCompassView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            myCompassView.setBackgroundColor(Color.BLACK);
 
-//            MyCompassView myCompassView = new MyCompassView(context);
+            myCompassView.addViewInLayout
+
+            View.addViewInLayout(myCompassView);
+
 //            //new class that draws something (line point or square) to screen FIRST. then add
 //            // how I want it to draw
-//            ((RelativeLayout)row).addView(myCompassView);
+
+
 
 
             foodTruckDataHolder = new FoodTruckDataHolder();
@@ -86,6 +101,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeOpenNowView = (TextView) row.findViewById(R.id.placeOpenNowView);
             foodTruckDataHolder.placePhoneView = (TextView) row.findViewById(R.id.placePhoneView);
             foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
+//            foodTruckDataHolder.myCompassView = (MyCompassView) row.findViewWithTag(myCompassView);
 //            foodTruckDataHolder.placeThumbnailView = (NetworkImageView) row.findViewById(R.id.placeThumbnailView);
             row.setTag(foodTruckDataHolder);
 
@@ -93,10 +109,14 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder = (FoodTruckDataHolder) row.getTag();
         }
 
-        FoodTruckData foodTruck = this.foodTruckDataArrayList.get(aPosition);
+        mPosition = aPosition;
+
+        FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
 
 //        FoodTruckData foodTruck = getItem(aPosition);
 
+
+//        ((RelativeLayout) row).
 
         foodTruckDataHolder.placeNameView.setText(foodTruck.getPlaceName());
         foodTruckDataHolder.placeDistanceView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + "mi (" + Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft)");
@@ -114,5 +134,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         return row;
     }
-
+    public FoodTruckData getFoodTruckData(){
+        FoodTruckData foodTruckNew = getFoodTruckData();
+        return foodTruckNew;
+    }
 }

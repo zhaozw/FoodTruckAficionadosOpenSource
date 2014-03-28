@@ -21,31 +21,24 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_truck_nearby);
 
-
         if (findViewById(R.id.container) != null) {
 
             if (savedInstanceState != null) {
                 return;
             }
-
-
             FoodTruckListViewFragment foodTruckListViewFragment = new FoodTruckListViewFragment();
 
-
             foodTruckListViewFragment.setArguments(getIntent().getExtras());
-
 
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new FoodTruckListViewFragment())
                     .commit();
         }
-
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.food_truck_nearby, menu);
         return true;
