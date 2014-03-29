@@ -15,8 +15,8 @@ import android.view.View;
 public class MyCompassView extends View  {
 
     private Paint paint;
-    private final int STROKE_MAX = 40;
-    private final int STROKE_MIN = 5;
+    private final int STROKE_MAX = 30;
+    private final int STROKE_MIN = 1;
     private boolean growStroke = true;
     private int glowStrokeWidth = STROKE_MIN;
 
@@ -63,7 +63,7 @@ public class MyCompassView extends View  {
 
 
 
-        paint.setColor(Color.argb(80, 50, 200, 50));
+        paint.setColor(Color.argb(255, 1, 1, 200));
         paint.setStrokeWidth(glowStrokeWidth);
 
         float centerCircleX = getWidth() / 2;

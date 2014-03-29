@@ -67,16 +67,6 @@
         android:layout_centerInParent="true"
         android:id="@+id/placeImageDistance">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/placeDistanceView"
-            android:layout_alignParentEnd="true"
-
-            android:text="place distance"
-            android:paddingTop="3dp"
-            android:textColor="#15576b" />
-
     </RelativeLayout>
 
 
@@ -126,5 +116,16 @@
 
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placeDistanceView"
+        android:text="place distance"
+        android:paddingTop="3dp"
+        android:textColor="#15576b"
+        android:gravity="bottom"
+        android:layout_alignBottom="@+id/placeExtraInfo"
+        android:layout_alignStart="@+id/placeImageDistance" />
 
 </RelativeLayout>
