@@ -31,7 +31,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     private boolean gotLocation = false;
     private Sensor mySensor;
     private FoodTruckData foodTruckData;
-
+    private double x;
+    private double y;
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
         foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
@@ -64,7 +65,19 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        {
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
+                x = (int) Math.pow(event.values[1], 2);
+                y = (int) Math.pow(event.values[2], 2);
+
+
+            }
+
+            if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+
+            }
+        }
 
         event.toString();
 
@@ -95,7 +108,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
         //Sensor stuff
-        mySensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        mySensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this,mySensor,SensorManager.SENSOR_DELAY_NORMAL);
 
 
@@ -170,6 +183,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
         FoodTruckData.setUserLatitude(userLatitudeDouble);
         FoodTruckData.setUserLongitude(userLongitudeDouble);
+        
 
     }
 }

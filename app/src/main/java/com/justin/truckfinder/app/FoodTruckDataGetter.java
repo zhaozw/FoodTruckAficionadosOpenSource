@@ -460,6 +460,7 @@ public class FoodTruckDataGetter {
                     FoodTruckStorage.saveMyData(context, listOfFoodTrucks);
 
                     notifyOfDataChanged();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
