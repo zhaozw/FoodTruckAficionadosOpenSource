@@ -31,9 +31,63 @@ public class FoodTruckData implements Serializable{
     private String phoneNumberFormatted;
     private static double userLatitude;
     private static double userLongitude;
+    private static float[] accelerometerTest = {1,2,3};
+    private static float testX = 4;
+    private static float testY = 5;
+    private static float testZ = 6;
 
     private double calculateDistanceFeet;
     private double calculateDistanceMiles;
+
+    public static float[] getAccelerometerTest() {
+        return accelerometerTest;
+    }
+
+    public static void setAccelerometerTest(float[] accelerometerTesting) {
+        if(accelerometerTesting != null) {
+            accelerometerTest = accelerometerTesting;
+            setAccelValues(accelerometerTest);
+        }else {
+            float[] floats = {11,12,13};
+            accelerometerTest = floats;
+            setAccelValues(accelerometerTest);
+        }
+
+    }
+
+    public static void setAccelValues(float[] accelValues){
+        setTestX(accelValues[0]);
+        setTestY(accelValues[1]);
+        setTestZ(accelValues[2]);
+    }
+
+    public static float getTestX() {
+        return testX;
+    }
+
+    public static void setTestX(float testXx) {
+        testX = testXx;
+    }
+
+    public static float getTestY() {
+        return testY;
+    }
+
+    public static void setTestY(float testYy) {
+        testY = testYy;
+    }
+
+    public static float getTestZ() {
+        return testZ;
+    }
+
+    public static void setTestZ(float testZz) {
+        testZ = testZz;
+    }
+
+
+
+
 
 
     public FoodTruckData(String fourSquareName) {

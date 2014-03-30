@@ -96,6 +96,16 @@
         android:layout_below="@id/placePhoneView"
         />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/placeExtraView"
+            android:padding="3dp"
+            android:text="placeExtra"
+            android:textColor="#7da4b3"
+            android:layout_below="@id/placePostalView"
+            />
+
 </RelativeLayout>
 <RelativeLayout
     android:layout_width="wrap_content"

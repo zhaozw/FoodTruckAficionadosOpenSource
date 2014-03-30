@@ -51,7 +51,7 @@ public class FoodTruckDataGetter {
     private static double userLatitude;
     private static double userLongitude;
     private static LatLng userLatLng;
-
+    public static float[] mAccelerometerTestFloat;
     //
     // Singleton pattern here:
     //
@@ -95,7 +95,10 @@ public class FoodTruckDataGetter {
         userLatLng = new LatLng(userLatitude, userLongitude);
         performFoursquareFoodTruckRequestFoursquare();
 
+
     }
+
+
 
     private static void notifyOfDataChanged(){
         callback.onDataReceived(listOfFoodTrucks);
@@ -459,6 +462,8 @@ public class FoodTruckDataGetter {
                         }
 
                     }
+
+
                     listOfFoodTrucks.addAll(someFoodTrucks);
                     FoodTruckStorage.saveMyData(context, listOfFoodTrucks);
 

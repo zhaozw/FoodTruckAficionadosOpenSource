@@ -50,6 +50,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placePhoneView;
         public TextView placeOpenNowView;
         public TextView placePostalView;
+        public TextView placeExtraView;
         public MyCompassView myCompassView;
 //        public NetworkImageView placeThumbnail;
     }
@@ -107,6 +108,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeOpenNowView = (TextView) row.findViewById(R.id.placeOpenNowView);
             foodTruckDataHolder.placePhoneView = (TextView) row.findViewById(R.id.placePhoneView);
             foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
+            foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
             foodTruckDataHolder.myCompassView = myCompassView;
 
 //            foodTruckDataHolder.placeThumbnailView = (NetworkImageView) row.findViewById(R.id.placeThumbnailView);
@@ -135,6 +137,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
         foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLongitude(), FoodTruckData.getUserLatitude(), foodTruck.getLongitude(), foodTruck.getLatitude());
         //todo: give myCompassView the sensor data to do the calculation (you already gave it the vectors)
+        foodTruckDataHolder.placePhoneView.setText(String.valueOf(foodTruck.getTestX()));
+        foodTruckDataHolder.placePostalView.setText(String.valueOf(foodTruck.getTestY()));
+        foodTruckDataHolder.placeExtraView.setText(String.valueOf(foodTruck.getTestZ()));
 
 //        foodTruckDataHolder.placeThumbnail.setImageUrl(foodTruck.getIconUrl(),imageLoader);
 

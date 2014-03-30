@@ -31,7 +31,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     private boolean gotLocation = false;
     private Sensor mySensor;
     private FoodTruckData foodTruckData;
-    private float[] accelerometerFloat;
+    public float[] mAccelerometerFloat = {7,8,9};
 
 
 //    private float[] mOrientation;
@@ -105,8 +105,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 //
 //        }
 
-        accelerometerFloat = event.values;
-
+        mAccelerometerFloat = (event.values);
+//        settingAdapterOnCreateView();
 
 //        foodTruckData.setEventTestY(event.values[1]);
 //        foodTruckData.setEventTestZ(event.values[2]);
@@ -160,7 +160,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
         sensorManager.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
 
-
     }
 
 
@@ -171,6 +170,11 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
 
+    }
+
+    public void settingAdapterOnCreateView(){
+        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
+        setListAdapter(foodTruckDataAdapter);
     }
 
     @Override
@@ -231,12 +235,17 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
 
 
-
         FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
         FoodTruckData.setUserLatitude(userLatitudeDouble);
         FoodTruckData.setUserLongitude(userLongitudeDouble);
-
-
+        if(mAccelerometerFloat == null){
+            float[] floats = {99,98,97};
+            FoodTruckData.setAccelerometerTest(floats);
+        }else {
+            FoodTruckData.setAccelerometerTest(mAccelerometerFloat);
+        }
 
     }
+
+
 }
