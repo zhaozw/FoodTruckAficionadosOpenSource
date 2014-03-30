@@ -27,13 +27,14 @@ public class FoodTruckData implements Serializable{
     private String vicinityAddress = "unavailable";
     private double distanceToPlaceFoursquare;
     private LatLng userLatLng;
-    private String postalCode = "unavailable";
-    private String phoneNumberFormatted = "unavailable";
+    private String postalCode;
+    private String phoneNumberFormatted;
     private static double userLatitude;
     private static double userLongitude;
 
     private double calculateDistanceFeet;
     private double calculateDistanceMiles;
+
 
     public FoodTruckData(String fourSquareName) {
         this.fourSquareName = fourSquareName;
@@ -182,39 +183,40 @@ public class FoodTruckData implements Serializable{
         double placeLatitudeEnd = getLatitude();
         double placeLongitudeEnd = getLongitude();
 
+        double calculateDistanceMiles;
+
+        double calculateDistanceFeet;
+
+        double calculateDistanceKilometers;
+
+        double theta = aUserLongitudeStart - placeLongitudeEnd;
+
+        calculateDistanceMiles = Math.sin(degreesToRadians(aUserLatitudeStart))
+                * Math.sin(degreesToRadians(placeLatitudeEnd))
+                + Math.cos(degreesToRadians(aUserLatitudeStart))
+                * Math.cos(degreesToRadians(placeLatitudeEnd))
+                * Math.cos(degreesToRadians(theta));
+
+        calculateDistanceMiles = Math.acos(calculateDistanceMiles);
+
+        calculateDistanceMiles = radiansToDegrees(calculateDistanceMiles);
+        // here it actually is converted into miles
+        calculateDistanceMiles = calculateDistanceMiles * 60 * 1.1515;
+        // Statute Miles (NOT Nautical) are what we consider "miles" (i.e. mph).
+        // Note: Nautical = distance * 0.8684.
+        String units = "Miles";
+        // not necessary unless people outside the USA want Kilometers.
+        if (units.equals("Kilometers")) {
+            calculateDistanceKilometers = calculateDistanceMiles * 1.609344;
+        }
+
+        setDistanceCalculatedMiles(calculateDistanceMiles);
+        //convert to feet 1 mile = 5280 feet
+        calculateDistanceFeet = calculateDistanceMiles * 5280;
+
+        setDistanceCalculatedFeet(calculateDistanceFeet);
+
     }
-
-        public double distanceBetween(double aStartLatitude, double aStartLongitude, double anEndLatitude, double anEndLongitude){
-
-        double calculateDistance;
-        double radiansToDegrees = Math.PI / 180.0;
-        double degreesToRadians = 180.0 / Math.PI;
-
-        double theta = aStartLongitude - anEndLongitude;
-        // converting to radians and using the 64-bit precision a double primitive
-        // this is classically similar to the spherical law of cosine
-        calculateDistance = Math.sin(aStartLatitude * radiansToDegrees);
-        calculateDistance = calculateDistance * Math.sin(anEndLatitude * degreesToRadians);
-        calculateDistance = calculateDistance + Math.cos(aStartLatitude * degreesToRadians);
-        calculateDistance = calculateDistance * Math.cos(anEndLatitude * degreesToRadians);
-        calculateDistance = calculateDistance * Math.cos(theta * degreesToRadians);
-        calculateDistance = Math.acos(calculateDistance);
-        calculateDistance = radiansToDegrees(calculateDistance);
-
-        double calculateDistanceMiles = calculateDistance * 60;
-        calculateDistanceMiles = calculateDistanceMiles * 1.1515;
-        // Note: Nautical Miles = calculateDistanceMiles * 0.8684.
-        // double calculateDistanceKilometers = calculateDistanceMiles * 1.609344
-        // double calculateDistanceFeet = calculateDistanceMiles * 5280;
-
-       setDistanceCalculatedFeet(calculateDistanceFeet);
-        return calculateDistanceMiles;
-    }
-
-//    public double distanceBetween(double startLatitude, double startLongitude, double endLatitude, double endLongitude){
-//        return 0.00;
-//    }
-
 
     public void setDistanceCalculatedFeet(double aCalculateDistance) {
         this.calculateDistanceFeet = aCalculateDistance;

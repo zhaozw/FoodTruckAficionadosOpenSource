@@ -43,8 +43,6 @@ public class MyCompassView extends View  {
 //        for (PointCoordinator p : drawnCoordinates){
 //            canvas.drawPoint(p.x, p.y, paint);
 //        }
-
-
         //if we want to grow the width (boolean indicator is true)
         // grow the width until we hit the max
         // when we hit the max (reset the boolean to tell it to shrink the width)
@@ -60,8 +58,6 @@ public class MyCompassView extends View  {
         if (glowStrokeWidth >= STROKE_MAX || glowStrokeWidth <= STROKE_MIN) {
             growStroke = !growStroke;
         }
-
-
 
         paint.setColor(Color.argb(255, 1, 1, 200));
         paint.setStrokeWidth(glowStrokeWidth);
@@ -110,7 +106,6 @@ public class MyCompassView extends View  {
 
     //remember to make this public Arrow convertToUnitArrow(Location location)
     public Arrow getUnitArrow() {
-        // Torchy's
 
         Arrow directorVector = new Arrow();
         directorVector.startX = startDoubleLat;

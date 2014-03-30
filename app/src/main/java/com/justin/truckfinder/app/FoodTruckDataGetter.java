@@ -421,6 +421,7 @@ public class FoodTruckDataGetter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "open_now error");
+
                         }
 
                         try {
@@ -429,6 +430,7 @@ public class FoodTruckDataGetter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "rating error");
+                            foodTruckData.setRating(Integer.parseInt("--"));
                         }
 
                         try {
@@ -444,6 +446,7 @@ public class FoodTruckDataGetter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "price_level error");
+                            foodTruckData.setPriceLevel(Integer.parseInt("--"));
                         }
                         //FoodTruckDataGetter.this.listOfFoodTrucks.add(foodTruckDataArrayList);
                         someFoodTrucks.add(foodTruckData);

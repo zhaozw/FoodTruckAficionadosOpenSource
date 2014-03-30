@@ -31,8 +31,21 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     private boolean gotLocation = false;
     private Sensor mySensor;
     private FoodTruckData foodTruckData;
-    private double x;
-    private double y;
+    private float[] accelerometerFloat;
+
+
+//    private float[] mOrientation;
+//    private float[] mRotationMatrix;
+//    private boolean mTracking;
+//    private float mHeading;
+//    private float mPitch;
+//    private Location mLocation;
+//    private GeomagneticField mGeomagneticField;
+//    private boolean mHasInterference;
+
+    public FoodTruckListViewFragment() {
+    }
+
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
         foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
@@ -63,26 +76,61 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     }
 
+
+
+    public float x;
+    public float y;
+    public float z;
+
     @Override
     public void onSensorChanged(SensorEvent event) {
-        {
-            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+//        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+//            // Get the current heading from the sensor, then notify the listeners of the
+//            // change.
+//            SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values);
+//            SensorManager.remapCoordinateSystem(mRotationMatrix, SensorManager.AXIS_X,
+//                    SensorManager.AXIS_Z, mRotationMatrix);
+//            SensorManager.getOrientation(mRotationMatrix, mOrientation);
+//
+//            // Store the pitch (used to display a message indicating that the user's head
+//            // angle is too steep to produce reliable results.
+//            mPitch = (float) Math.toDegrees(mOrientation[1]);
+//
+//            // Convert the heading (which is relative to magnetic north) to one that is
+//            // relative to true north, using the user's current location to compute this.
+//            float magneticHeading = (float) Math.toDegrees(mOrientation[0]);
+//            mHeading = mod(computeTrueNorth(magneticHeading), 360.0f);
+//
+//
+//
+//        }
 
-                x = (int) Math.pow(event.values[1], 2);
-                y = (int) Math.pow(event.values[2], 2);
+        accelerometerFloat = event.values;
 
 
-            }
-
-            if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-
-            }
-        }
-
-        event.toString();
-
+//        foodTruckData.setEventTestY(event.values[1]);
+//        foodTruckData.setEventTestZ(event.values[2]);
         //Store that updated information in your FoodTruckData class. as maybe a float array that is static and is called
         //latest sensor data.
+    }
+
+//    private float computeTrueNorth(float heading) {
+//        if (mGeomagneticField != null) {
+//            return heading + mGeomagneticField.getDeclination();
+//        } else {
+//            return heading;
+//        }
+//    }
+    /**
+     * Calculates {@code a mod b} in a way that respects negative values (for example,
+     * {@code mod(-1, 5) == 4}, rather than {@code -1}).
+     *
+     * @param a the dividend
+     * @param b the divisor
+     * @return {@code a mod b}
+     */
+    public static float mod(float a, float b) {
+        return (a % b + b) % b;
     }
 
     @Override
@@ -109,7 +157,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
         //Sensor stuff
         mySensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this,mySensor,SensorManager.SENSOR_DELAY_NORMAL);
+
+        sensorManager.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
 
 
     }
@@ -180,10 +229,14 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         Log.v("gps", latitudeLongitude);
         currentLocation = latitudeLongitude;
 
+
+
+
         FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
         FoodTruckData.setUserLatitude(userLatitudeDouble);
         FoodTruckData.setUserLongitude(userLongitudeDouble);
-        
+
+
 
     }
 }

@@ -75,11 +75,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
             //row.addView
 
-
            // ((RelativeLayout)row).addView
-
-
-
             /*
                         android:scaleType="fitEnd"
             android:layout_width="90dp"
@@ -87,11 +83,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             android:id="@+id/placeThumbnailView"
             android:background="@drawable/newcompass"
             android:layout_alignParentEnd="true"
-
              */
-
             int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75, context.getResources().getDisplayMetrics());
-
 
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
@@ -102,15 +95,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             aRelativeLayout.addView(myCompassView);
 
-
-
-
-
 //            //new class that draws something (line point or square) to screen FIRST. then add
 //            // how I want it to draw
-
-
-
 
             foodTruckDataHolder = new FoodTruckDataHolder();
             foodTruckDataHolder.placeNameView = (TextView) row.findViewById(R.id.placeNameView);
@@ -135,13 +121,10 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
 
 //        FoodTruckData foodTruck = getItem(aPosition);
-
-
 //        ((RelativeLayout) row).
 
         foodTruckDataHolder.placeNameView.setText(foodTruck.getPlaceName());
         foodTruckDataHolder.placeDistanceView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + "mi (" + Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft)");
-
 
         foodTruckDataHolder.placePriceView.setText(String.valueOf("Price: " + foodTruck.getPriceLevel()));
         foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating: " + foodTruck.getRating()));
@@ -153,11 +136,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLongitude(), FoodTruckData.getUserLatitude(), foodTruck.getLongitude(), foodTruck.getLatitude());
         //todo: give myCompassView the sensor data to do the calculation (you already gave it the vectors)
 
-
-
-
 //        foodTruckDataHolder.placeThumbnail.setImageUrl(foodTruck.getIconUrl(),imageLoader);
-
 
         return row;
     }
