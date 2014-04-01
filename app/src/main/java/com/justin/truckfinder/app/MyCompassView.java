@@ -25,10 +25,26 @@ public class MyCompassView extends View  {
     private double endDoubleLong;
     private double endDoubleLat;
     private float mDirection;
-    double direction = FoodTruckData.getAzimuthIsDirection();
+
+    private static final double RADIANS_TO_DEGREES = (180 / Math.PI);
 
     private float[] mR = new float[16];
     private float[] mOrientation = new float[3];
+
+    public SensorDataRequestListener sensorDataCallback;
+
+    public interface SensorDataRequestListener{
+        public double getDirection();
+    }
+
+    public void setSensorDataCallback(SensorDataRequestListener callback){
+        sensorDataCallback = callback;
+    }
+
+    private double getDirection(){
+        return sensorDataCallback.getDirection();
+    }
+
 
     public MyCompassView(Context context) {
         super(context);
@@ -37,6 +53,8 @@ public class MyCompassView extends View  {
         paint.setStyle(Paint.Style.STROKE);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD));
     }
+
+    static Point currentPoint = new Point(1,1);
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -79,16 +97,23 @@ public class MyCompassView extends View  {
 
         Arrow drawingArrow = getUnitArrow();
 
+
+
+
         float lineStartX = centerCircleX + (float) drawingArrow.startX;
         float lineStartY = centerCircleY + (float) drawingArrow.startY;
 //        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius;
 //        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius;
-        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius * ((float) Math.sin(direction));
-        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius * ((float) Math.cos(direction));
+        float lineEndX = centerCircleX +  centerRadius * -(float) Math.sin(getDirection());
+        float lineEndY = centerCircleY +  centerRadius * -(float) Math.cos(getDirection());
 
 
-        canvas.drawLine(lineStartX, lineStartY, lineEndX, lineEndY, paint);
+        Point end = new Point(lineEndX,lineEndY);
 
+        Point smoothPoint = interpolate(currentPoint,end);
+
+        canvas.drawLine(lineStartX, lineStartY, smoothPoint.x, smoothPoint.y, paint);
+        currentPoint = end;
 //        canvas.drawLine(
 //                lineStartX,
 //                lineStartY,
@@ -112,16 +137,43 @@ public class MyCompassView extends View  {
 //
     }
 
-    public void update(float dir){
-        direction = dir;
-        invalidate();
+    public static class Point{
+        public float x;
+        public float y;
+
+        public Point(float x, float y) {
+            this.x = x;
+            this.y = y;
+        }
     }
+
+
+    private static final float WEIGHT = 0.15f;
+    private static Point interpolate(Point startPoint, Point endPoint){
+        float changeX = endPoint.x - startPoint.x;
+        float changeY = endPoint.y - startPoint.y;
+        float distance = (float) Math.sqrt((changeX * changeX) + (changeY * changeY));
+        if(distance > WEIGHT){
+            float ratio = WEIGHT / distance;
+            float xMove = ratio * changeX;
+            float yMove = ratio * changeY;
+            return new Point(startPoint.x + xMove, startPoint.y + yMove);
+
+        }else{
+            return new Point(endPoint.x, endPoint.y);
+        }
+    }
+
+
+
+
     private class Arrow{
 
         public double startX;
         public double startY;
         public double endX;
         public double endY;
+
     }
 
 
@@ -205,6 +257,8 @@ public class MyCompassView extends View  {
             return degree;
         }
     }
+
+
 
 
 }

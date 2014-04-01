@@ -20,6 +20,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private int mLayoutResourceId;
     private ArrayList<FoodTruckData> foodTruckDataArrayList;
     private LayoutInflater layoutInflater;
+    private MyCompassView.SensorDataRequestListener sensorListener;
     public int mPosition;
 
 
@@ -34,6 +35,10 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     public void setFoodTruckDataArrayList(ArrayList<FoodTruckData> foodTruckDataArrayList) {
         this.foodTruckDataArrayList = foodTruckDataArrayList;
         notifyDataSetChanged();
+    }
+
+    public void setSensorListener(MyCompassView.SensorDataRequestListener listener){
+        sensorListener = listener;
     }
 
     @Override
@@ -93,7 +98,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_END);
             myCompassView.setLayoutParams(compassLayout);
             myCompassView.setBackgroundResource(R.drawable.newcompass);
-
+            myCompassView.setSensorDataCallback(sensorListener);
             aRelativeLayout.addView(myCompassView);
 
 //            //new class that draws something (line point or square) to screen FIRST. then add
@@ -110,6 +115,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
 //            foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
             foodTruckDataHolder.myCompassView = myCompassView;
+
 
 //            foodTruckDataHolder.placeThumbnailView = (NetworkImageView) row.findViewById(R.id.placeThumbnailView);
             row.setTag(foodTruckDataHolder);

@@ -54,7 +54,7 @@ import java.util.ArrayList;
 // {Sensor name="PEDESTRIAN-ACTIVITY-MONITOR", vendor="Qualcomm", version=1, type=33171010, maxRange=65535.0, resolution=1.0, power=0.28, minDelay=0},
 // {Sensor name="Motion Accel", vendor="Qualcomm", version=1, type=33171011, maxRange=39.226593, resolution=0.0011901855, power=0.28, minDelay=0}],
 //TODO: NOTE THAT ONLY TYPE 1 (TYPE_ACCELEROMETER) and TYPE 2 (TYPE_MAGNETIC_FIELD) are common among the two in relation to the compass use. The Moto G is
-public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener {
+public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener {
 
 
     private FoodTruckDataAdapter foodTruckDataAdapter;
@@ -147,17 +147,27 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 //            SensorManager.remapCoordinateSystem(matrixR, ?????, ?????, matrixI);
                 // converted to degrees in foodTruckData when being set as "setAzimuthIsDirection"
                 SensorManager.getOrientation(matrixR, matrixValues);
-                FoodTruckData.setAzimuthIsDirection(matrixValues[0]);
-                FoodTruckData.setMatrixR(matrixR);
-                FoodTruckData.setMatrixI(matrixI);
-                FoodTruckData.setValuesAccelerometer(valuesAccelerometer);
-                FoodTruckData.setValuesMagneticField(valuesMagneticField);
-                FoodTruckData.setMatrixValues(matrixValues);
+//                FoodTruckData.setAzimuthIsDirection(matrixValues[0]);
+//                FoodTruckData.setMatrixR(matrixR);
+//                FoodTruckData.setMatrixI(matrixI);
+//                FoodTruckData.setValuesAccelerometer(valuesAccelerometer);
+//                FoodTruckData.setValuesMagneticField(valuesMagneticField);
+//                FoodTruckData.setMatrixValues(matrixValues);
             }
-            if (success && theDataReceivedSensor != null) {
-                foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceivedSensor);
-            }
+//            if (success && theDataReceivedSensor != null) {
+//                foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceivedSensor);
+//            }
         }
+    }
+
+    @Override
+    public double getDirection() {
+
+        //here is where you should give the direction,
+        //but also take into consideration the current orientation of landscape or portrait and
+        //change the variable accordingly.
+
+        return matrixValues[0]; //this is from the sensor updating
     }
 
     /**
@@ -208,7 +218,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onViewCreated(view, savedInstanceState);
         foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
-
+        foodTruckDataAdapter.setSensorListener(this);
     }
 
     public void settingAdapterOnCreateView() {
