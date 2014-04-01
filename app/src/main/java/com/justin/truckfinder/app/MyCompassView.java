@@ -83,8 +83,8 @@ public class MyCompassView extends View  {
         float lineStartY = centerCircleY + (float) drawingArrow.startY;
 //        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius;
 //        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius;
-        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius * ((float) Math.sin(-direction));
-        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius * ((float) Math.cos(-direction));
+        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius * ((float) Math.sin(direction));
+        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius * ((float) Math.cos(direction));
 
 
         canvas.drawLine(lineStartX, lineStartY, lineEndX, lineEndY, paint);
