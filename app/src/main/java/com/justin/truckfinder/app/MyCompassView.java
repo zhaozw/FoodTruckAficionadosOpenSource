@@ -24,6 +24,8 @@ public class MyCompassView extends View  {
     private double startDoubleLat;
     private double endDoubleLong;
     private double endDoubleLat;
+    private float mDirection;
+    double direction = FoodTruckData.getAzimuthIsDirection();
 
     private float[] mR = new float[16];
     private float[] mOrientation = new float[3];
@@ -38,6 +40,8 @@ public class MyCompassView extends View  {
 
     @Override
     protected void onDraw(Canvas canvas) {
+
+
         //redraw all previously touched coordinates
 //        canvas.drawPoint(x, y, paint);
 //        for (PointCoordinator p : drawnCoordinates){
@@ -49,6 +53,10 @@ public class MyCompassView extends View  {
         //if we want to shrink the width and the width is greater than the min
         //shrink the width until we hit the min
         // when we hit the min, reset the boolean to tell it to grow
+        getRotation();
+
+
+
 
         if (growStroke) {
             glowStrokeWidth++;
@@ -59,7 +67,7 @@ public class MyCompassView extends View  {
             growStroke = !growStroke;
         }
 
-        paint.setColor(Color.argb(255, 1, 1, 200));
+        paint.setColor(Color.argb(255, 1, 200, 50));
         paint.setStrokeWidth(glowStrokeWidth);
 
         float centerCircleX = getWidth() / 2;
@@ -73,21 +81,41 @@ public class MyCompassView extends View  {
 
         float lineStartX = centerCircleX + (float) drawingArrow.startX;
         float lineStartY = centerCircleY + (float) drawingArrow.startY;
-        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius;
-        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius;
+//        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius;
+//        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius;
+        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius * ((float) Math.sin(-direction));
+        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius * ((float) Math.cos(-direction));
 
 
         canvas.drawLine(lineStartX, lineStartY, lineEndX, lineEndY, paint);
 
-
-
-
-
+//        canvas.drawLine(
+//                lineStartX,
+//                lineStartY,
+//                (float)(lineEndX + Math.sin(-FoodTruckData.getAzimuthIsDirection())),
+//                (float)(lineEndY + Math.cos(-FoodTruckData.getAzimuthIsDirection())),
+//                paint);
+//        canvas.rotate();
 
         invalidate();
 
+
+//        canvas.drawCircle(w/2, h/2, r, paint);
+//
+//        paint.setColor(Color.RED);
+//        canvas.drawLine(
+//                w/2,
+//                h/2,
+//                (float)(w/2 + r * Math.sin(-direction)),
+//                (float)(h/2 - r * Math.cos(-direction)),
+//                paint);
+//
     }
 
+    public void update(float dir){
+        direction = dir;
+        invalidate();
+    }
     private class Arrow{
 
         public double startX;
@@ -112,6 +140,7 @@ public class MyCompassView extends View  {
         directorVector.startY = startDoubleLong;
         directorVector.endX = endDoubleLat;
         directorVector.endY = endDoubleLong;
+        // a^2 + b^2 = c^2 = vectorLength
         double a = directorVector.endX - directorVector.startX;
         double b = directorVector.endY - directorVector.startY;
         double vectorLength = Math.sqrt(a*a + b*b);

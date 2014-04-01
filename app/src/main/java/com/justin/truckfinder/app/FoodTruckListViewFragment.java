@@ -29,10 +29,17 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     private OnItemSelectedListener selectedListenerCallback;
     private String currentLocation;  //Format: "123.12341234,-1234.11341234"
     private boolean gotLocation = false;
-    private Sensor mySensor;
-    private FoodTruckData foodTruckData;
-    public float[] mAccelerometerFloat = {7,8,9};
+    private Sensor mySensorAccelerometer;
+    private Sensor mySensorMagnetometer;
+    private MyCompassView myCompassView;
+    private Location userLocation;
 
+    float[] matrixR = {};
+    float[] matrixI = {};
+    float[] valuesAccelerometer = {};
+    float[] valuesMagneticField = {};
+    float[] matrixValues = {};
+    protected ArrayList<FoodTruckData> theDataReceivedSensor;
 
 //    private float[] mOrientation;
 //    private float[] mRotationMatrix;
@@ -48,6 +55,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
+        theDataReceivedSensor = theDataReceived;
         foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
     }
 
@@ -76,51 +84,50 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     }
 
-
-
-    public float x;
-    public float y;
-    public float z;
-
     @Override
     public void onSensorChanged(SensorEvent event) {
-//        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-//            // Get the current heading from the sensor, then notify the listeners of the
-//            // change.
-//            SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values);
-//            SensorManager.remapCoordinateSystem(mRotationMatrix, SensorManager.AXIS_X,
-//                    SensorManager.AXIS_Z, mRotationMatrix);
-//            SensorManager.getOrientation(mRotationMatrix, mOrientation);
-//
-//            // Store the pitch (used to display a message indicating that the user's head
-//            // angle is too steep to produce reliable results.
-//            mPitch = (float) Math.toDegrees(mOrientation[1]);
-//
-//            // Convert the heading (which is relative to magnetic north) to one that is
-//            // relative to true north, using the user's current location to compute this.
-//            float magneticHeading = (float) Math.toDegrees(mOrientation[0]);
-//            mHeading = mod(computeTrueNorth(magneticHeading), 360.0f);
-//
-//
-//
-//        }
 
-        mAccelerometerFloat = (event.values);
-//        settingAdapterOnCreateView();
+        switch(event.sensor.getType()){
+            case Sensor.TYPE_ACCELEROMETER:
+                for(int i =0; i < 3; i++){
+                    valuesAccelerometer[i] = event.values[i];
+                    FoodTruckData.setValuesAccelerometer(valuesAccelerometer);
+                }
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                for(int i =0; i < 3; i++){
+                    valuesMagneticField[i] = event.values[i];
+                    FoodTruckData.setValuesMagneticField(valuesMagneticField);
+                }
+                break;
+        }
 
-//        foodTruckData.setEventTestY(event.values[1]);
-//        foodTruckData.setEventTestZ(event.values[2]);
-        //Store that updated information in your FoodTruckData class. as maybe a float array that is static and is called
-        //latest sensor data.
+        boolean success = SensorManager.getRotationMatrix(
+                matrixR,
+                matrixI,
+                valuesAccelerometer,
+                valuesMagneticField);
+
+        if(success){
+//            SensorManager.remapCoordinateSystem(matrixR, userLocation.getLatitude(), userLocation.getLongitude(), matrixI);
+            SensorManager.getOrientation(matrixR, matrixValues);
+
+
+            FoodTruckData.setAzimuthIsDirection(matrixValues[0]);
+            FoodTruckData.setMatrixR(matrixR);
+            FoodTruckData.setMatrixI(matrixI);
+            FoodTruckData.setValuesAccelerometer(valuesAccelerometer);
+            FoodTruckData.setValuesMagneticField(valuesMagneticField);
+            FoodTruckData.setMatrixValues(matrixValues);
+
+
+        }
+        if (success && theDataReceivedSensor != null){
+            foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceivedSensor);
+
+        }
+
     }
-
-//    private float computeTrueNorth(float heading) {
-//        if (mGeomagneticField != null) {
-//            return heading + mGeomagneticField.getDeclination();
-//        } else {
-//            return heading;
-//        }
-//    }
     /**
      * Calculates {@code a mod b} in a way that respects negative values (for example,
      * {@code mod(-1, 5) == 4}, rather than {@code -1}).
@@ -156,10 +163,10 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
         //Sensor stuff
-        mySensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-        sensorManager.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
-
+        mySensorAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mySensorMagnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        sensorManager.registerListener(this, mySensorAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, mySensorMagnetometer, SensorManager.SENSOR_DELAY_GAME);
     }
 
 
@@ -193,6 +200,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onPause();
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
+
     }
 
     @Override
@@ -215,6 +223,11 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
 
+        valuesAccelerometer = new float[3];
+        valuesMagneticField = new float[3];
+        matrixR = new float[9];
+        matrixI = new float[9];
+        matrixValues = new float[3];
 
     }
 
@@ -234,16 +247,10 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         currentLocation = latitudeLongitude;
 
 
-
         FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
         FoodTruckData.setUserLatitude(userLatitudeDouble);
         FoodTruckData.setUserLongitude(userLongitudeDouble);
-        if(mAccelerometerFloat == null){
-            float[] floats = {99,98,97};
-            FoodTruckData.setAccelerometerTest(floats);
-        }else {
-            FoodTruckData.setAccelerometerTest(mAccelerometerFloat);
-        }
+
 
     }
 

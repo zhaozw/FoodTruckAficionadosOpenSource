@@ -31,63 +31,17 @@ public class FoodTruckData implements Serializable{
     private String phoneNumberFormatted;
     private static double userLatitude;
     private static double userLongitude;
-    private static float[] accelerometerTest = {1,2,3};
-    private static float testX = 4;
-    private static float testY = 5;
-    private static float testZ = 6;
+
+    private static float[] valuesAccelerometer;
+    private static float[] valuesMagneticField;
+
+    private static float[] matrixR;
+    private static float[] matrixI;
+    private static float[] matrixValues;
+    private static double azimuthIsDirection;
 
     private double calculateDistanceFeet;
     private double calculateDistanceMiles;
-
-    public static float[] getAccelerometerTest() {
-        return accelerometerTest;
-    }
-
-    public static void setAccelerometerTest(float[] accelerometerTesting) {
-        if(accelerometerTesting != null) {
-            accelerometerTest = accelerometerTesting;
-            setAccelValues(accelerometerTest);
-        }else {
-            float[] floats = {11,12,13};
-            accelerometerTest = floats;
-            setAccelValues(accelerometerTest);
-        }
-
-    }
-
-    public static void setAccelValues(float[] accelValues){
-        setTestX(accelValues[0]);
-        setTestY(accelValues[1]);
-        setTestZ(accelValues[2]);
-    }
-
-    public static float getTestX() {
-        return testX;
-    }
-
-    public static void setTestX(float testXx) {
-        testX = testXx;
-    }
-
-    public static float getTestY() {
-        return testY;
-    }
-
-    public static void setTestY(float testYy) {
-        testY = testYy;
-    }
-
-    public static float getTestZ() {
-        return testZ;
-    }
-
-    public static void setTestZ(float testZz) {
-        testZ = testZz;
-    }
-
-
-
-
 
 
     public FoodTruckData(String fourSquareName) {
@@ -95,7 +49,56 @@ public class FoodTruckData implements Serializable{
     }
 
     public FoodTruckData() {
+    }
 
+    public static double getAzimuthIsDirection() {
+        return azimuthIsDirection;
+    }
+
+    public static void setAzimuthIsDirection(double azimuthIsDirection) {
+        double radiansToDegrees = (180 / Math.PI);
+
+        FoodTruckData.azimuthIsDirection = azimuthIsDirection * radiansToDegrees;
+    }
+
+    public static float[] getValuesAccelerometer() {
+        return valuesAccelerometer;
+    }
+
+    public static void setValuesAccelerometer(float[] valuesAccelerometer) {
+        FoodTruckData.valuesAccelerometer = valuesAccelerometer;
+    }
+
+    public static float[] getValuesMagneticField() {
+        return valuesMagneticField;
+    }
+
+    public static void setValuesMagneticField(float[] valuesMagneticField) {
+        FoodTruckData.valuesMagneticField = valuesMagneticField;
+    }
+
+    public static float[] getMatrixR() {
+        return matrixR;
+    }
+
+    public static void setMatrixR(float[] matrixR) {
+        FoodTruckData.matrixR = matrixR;
+    }
+
+    public static float[] getMatrixI() {
+        return matrixI;
+    }
+
+    public static void setMatrixI(float[] matrixI) {
+        FoodTruckData.matrixI = matrixI;
+    }
+
+    public static float[] getMatrixValues() {
+        return matrixValues;
+    }
+
+    public static void setMatrixValues(float[] matrixValues) {
+        FoodTruckData.matrixValues = matrixValues;
     }
 
     public LatLng getUserLatLng() {
@@ -220,11 +223,11 @@ public class FoodTruckData implements Serializable{
         return this.distanceToPlaceFoursquare = aDistanceToPlace * 3.2808;
     }
 
-    private double degreesToRadians(double degree) {
+    public double degreesToRadians(double degree) {
         return (degree * Math.PI / 180.0);
     }
 
-    private double radiansToDegrees(double radians) {
+    public double radiansToDegrees(double radians) {
         return (radians * 180 / Math.PI);
     }
 
