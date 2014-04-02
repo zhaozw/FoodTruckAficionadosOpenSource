@@ -51,7 +51,6 @@ public class FoodTruckDataGetter {
     private static double userLatitude;
     private static double userLongitude;
     private static LatLng userLatLng;
-    public static float[] mAccelerometerTestFloat;
     //
     // Singleton pattern here:
     //
@@ -72,7 +71,6 @@ public class FoodTruckDataGetter {
 
     public interface OnDataReceivedListener {
         public void onDataReceived(ArrayList<FoodTruckData> theDataReceived);
-
     }
 
     private static String getCurrentDateString() {
@@ -98,8 +96,6 @@ public class FoodTruckDataGetter {
 
     }
 
-
-
     private static void notifyOfDataChanged(){
         callback.onDataReceived(listOfFoodTrucks);
     }
@@ -113,18 +109,15 @@ public class FoodTruckDataGetter {
 
         try {
 //"ll=30.256496,-97.74712"
-
             try {
                 StringBuilder stringBuilder = new StringBuilder(myAPIfoursquarePartial);
                 stringBuilder.append("&v=" + getCurrentDateString());
                 stringBuilder.append("&ll=" + URLEncoder.encode(GPSLocation, "utf8"));
 
-
                 myAPIFoursquare = stringBuilder.toString();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                     myAPIFoursquare,
                     null,
@@ -151,11 +144,17 @@ public class FoodTruckDataGetter {
                     JSONObject jsonResponse = jsonInitial.getJSONObject("response");
                     JSONArray resultArray = jsonResponse.getJSONArray("venues");
                     incompleteFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
-                    for (int i = 0; i < resultArray.length(); i++) {
+                    // TODO: TEMPORARILY PARSING FOR 5 FOOD TRUCK DATA OBJECTS
+                    int lengthArray = 0;
+                    if(resultArray.length() <= 10){
+                        lengthArray = resultArray.length();
+                    }else{
+                        lengthArray = 20;
+                    }
+                    for (int i = 0; i < lengthArray; i++) {
 
                         FoodTruckData foodTruckData = new FoodTruckData("unknown");
                         JSONObject aResult = resultArray.getJSONObject(i);
-
 
                         try {
                             String fourSquareName = aResult.getString("name");
@@ -184,25 +183,25 @@ public class FoodTruckDataGetter {
                             foodTruckData.setPhoneNumberFormatted("Phone Unavailable");
                         }
 
-//                        try {
-//                            JSONObject location = aResult.getJSONObject("location");
-//                            Double latitude = location.getDouble("lat");
-//                            foodTruckData.setLatitude(latitude.doubleValue());
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "Latitude catch JSONException error");
-//                            foodTruckData.setLatitude(0);
-//                        }
-//
-//                        try {
-//                            JSONObject location = aResult.getJSONObject("location");
-//                            Double longitude = location.getDouble("lng");
-//                            foodTruckData.setLongitude(longitude.doubleValue());
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "Longitude catch JSONException error");
-//                            foodTruckData.setLongitude(0);
-//                        }
+                        try {
+                            JSONObject location = aResult.getJSONObject("location");
+                            Double latitude = location.getDouble("lat");
+                            foodTruckData.setLatitude(latitude.doubleValue());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "Latitude catch JSONException error");
+                            foodTruckData.setLatitude(0);
+                        }
+
+                        try {
+                            JSONObject location = aResult.getJSONObject("location");
+                            Double longitude = location.getDouble("lng");
+                            foodTruckData.setLongitude(longitude.doubleValue());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "Longitude catch JSONException error");
+                            foodTruckData.setLongitude(0);
+                        }
 
 
                         try {
@@ -239,7 +238,7 @@ public class FoodTruckDataGetter {
                             foodTruckData.setCalculatedDistanceToPlace(userLatitude, userLongitude);
                         }catch (Exception e) {
                             e.printStackTrace();
-                            Log.e("Calculatingdistance", "there was an error");
+                            Log.e("CalculatingDistance", "there was an error");
                         }
 
                         try {
@@ -258,9 +257,9 @@ public class FoodTruckDataGetter {
 
                         incompleteFoodTrucks.add(foodTruckData);
                         //this is where the next thing should happen.
-
                     }
                     incompleteFoodTrucks.addAll(listOfFoodTrucks);
+                    FoodTruckStorage.saveMyData(context, incompleteFoodTrucks);
                     notifyOfDataChanged();
                     performAdditionalGoogleSearches();
 

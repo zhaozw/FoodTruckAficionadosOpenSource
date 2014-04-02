@@ -13,49 +13,26 @@ import android.view.ViewGroup;
 
 public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener{
 
-    FoodTruckDataGetter foodTruckDataGetter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_truck_nearby);
-//        setContentView(android.R.layout.simple_expandable_list_item_2);
-//
-//        RelativeLayout r = new RelativeLayout(this);
-//
-//
-//        LayoutInflater myLayoutInflater = LayoutInflater.from(this);
-//
-//        View myView = myLayoutInflater.inflate(R.layout.map_fragment_food_truck,null);
-
-//
-//        myView.set
-
         if (findViewById(R.id.container) != null) {
 
             if (savedInstanceState != null) {
                 return;
             }
-
-
             FoodTruckListViewFragment foodTruckListViewFragment = new FoodTruckListViewFragment();
-
-
             foodTruckListViewFragment.setArguments(getIntent().getExtras());
-
-
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new FoodTruckListViewFragment())
                     .commit();
         }
-
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.food_truck_nearby, menu);
         return true;
@@ -77,10 +54,8 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
-
         public PlaceholderFragment() {
         }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
@@ -88,8 +63,6 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
             return rootView;
         }
     }
-
-
     @Override
     public void OnItemSelected(){
         Fragment mFoodTruckMapsFragment = new FoodTruckMapsFragment();

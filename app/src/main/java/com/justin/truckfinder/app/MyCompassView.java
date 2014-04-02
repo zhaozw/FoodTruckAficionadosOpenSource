@@ -55,6 +55,7 @@ public class MyCompassView extends View  {
     }
 
     static Point currentPoint = new Point(1,1);
+    static Point currentPointPlace = new Point(1,1);
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -102,18 +103,23 @@ public class MyCompassView extends View  {
 
         float lineStartX = centerCircleX + (float) drawingArrow.startX;
         float lineStartY = centerCircleY + (float) drawingArrow.startY;
-//        float lineEndX = centerCircleX + (float) drawingArrow.endX * centerRadius;
-//        float lineEndY = centerCircleY + (float) drawingArrow.endY * centerRadius;
+        float lineEndPlaceX = centerCircleX + (float) drawingArrow.endX * centerRadius;
+        float lineEndPlaceY = centerCircleY + (float) drawingArrow.endY * centerRadius;
         float lineEndX = centerCircleX +  centerRadius * -(float) Math.sin(getDirection());
         float lineEndY = centerCircleY +  centerRadius * -(float) Math.cos(getDirection());
 
-
+        Point endPlace = new Point (lineEndPlaceX, lineEndPlaceY);
         Point end = new Point(lineEndX,lineEndY);
 
+        Point smoothPointPlace = interpolate(currentPointPlace,endPlace);
         Point smoothPoint = interpolate(currentPoint,end);
+
+        canvas.drawLine(lineStartX, lineStartY, smoothPointPlace.x, smoothPointPlace.y, paint);
+        currentPointPlace = endPlace;
 
         canvas.drawLine(lineStartX, lineStartY, smoothPoint.x, smoothPoint.y, paint);
         currentPoint = end;
+
 //        canvas.drawLine(
 //                lineStartX,
 //                lineStartY,
