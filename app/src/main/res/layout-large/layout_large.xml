@@ -11,7 +11,7 @@
             android:layout_height="match_parent"
             tools:layout="@layout/food_truck_listfragment_rows" />
 
-        <fragment android:name="com.justin.truckfinder.app.FoodTruckMapsFragment"
+        <fragment android:name="com.justin.truckfinder.app.FoodTruckDetailsFragment"
             android:id="@+id/food_map_fragment"
             android:layout_weight="2"
             android:layout_width="0dp"

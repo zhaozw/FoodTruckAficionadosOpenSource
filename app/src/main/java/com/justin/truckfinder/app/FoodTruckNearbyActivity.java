@@ -9,16 +9,46 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 
 public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener{
 
+    private ProgressBar mProgressBar;
+
+    @Override
+    public void setContentView(View view) {
+        init().addView(view);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        getLayoutInflater().inflate(layoutResID,init(),true);
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        init().addView(view,params);
+    }
+
+    private ViewGroup init(){
+        super.setContentView(R.layout.progress);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        return (ViewGroup) findViewById(R.id.activity_frame);
+    }
+
+    protected ProgressBar getProgressBar(){
+        return mProgressBar;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        getProgressBar();
         setContentView(R.layout.activity_food_truck_nearby);
         if (findViewById(R.id.container) != null) {
-
             if (savedInstanceState != null) {
                 return;
             }
@@ -29,7 +59,6 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
                     .commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -50,7 +79,9 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
         return super.onOptionsItemSelected(item);
     }
 
-    /**
+
+
+/**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
@@ -65,9 +96,9 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
     }
     @Override
     public void OnItemSelected(){
-        Fragment mFoodTruckMapsFragment = new FoodTruckMapsFragment();
+        Fragment mFoodTruckListFragment = new FoodTruckDetailsFragment();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.container, mFoodTruckMapsFragment);
+        fragmentTransaction.replace(R.id.container, mFoodTruckListFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }

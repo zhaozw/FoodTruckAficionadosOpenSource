@@ -13,7 +13,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
@@ -22,8 +25,10 @@ import java.util.ArrayList;
  */
 
 public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener {
+    ProgressBar progress;
 
-
+    protected float from;
+    protected float  to;
     private FoodTruckDataAdapter foodTruckDataAdapter;
     private LocationManager locationManager;
     protected String currentLocation;  //Format: "30.12341234,-90.11341234"
@@ -54,7 +59,10 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
+
 //        setRetainInstance(true);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
@@ -168,6 +176,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
         foodTruckDataAdapter.setSensorListener(this);
@@ -232,5 +241,26 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
      */
     public static float mod(float a, float b) {
         return (a % b + b) % b;
+    }
+
+    public class ProgressBarAnimation extends Animation {
+        private ProgressBar progressBar;
+        private float from;
+        private float  to;
+
+        public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
+            super();
+            this.progressBar = progressBar;
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            float value = from + (to - from) * interpolatedTime;
+            progressBar.setProgress((int) value);
+        }
+
     }
 }

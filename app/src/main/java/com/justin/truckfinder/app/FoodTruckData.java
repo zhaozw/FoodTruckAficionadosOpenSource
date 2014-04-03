@@ -29,9 +29,9 @@ public class FoodTruckData implements Serializable{
     private LatLng userLatLng;
     private String postalCode;
     private String phoneNumberFormatted;
+    private String photoPlacesReference;
     private static double userLatitude;
     private static double userLongitude;
-
     private static float[] valuesAccelerometer;
     private static float[] valuesMagneticField;
 
@@ -44,6 +44,9 @@ public class FoodTruckData implements Serializable{
     private double calculateDistanceMiles;
 
 
+
+
+
     public FoodTruckData(String fourSquareName) {
         this.fourSquareName = fourSquareName;
     }
@@ -51,14 +54,12 @@ public class FoodTruckData implements Serializable{
     public FoodTruckData() {
     }
 
-    public static double getAzimuthIsDirection() {
-        return azimuthIsDirection;
+    public String getPhotoPlacesReference() {
+        return photoPlacesReference;
     }
 
-    public static void setAzimuthIsDirection(double azimuthIsDirection) {
-        double radiansToDegrees = (180 / Math.PI);
-
-        FoodTruckData.azimuthIsDirection = azimuthIsDirection * radiansToDegrees;
+    public void setPhotoPlacesReference(String photoPlacesReference) {
+        this.photoPlacesReference = photoPlacesReference;
     }
 
     public static float[] getValuesAccelerometer() {
@@ -76,53 +77,20 @@ public class FoodTruckData implements Serializable{
     public static void setValuesMagneticField(float[] valuesMagneticField) {
         FoodTruckData.valuesMagneticField = valuesMagneticField;
     }
-
-    public static float[] getMatrixR() {
-        return matrixR;
-    }
-
-    public static void setMatrixR(float[] matrixR) {
-        FoodTruckData.matrixR = matrixR;
-    }
-
-    public static float[] getMatrixI() {
-        return matrixI;
-    }
-
-    public static void setMatrixI(float[] matrixI) {
-        FoodTruckData.matrixI = matrixI;
-    }
-
-    public static float[] getMatrixValues() {
-        return matrixValues;
-    }
-
-    public static void setMatrixValues(float[] matrixValues) {
-        FoodTruckData.matrixValues = matrixValues;
-    }
-
-    public LatLng getUserLatLng() {
-        return userLatLng;
-    }
-
-    public void setUserLatLng(LatLng userLatLng) {
-        this.userLatLng = userLatLng;
-    }
-
     public static double getUserLatitude() {
         return userLatitude;
     }
 
-    public static void  setUserLatitude(double userlat) {
-        userLatitude = userlat;
+    public static void  setUserLatitude(double userLat) {
+        userLatitude = userLat;
     }
 
     public static double getUserLongitude() {
         return userLongitude;
     }
 
-    public static void setUserLongitude(double userLong) {
-        userLongitude = userLong;
+    public static void setUserLongitude(double userLng) {
+        userLongitude = userLng;
     }
 
     public String getPostalCode() {

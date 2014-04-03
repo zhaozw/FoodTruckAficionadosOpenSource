@@ -35,7 +35,6 @@ public class FoodTruckStorage {
     // Serialization here
     //
 
-    // static String DATA_FILE_ARRAY = "data_file_array";
 
     static final String DATA_FILE_ARRAY = "data_file_array";
 
