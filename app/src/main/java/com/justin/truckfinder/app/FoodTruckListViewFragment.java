@@ -51,6 +51,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
+        //if we now have data, kill the loading screen.
+
         if (theDataReceived == null) {
             foodTruckDataAdapter.setFoodTruckDataArrayList(FoodTruckStorage.getMyData(context));
         }else {
@@ -188,6 +190,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //for the first time, see if they have data while you're waiting for new data.
+
         foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
         foodTruckDataAdapter.setSensorListener(this);
@@ -207,7 +211,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onPause();
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
-        FoodTruckStorage.getMyData(getActivity());
+        FoodTruckStorage.getMyData(getActivity());  //no
     }
 
     @Override
@@ -256,34 +260,4 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
             return heading;
         }
     }
-
-    /**
-     * Calculates {@code a mod b} in a way that respects negative values (for example,
-     * {@code mod(-1, 5) == 4}, rather than {@code -1}).
-     *
-     * @param a the dividend
-     * @param b the divisor
-     * @return {@code a mod b}
-     */
-
-//    public class ProgressBarAnimation extends Animation {
-//        private ProgressBar progressBar;
-//        private float from;
-//        private float  to;
-//
-//        public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
-//            super();
-//            this.progressBar = progressBar;
-//            this.from = from;
-//            this.to = to;
-//        }
-//
-//        @Override
-//        protected void applyTransformation(float interpolatedTime, Transformation t) {
-//            super.applyTransformation(interpolatedTime, t);
-//            float value = from + (to - from) * interpolatedTime;
-//            progressBar.setProgress((int) value);
-//        }
-//
-//    }
 }

@@ -141,7 +141,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
         foodTruckDataHolder.placeOpenNowView.setText("Open: " + String.valueOf(foodTruck.getIsOpenNow()));
         foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
-        foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLongitude(), FoodTruckData.getUserLatitude(), foodTruck.getLongitude(), foodTruck.getLatitude());
+        foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude(), foodTruck.getLatitude(), foodTruck.getLongitude());
         //todo: give myCompassView the sensor data to do the calculation (you already gave it the vectors)
 
 

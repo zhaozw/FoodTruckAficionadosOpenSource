@@ -1,6 +1,8 @@
 package com.justin.truckfinder.app;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,8 +16,12 @@ import android.view.View;
  * Created by justindelta on 3/26/14.
  */
 public class MyCompassView extends View  {
+    private static final boolean DEBUG = false;
 
+
+    private Context myContext;
     private Paint paint;
+    private Bitmap compassBitmap;
     private final int STROKE_MAX = 30;
     private final int STROKE_MIN = 1;
     private boolean growStroke = true;
@@ -37,6 +43,11 @@ public class MyCompassView extends View  {
     private float[] mR = new float[16];
     private float[] mOrientation = new float[3];
 
+    static Point currentPoint = new Point(1,1);
+    static float currentRotationInDegrees = 0.0f;
+
+
+
     public SensorDataRequestListener sensorDataCallback;
 
     public interface SensorDataRequestListener{
@@ -51,34 +62,43 @@ public class MyCompassView extends View  {
         return sensorDataCallback.getDirection();
     }
 
-
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        compassBitmap = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.newcompass);
+        compassBitmap = Bitmap.createScaledBitmap(compassBitmap, getWidth(), getHeight(), true);
+    }
 
     public MyCompassView(Context context) {
         super(context);
+        myContext = context;
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.ADD));
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
     }
 
-    static Point currentPoint = new Point(1,1);
-    static Point currentPointPlaceStatic = new Point(1,1);
+
 
 
     @Override
     protected void onDraw(Canvas canvas) {
-        //redraw all previously touched coordinates
-//        canvas.drawPoint(x, y, paint);
-//        for (PointCoordinator p : drawnCoordinates){
-//            canvas.drawPoint(p.x, p.y, paint);
-//        }
-        //if we want to grow the width (boolean indicator is true)
-        // grow the width until we hit the max
-        // when we hit the max (reset the boolean to tell it to shrink the width)
-        //if we want to shrink the width and the width is greater than the min
-        //shrink the width until we hit the min
-        // when we hit the min, reset the boolean to tell it to grow
-        getRotation();
+        /*
+        redraw all previously touched coordinates
+        e.g.
+
+        canvas.drawPoint(x, y, paint);
+        for (PointCoordinator p : drawnCoordinates){
+            canvas.drawPoint(p.x, p.y, paint);
+        }
+
+        if we want to grow the width (boolean indicator is true)
+        grow the width until we hit the max
+        when we hit the max (reset the boolean to tell it to shrink the width)
+        if we want to shrink the width and the width is greater than the min
+        shrink the width until we hit the min
+        when we hit the min, reset the boolean to tell it to grow
+        */
 
 
         if (growStroke) {
@@ -90,64 +110,88 @@ public class MyCompassView extends View  {
             growStroke = !growStroke;
         }
 
-        paint.setColor(Color.argb(255, 1, 200, 50));
-        paint.setStrokeWidth(glowStrokeWidth);
-
+        // calculating all variables to draw what is necessary
         float centerCircleX = getWidth() / 2;
         float centerCircleY = getHeight() / 2;
         float centerRadius = getWidth() / 2;
 
-        canvas.drawCircle(centerCircleX, centerCircleY, centerRadius, paint);
+        Arrow placeDirection = getPlaceDirectionUnitArrow();
+
+        //calculate north
+        float lineStartX = centerCircleX;
+        float lineStartY = centerCircleY;
+        // north is negative to compensate for azimuth
+        float lineEndMagNorthX = centerCircleX + (centerRadius * -( (float) Math.sin(getDirection())));
+        float lineEndMagNorthY = centerCircleY + (centerRadius *  (float) Math.cos(getDirection()));
+
+        //calculate vector to destination raw
+        //
+        // swapping x and y because the coordinate system is off.
+        //
+        float lineEndPlaceStaticY = centerCircleX + ((float) placeDirection.endX * centerRadius);
+        float lineEndPlaceStaticX = centerCircleY + ((float) placeDirection.endY * centerRadius);
+
+        //calculate degrees between destination and true north
+//        double deltaX = lineEndPlaceStaticX - lineEndMagNorthX;
+//        double deltaY = lineEndPlaceStaticY - lineEndMagNorthY;
+//
+//        double angleInRadians = Math.atan2(deltaY, deltaX);
+//        double angleInDegrees = angleInRadians * RADIANS_TO_DEGREES;
 
 
-        Arrow drawingArrow = getUnitArrow();
-
-        float lineStartX = centerCircleX + (float) drawingArrow.startX;
-        float lineStartY = centerCircleY + (float) drawingArrow.startY;
-        float lineEndPlaceStaticX = centerCircleX + (float) drawingArrow.endX * centerRadius;
-        float lineEndPlaceStaticY = centerCircleY + (float) drawingArrow.endY * centerRadius;
-        float lineEndMagNorthX = centerCircleX + centerRadius * -(float) Math.sin(getDirection());
-        float lineEndMagNorthY = centerCircleY + centerRadius * -(float) Math.cos(getDirection());
+        float angleInDegrees = (float) Math.toDegrees(Math.atan2(lineEndMagNorthX - centerCircleX,lineEndMagNorthY -centerCircleY));
 
 
-        double deltaX = lineEndPlaceStaticX - lineEndMagNorthX;
-        double deltaY = lineEndPlaceStaticY - lineEndMagNorthY;
-
-        double angleInRadians = Math.atan2(deltaY, deltaX);
-        double angleInDegrees = angleInRadians * RADIANS_TO_DEGREES;
-//        angleInDegrees = (float) convertToDegreesOnCircle(angleInDegrees);
-//        if (angleInDegrees == 0) {
-//            angleInDegrees = (float) (angleInDegrees + .01);
-//        } else if (angleInDegrees > 359) {
-//            angleInDegrees = (float) (angleInDegrees - .01);
-//        }
+        //todo: integrate this fix into the interpolate method
+        if (angleInDegrees < 0){
+            angleInDegrees += 360;
+        }
 
 
-        Point endPlaceStatic = new Point (lineEndPlaceStaticX, lineEndPlaceStaticY);
+
+
+//
+//        Point endPlaceStatic = new Point (lineEndPlaceStaticX, lineEndPlaceStaticY);
+
+        //interpolate north smoothly
         Point endMagNorth = new Point(lineEndMagNorthX,lineEndMagNorthY);
-
-
-        Point smoothPointPlace = interpolate(currentPointPlaceStatic, endPlaceStatic);
         Point smoothPoint = interpolate(currentPoint, endMagNorth);
 
-        canvas.rotate((float) angleInDegrees, lineStartX, lineStartY);
-//        canvas.drawLine(lineStartX, lineStartY, smoothPointPlace.x, smoothPointPlace.y, paint);
-//        currentPointPlaceStatic = endPlaceStatic;
 
-        canvas.drawLine(lineStartX, lineStartY, smoothPoint.x, smoothPoint.y, paint);
-//        canvas.drawText(String.format("%.3f ", endMagNorth) + String.format(" %.3f", angleInDegrees), lineStartX, lineStartY - 120, paint);
+
+        // drawing circle, line, etc.
+        paint.setColor(Color.argb(255, 1, 200, 50));
+        paint.setStrokeWidth(glowStrokeWidth);
+
+
+        //
+        //  Make y be the height - y, because y draws downward
+        //
+
+        float interpolatedDegrees = interpolate(currentRotationInDegrees, angleInDegrees);
+        canvas.drawCircle(centerCircleX, getHeight() - centerCircleY, centerRadius, paint);
+        canvas.rotate( interpolatedDegrees, lineStartX, lineStartY);
+        canvas.drawBitmap(compassBitmap,0,0,paint);
+        canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndPlaceStaticX, getHeight() - lineEndPlaceStaticY, paint);
+
         currentPoint = endMagNorth;
+        currentRotationInDegrees = interpolatedDegrees;
+        // draw debug info
+        if(DEBUG){
+            //draw magnorth
+            canvas.rotate(-interpolatedDegrees, lineStartX, lineStartY);
+            paint.setColor(Color.argb(255, 255, 0, 0));
+            paint.setStrokeWidth(10);
+
+            canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndMagNorthX,getHeight() - lineEndMagNorthY, paint);
+            paint.setColor(Color.argb(255, 0, 255, 0));
+            paint.setStrokeWidth(10);
+            canvas.drawLine(0, getHeight(), 40, getHeight() - 40, paint);
+
+        }
 
         invalidate();
-//        canvas.drawCircle(w/2, h/2, r, paint);
-//
-//        paint.setColor(Color.RED);
-//        canvas.drawLine(
-//                w/2,
-//                h/2,
-//                (float)(w/2 + r * Math.sin(-direction)),
-//                (float)(h/2 - r * Math.cos(-direction)),
-//                paint);
+
     }
 
     private float computeTrueNorth(float heading) {
@@ -192,6 +236,13 @@ public class MyCompassView extends View  {
         }
     }
 
+    private static float interpolate(float startDegree, float endDegree){
+        float change = endDegree - startDegree;
+        float interpChange = WEIGHT * change;
+        return interpChange + startDegree;
+
+    }
+
 
 
 
@@ -205,7 +256,7 @@ public class MyCompassView extends View  {
     }
 
 
-    public void setDirections(double startLong, double startLat, double endLong, double endLat){
+    public void setDirections(double startLat, double startLong, double endLat, double endLong){
         this.startDoubleLat = startLat;
         this.startDoubleLong = startLong;
         this.endDoubleLat = endLat;
@@ -213,7 +264,7 @@ public class MyCompassView extends View  {
     }
 
     //remember to make this public Arrow convertToUnitArrow(Location location)
-    public Arrow getUnitArrow() {
+    public Arrow getPlaceDirectionUnitArrow() {
 
         Arrow directorVector = new Arrow();
         directorVector.startX = startDoubleLat;
