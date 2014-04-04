@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.view.View;
 
@@ -24,9 +25,14 @@ public class MyCompassView extends View  {
     private double startDoubleLat;
     private double endDoubleLong;
     private double endDoubleLat;
+    protected float[] matrixValues = {};
     private float mDirection;
+    protected GeomagneticField mGeomagneticField;
+
 
     private static final double RADIANS_TO_DEGREES = (180 / Math.PI);
+    private static final double DEGREES_TO_RADIANS = (Math.PI / 180);
+
 
     private float[] mR = new float[16];
     private float[] mOrientation = new float[3];
@@ -34,16 +40,17 @@ public class MyCompassView extends View  {
     public SensorDataRequestListener sensorDataCallback;
 
     public interface SensorDataRequestListener{
-        public double getDirection();
+        public float[] getDirection();
     }
 
     public void setSensorDataCallback(SensorDataRequestListener callback){
         sensorDataCallback = callback;
     }
 
-    private double getDirection(){
+    private float[] getDirection(){
         return sensorDataCallback.getDirection();
     }
+
 
 
     public MyCompassView(Context context) {
@@ -55,12 +62,11 @@ public class MyCompassView extends View  {
     }
 
     static Point currentPoint = new Point(1,1);
-    static Point currentPointPlace = new Point(1,1);
+    static Point currentPointPlaceStatic = new Point(1,1);
+
 
     @Override
     protected void onDraw(Canvas canvas) {
-
-
         //redraw all previously touched coordinates
 //        canvas.drawPoint(x, y, paint);
 //        for (PointCoordinator p : drawnCoordinates){
@@ -73,8 +79,6 @@ public class MyCompassView extends View  {
         //shrink the width until we hit the min
         // when we hit the min, reset the boolean to tell it to grow
         getRotation();
-
-
 
 
         if (growStroke) {
@@ -93,44 +97,47 @@ public class MyCompassView extends View  {
         float centerCircleY = getHeight() / 2;
         float centerRadius = getWidth() / 2;
 
-        canvas.drawCircle(centerCircleX,centerCircleY,centerRadius,paint);
+        canvas.drawCircle(centerCircleX, centerCircleY, centerRadius, paint);
 
 
         Arrow drawingArrow = getUnitArrow();
 
-
-
-
+        matrixValues = getDirection();
         float lineStartX = centerCircleX + (float) drawingArrow.startX;
         float lineStartY = centerCircleY + (float) drawingArrow.startY;
-        float lineEndPlaceX = centerCircleX + (float) drawingArrow.endX * centerRadius;
-        float lineEndPlaceY = centerCircleY + (float) drawingArrow.endY * centerRadius;
-        float lineEndX = centerCircleX +  centerRadius * -(float) Math.sin(getDirection());
-        float lineEndY = centerCircleY +  centerRadius * -(float) Math.cos(getDirection());
+        float lineEndPlaceStaticX = centerCircleX + (float) drawingArrow.endX * centerRadius;
+        float lineEndPlaceStaticY = centerCircleY + (float) drawingArrow.endY * centerRadius;
+        float lineEndMagNorthX = centerCircleX + centerRadius * -(float) Math.sin(matrixValues[0]);
+        float lineEndMagNorthY = centerCircleY + centerRadius * -(float) Math.cos(matrixValues[0]);
 
-        Point endPlace = new Point (lineEndPlaceX, lineEndPlaceY);
-        Point end = new Point(lineEndX,lineEndY);
+        float deltaX = lineEndPlaceStaticX - lineEndMagNorthX;
+        float deltaY = lineEndPlaceStaticY - lineEndMagNorthY;
 
-        Point smoothPointPlace = interpolate(currentPointPlace,endPlace);
-        Point smoothPoint = interpolate(currentPoint,end);
 
-        canvas.drawLine(lineStartX, lineStartY, smoothPointPlace.x, smoothPointPlace.y, paint);
-        currentPointPlace = endPlace;
+        float angleInDegrees = (float) (Math.atan2(deltaY, deltaX) * RADIANS_TO_DEGREES);
+//        angleInDegrees = (float) convertToDegreesOnCircle(angleInDegrees);
+//        if (angleInDegrees == 0) {
+//            angleInDegrees = (float) (angleInDegrees + .01);
+//        } else if (angleInDegrees > 359) {
+//            angleInDegrees = (float) (angleInDegrees - .01);
+//        }
+
+
+        Point endPlaceStatic = new Point (lineEndPlaceStaticX, lineEndPlaceStaticY);
+        Point endMagNorth = new Point(lineEndMagNorthX,lineEndMagNorthY);
+
+
+        Point smoothPointPlace = interpolate(currentPointPlaceStatic,endPlaceStatic);
+        Point smoothPoint = interpolate(currentPoint,endMagNorth);
+
+        canvas.rotate(angleInDegrees, lineStartX, lineStartY);
+//        canvas.drawLine(lineStartX, lineStartY, smoothPointPlace.x, smoothPointPlace.y, paint);
+//        currentPointPlaceStatic = endPlaceStatic;
 
         canvas.drawLine(lineStartX, lineStartY, smoothPoint.x, smoothPoint.y, paint);
-        currentPoint = end;
-
-//        canvas.drawLine(
-//                lineStartX,
-//                lineStartY,
-//                (float)(lineEndX + Math.sin(-FoodTruckData.getAzimuthIsDirection())),
-//                (float)(lineEndY + Math.cos(-FoodTruckData.getAzimuthIsDirection())),
-//                paint);
-//        canvas.rotate();
+        currentPoint = endMagNorth;
 
         invalidate();
-
-
 //        canvas.drawCircle(w/2, h/2, r, paint);
 //
 //        paint.setColor(Color.RED);
@@ -140,10 +147,41 @@ public class MyCompassView extends View  {
 //                (float)(w/2 + r * Math.sin(-direction)),
 //                (float)(h/2 - r * Math.cos(-direction)),
 //                paint);
-//
     }
 
-    public static class Point{
+    private float computeTrueNorth(float heading) {
+        if (mGeomagneticField != null) {
+            return heading + mGeomagneticField.getDeclination();
+        } else {
+            return heading;
+        }
+    }
+
+    public static float mod(float a, float b) {
+        return (a % b + b) % b;
+    }
+
+
+    public double calculateDistanceBetweenPointsDegrees(double magNorthDegreesX, double magNorthDegreesY, double placeDegreesX, double placeDegreesY) {
+        double calculateDistanceBetweenPoints;
+
+        // Location of Destination in GPS coordinates
+        double placeLatitudeEnd = placeDegreesX;
+        double placeLongitudeEnd = placeDegreesY;
+
+
+        double theta = magNorthDegreesY - placeLongitudeEnd;
+
+        calculateDistanceBetweenPoints = Math.sin(degreesToRadians(magNorthDegreesX))
+                * Math.sin(degreesToRadians(placeLatitudeEnd))
+                + Math.cos(degreesToRadians(magNorthDegreesX))
+                * Math.cos(degreesToRadians(placeLatitudeEnd))
+                * Math.cos(degreesToRadians(theta));
+
+        calculateDistanceBetweenPoints = Math.acos(calculateDistanceBetweenPoints);
+        return radiansToDegrees(calculateDistanceBetweenPoints);
+    }
+        public static class Point{
         public float x;
         public float y;
 
@@ -151,10 +189,12 @@ public class MyCompassView extends View  {
             this.x = x;
             this.y = y;
         }
-    }
 
 
-    private static final float WEIGHT = 0.15f;
+        }
+
+
+    private static final float WEIGHT = 0.05f;
     private static Point interpolate(Point startPoint, Point endPoint){
         float changeX = endPoint.x - startPoint.x;
         float changeY = endPoint.y - startPoint.y;

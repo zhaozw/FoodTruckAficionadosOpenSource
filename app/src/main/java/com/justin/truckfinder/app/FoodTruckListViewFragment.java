@@ -3,6 +3,7 @@ package com.justin.truckfinder.app;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
+import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,8 +14,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -38,12 +37,14 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     protected Sensor mySensorAccelerometer;
     protected Sensor mySensorMagnetometer;
     private Context context;
+    protected GeomagneticField mGeomagneticField;
 
     float[] matrixR = {};
     float[] matrixI = {};
     float[] valuesAccelerometer = {};
     float[] valuesMagneticField = {};
     float[] matrixValues = {};
+    float[] remappedMatrixValues = {};
 
     public FoodTruckListViewFragment() {
     }
@@ -127,17 +128,27 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
             if (success) {
                 SensorManager.getOrientation(matrixR, matrixValues);
+//                int x = (int) matrixValues[0];
+//                int y = (int) matrixValues[1];
+//                SensorManager.remapCoordinateSystem(matrixR, x, y, remappedMatrixValues);
+
+
             }
         }
     }
 
     @Override
-    public double getDirection() {
+    public float[] getDirection() {
         //here is where you should give the direction,
         //but also take into consideration the current orientation of landscape or portrait and
         //change the variable accordingly.
-        return matrixValues[0]; //this is from the sensor updating
+        float[] matrixValuesCallback = matrixValues;
+//        float[] matrixR = {};
+//        SensorManager.getOrientation(matrixR, remappedMatrixValues);
+//        double trueNorthHeading = computeTrueNorth((float) magneticNorthHeading);
+        return matrixValuesCallback; //this is from the sensor updating
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -229,6 +240,21 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
         FoodTruckData.setUserLatitude(userLatitudeDouble);
         FoodTruckData.setUserLongitude(userLongitudeDouble);
+        updateGeomagneticField(location);
+    }
+
+    private void updateGeomagneticField(Location aLocation) {
+        mGeomagneticField = new GeomagneticField((float) aLocation.getLatitude(),
+                (float) aLocation.getLongitude(), (float) aLocation.getAltitude(),
+                aLocation.getTime());
+    }
+
+    private float computeTrueNorth(float heading) {
+        if (mGeomagneticField != null) {
+            return heading + mGeomagneticField.getDeclination();
+        } else {
+            return heading;
+        }
     }
 
     /**
@@ -239,28 +265,25 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
      * @param b the divisor
      * @return {@code a mod b}
      */
-    public static float mod(float a, float b) {
-        return (a % b + b) % b;
-    }
 
-    public class ProgressBarAnimation extends Animation {
-        private ProgressBar progressBar;
-        private float from;
-        private float  to;
-
-        public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
-            super();
-            this.progressBar = progressBar;
-            this.from = from;
-            this.to = to;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            super.applyTransformation(interpolatedTime, t);
-            float value = from + (to - from) * interpolatedTime;
-            progressBar.setProgress((int) value);
-        }
-
-    }
+//    public class ProgressBarAnimation extends Animation {
+//        private ProgressBar progressBar;
+//        private float from;
+//        private float  to;
+//
+//        public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
+//            super();
+//            this.progressBar = progressBar;
+//            this.from = from;
+//            this.to = to;
+//        }
+//
+//        @Override
+//        protected void applyTransformation(float interpolatedTime, Transformation t) {
+//            super.applyTransformation(interpolatedTime, t);
+//            float value = from + (to - from) * interpolatedTime;
+//            progressBar.setProgress((int) value);
+//        }
+//
+//    }
 }
