@@ -36,7 +36,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     private SensorManager sensorManager;
     protected Sensor mySensorAccelerometer;
     protected Sensor mySensorMagnetometer;
-    private Context context;
+    protected Context context;
     protected GeomagneticField mGeomagneticField;
 
     float[] matrixR = {};
@@ -138,15 +138,15 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     }
 
     @Override
-    public float[] getDirection() {
+    public float getDirection() {
         //here is where you should give the direction,
         //but also take into consideration the current orientation of landscape or portrait and
         //change the variable accordingly.
-        float[] matrixValuesCallback = matrixValues;
+//        float[] matrixValuesCallback = matrixValues;
 //        float[] matrixR = {};
 //        SensorManager.getOrientation(matrixR, remappedMatrixValues);
 //        double trueNorthHeading = computeTrueNorth((float) magneticNorthHeading);
-        return matrixValuesCallback; //this is from the sensor updating
+        return matrixValues[0]; //this is from the sensor updating
     }
 
 

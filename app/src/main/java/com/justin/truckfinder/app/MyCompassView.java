@@ -40,14 +40,14 @@ public class MyCompassView extends View  {
     public SensorDataRequestListener sensorDataCallback;
 
     public interface SensorDataRequestListener{
-        public float[] getDirection();
+        public float getDirection();
     }
 
     public void setSensorDataCallback(SensorDataRequestListener callback){
         sensorDataCallback = callback;
     }
 
-    private float[] getDirection(){
+    private float getDirection(){
         return sensorDataCallback.getDirection();
     }
 
@@ -102,19 +102,19 @@ public class MyCompassView extends View  {
 
         Arrow drawingArrow = getUnitArrow();
 
-        matrixValues = getDirection();
         float lineStartX = centerCircleX + (float) drawingArrow.startX;
         float lineStartY = centerCircleY + (float) drawingArrow.startY;
         float lineEndPlaceStaticX = centerCircleX + (float) drawingArrow.endX * centerRadius;
         float lineEndPlaceStaticY = centerCircleY + (float) drawingArrow.endY * centerRadius;
-        float lineEndMagNorthX = centerCircleX + centerRadius * -(float) Math.sin(matrixValues[0]);
-        float lineEndMagNorthY = centerCircleY + centerRadius * -(float) Math.cos(matrixValues[0]);
-
-        float deltaX = lineEndPlaceStaticX - lineEndMagNorthX;
-        float deltaY = lineEndPlaceStaticY - lineEndMagNorthY;
+        float lineEndMagNorthX = centerCircleX + centerRadius * -(float) Math.sin(getDirection());
+        float lineEndMagNorthY = centerCircleY + centerRadius * -(float) Math.cos(getDirection());
 
 
-        float angleInDegrees = (float) (Math.atan2(deltaY, deltaX) * RADIANS_TO_DEGREES);
+        double deltaX = lineEndPlaceStaticX - lineEndMagNorthX;
+        double deltaY = lineEndPlaceStaticY - lineEndMagNorthY;
+
+        double angleInRadians = Math.atan2(deltaY, deltaX);
+        double angleInDegrees = angleInRadians * RADIANS_TO_DEGREES;
 //        angleInDegrees = (float) convertToDegreesOnCircle(angleInDegrees);
 //        if (angleInDegrees == 0) {
 //            angleInDegrees = (float) (angleInDegrees + .01);
@@ -127,14 +127,15 @@ public class MyCompassView extends View  {
         Point endMagNorth = new Point(lineEndMagNorthX,lineEndMagNorthY);
 
 
-        Point smoothPointPlace = interpolate(currentPointPlaceStatic,endPlaceStatic);
-        Point smoothPoint = interpolate(currentPoint,endMagNorth);
+        Point smoothPointPlace = interpolate(currentPointPlaceStatic, endPlaceStatic);
+        Point smoothPoint = interpolate(currentPoint, endMagNorth);
 
-        canvas.rotate(angleInDegrees, lineStartX, lineStartY);
+        canvas.rotate((float) angleInDegrees, lineStartX, lineStartY);
 //        canvas.drawLine(lineStartX, lineStartY, smoothPointPlace.x, smoothPointPlace.y, paint);
 //        currentPointPlaceStatic = endPlaceStatic;
 
         canvas.drawLine(lineStartX, lineStartY, smoothPoint.x, smoothPoint.y, paint);
+//        canvas.drawText(String.format("%.3f ", endMagNorth) + String.format(" %.3f", angleInDegrees), lineStartX, lineStartY - 120, paint);
         currentPoint = endMagNorth;
 
         invalidate();
@@ -162,25 +163,6 @@ public class MyCompassView extends View  {
     }
 
 
-    public double calculateDistanceBetweenPointsDegrees(double magNorthDegreesX, double magNorthDegreesY, double placeDegreesX, double placeDegreesY) {
-        double calculateDistanceBetweenPoints;
-
-        // Location of Destination in GPS coordinates
-        double placeLatitudeEnd = placeDegreesX;
-        double placeLongitudeEnd = placeDegreesY;
-
-
-        double theta = magNorthDegreesY - placeLongitudeEnd;
-
-        calculateDistanceBetweenPoints = Math.sin(degreesToRadians(magNorthDegreesX))
-                * Math.sin(degreesToRadians(placeLatitudeEnd))
-                + Math.cos(degreesToRadians(magNorthDegreesX))
-                * Math.cos(degreesToRadians(placeLatitudeEnd))
-                * Math.cos(degreesToRadians(theta));
-
-        calculateDistanceBetweenPoints = Math.acos(calculateDistanceBetweenPoints);
-        return radiansToDegrees(calculateDistanceBetweenPoints);
-    }
         public static class Point{
         public float x;
         public float y;
