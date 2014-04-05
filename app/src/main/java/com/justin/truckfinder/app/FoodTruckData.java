@@ -18,13 +18,13 @@ public class FoodTruckData implements Serializable{
 
     private double latitude = 0;
     private double longitude = 0;
-    private String iconUrl = "unavailable";
+    private String iconUrl = "--";
     private String placeName;
-    private String fourSquareName = "unavailable";
+    private String fourSquareName = "--";
     private boolean openNow = true;
     private int priceLevel = 0;
     private double rating = 0;
-    private String vicinityAddress = "unavailable";
+    private String vicinityAddress = "--";
     private double distanceToPlaceFoursquare;
     private LatLng userLatLng;
     private String postalCode;
@@ -52,6 +52,15 @@ public class FoodTruckData implements Serializable{
     }
 
     public FoodTruckData() {
+    }
+
+
+    public LatLng getUserLatLng() {
+        return userLatLng;
+    }
+
+    public void setUserLatLng(LatLng userLatLng) {
+        this.userLatLng = userLatLng;
     }
 
     public String getPhotoPlacesReference() {
@@ -199,9 +208,6 @@ public class FoodTruckData implements Serializable{
         return (radians * 180 / Math.PI);
     }
 
-    //TODO may still need to account for negative values where
-    // TODO southern latitudes are negatives and
-    // TODO eastern latitudes are positive
     public void setCalculatedDistanceToPlace(double aUserLatitudeStart, double aUserLongitudeStart) {
 
         // Location of Destination in GPS coordinates
@@ -209,9 +215,7 @@ public class FoodTruckData implements Serializable{
         double placeLongitudeEnd = getLongitude();
 
         double calculateDistanceMiles;
-
         double calculateDistanceFeet;
-
         double calculateDistanceKilometers;
 
         double theta = aUserLongitudeStart - placeLongitudeEnd;
