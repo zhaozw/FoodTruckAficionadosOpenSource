@@ -18,7 +18,7 @@ public class FoodTruckData implements Serializable{
 
     private double latitude = 0;
     private double longitude = 0;
-    private String iconUrl = "--";
+    private String iconUrl = "unknown";
     private String placeName;
     private String fourSquareName = "--";
     private boolean openNow = true;

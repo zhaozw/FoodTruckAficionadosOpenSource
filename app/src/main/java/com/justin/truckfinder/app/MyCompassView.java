@@ -15,7 +15,7 @@ import android.view.View;
 /**
  * Created by justindelta on 3/26/14.
  */
-public class MyCompassView extends View  {
+public class MyCompassView extends View {
     private static final boolean DEBUG = false;
 
 
@@ -43,22 +43,21 @@ public class MyCompassView extends View  {
     private float[] mR = new float[16];
     private float[] mOrientation = new float[3];
 
-    static Point currentPoint = new Point(1,1);
+    static Point currentPoint = new Point(1, 1);
     static float currentRotationInDegrees = 0.0f;
-
 
 
     public SensorDataRequestListener sensorDataCallback;
 
-    public interface SensorDataRequestListener{
+    public interface SensorDataRequestListener {
         public float getDirection();
     }
 
-    public void setSensorDataCallback(SensorDataRequestListener callback){
+    public void setSensorDataCallback(SensorDataRequestListener callback) {
         sensorDataCallback = callback;
     }
 
-    private float getDirection(){
+    protected float getDirection() {
         return sensorDataCallback.getDirection();
     }
 
@@ -77,8 +76,6 @@ public class MyCompassView extends View  {
         paint.setStyle(Paint.Style.STROKE);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
     }
-
-
 
 
     @Override
@@ -100,7 +97,6 @@ public class MyCompassView extends View  {
         when we hit the min, reset the boolean to tell it to grow
         */
 
-
         if (growStroke) {
             glowStrokeWidth++;
         } else {
@@ -121,8 +117,8 @@ public class MyCompassView extends View  {
         float lineStartX = centerCircleX;
         float lineStartY = centerCircleY;
         // north is negative to compensate for azimuth
-        float lineEndMagNorthX = centerCircleX + (centerRadius * -( (float) Math.sin(getDirection())));
-        float lineEndMagNorthY = centerCircleY + (centerRadius *  (float) Math.cos(getDirection()));
+        float lineEndMagNorthX = centerCircleX + (centerRadius * -((float) Math.sin(getDirection())));
+        float lineEndMagNorthY = centerCircleY + (centerRadius * (float) Math.cos(getDirection()));
 
         //calculate vector to destination raw
         //
@@ -138,31 +134,21 @@ public class MyCompassView extends View  {
 //        double angleInRadians = Math.atan2(deltaY, deltaX);
 //        double angleInDegrees = angleInRadians * RADIANS_TO_DEGREES;
 
-
-        float angleInDegrees = (float) Math.toDegrees(Math.atan2(lineEndMagNorthX - centerCircleX,lineEndMagNorthY -centerCircleY));
+        float angleInDegrees = (float) Math.toDegrees(Math.atan2(lineEndMagNorthX - centerCircleX, lineEndMagNorthY - centerCircleY));
 
 
         //todo: integrate this fix into the interpolate method
-        if (angleInDegrees < 0){
-            angleInDegrees += 360;
-        }
 
-
-
-
-//
 //        Point endPlaceStatic = new Point (lineEndPlaceStaticX, lineEndPlaceStaticY);
 
         //interpolate north smoothly
-        Point endMagNorth = new Point(lineEndMagNorthX,lineEndMagNorthY);
+        Point endMagNorth = new Point(lineEndMagNorthX, lineEndMagNorthY);
         Point smoothPoint = interpolate(currentPoint, endMagNorth);
-
 
 
         // drawing circle, line, etc.
         paint.setColor(Color.argb(255, 1, 200, 50));
         paint.setStrokeWidth(glowStrokeWidth);
-
 
         //
         //  Make y be the height - y, because y draws downward
@@ -170,44 +156,30 @@ public class MyCompassView extends View  {
 
         float interpolatedDegrees = interpolate(currentRotationInDegrees, angleInDegrees);
         canvas.drawCircle(centerCircleX, getHeight() - centerCircleY, centerRadius, paint);
-        canvas.rotate( interpolatedDegrees, lineStartX, lineStartY);
-        canvas.drawBitmap(compassBitmap,0,0,paint);
+        canvas.rotate(interpolatedDegrees, lineStartX, lineStartY);
+        canvas.drawBitmap(compassBitmap, 0, 0, paint);
         canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndPlaceStaticX, getHeight() - lineEndPlaceStaticY, paint);
 
         currentPoint = endMagNorth;
         currentRotationInDegrees = interpolatedDegrees;
         // draw debug info
-        if(DEBUG){
+        if (DEBUG) {
             //draw magnorth
             canvas.rotate(-interpolatedDegrees, lineStartX, lineStartY);
             paint.setColor(Color.argb(255, 255, 0, 0));
             paint.setStrokeWidth(10);
 
-            canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndMagNorthX,getHeight() - lineEndMagNorthY, paint);
+            canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndMagNorthX, getHeight() - lineEndMagNorthY, paint);
             paint.setColor(Color.argb(255, 0, 255, 0));
             paint.setStrokeWidth(10);
             canvas.drawLine(0, getHeight(), 40, getHeight() - 40, paint);
-
         }
 
         invalidate();
 
     }
 
-    private float computeTrueNorth(float heading) {
-        if (mGeomagneticField != null) {
-            return heading + mGeomagneticField.getDeclination();
-        } else {
-            return heading;
-        }
-    }
-
-    public static float mod(float a, float b) {
-        return (a % b + b) % b;
-    }
-
-
-        public static class Point{
+    public static class Point {
         public float x;
         public float y;
 
@@ -217,36 +189,35 @@ public class MyCompassView extends View  {
         }
 
 
-        }
+    }
 
 
-    private static final float WEIGHT = 0.05f;
-    private static Point interpolate(Point startPoint, Point endPoint){
+    private static final float WEIGHT = 0.25f;
+
+    protected static Point interpolate(Point startPoint, Point endPoint) {
         float changeX = endPoint.x - startPoint.x;
         float changeY = endPoint.y - startPoint.y;
         float distance = (float) Math.sqrt((changeX * changeX) + (changeY * changeY));
-        if(distance > WEIGHT){
+        if (distance > WEIGHT) {
             float ratio = WEIGHT / distance;
             float xMove = ratio * changeX;
             float yMove = ratio * changeY;
             return new Point(startPoint.x + xMove, startPoint.y + yMove);
 
-        }else{
+        } else {
             return new Point(endPoint.x, endPoint.y);
         }
     }
 
-    private static float interpolate(float startDegree, float endDegree){
+    protected static float interpolate(float startDegree, float endDegree) {
         float change = endDegree - startDegree;
         float interpChange = WEIGHT * change;
-        return interpChange + startDegree;
 
+        return interpChange + startDegree;
     }
 
 
-
-
-    private class Arrow{
+    private class Arrow {
 
         public double startX;
         public double startY;
@@ -256,7 +227,7 @@ public class MyCompassView extends View  {
     }
 
 
-    public void setDirections(double startLat, double startLong, double endLat, double endLong){
+    public void setDirections(double startLat, double startLong, double endLat, double endLong) {
         this.startDoubleLat = startLat;
         this.startDoubleLong = startLong;
         this.endDoubleLat = endLat;
@@ -274,10 +245,10 @@ public class MyCompassView extends View  {
         // a^2 + b^2 = c^2 = vectorLength
         double a = directorVector.endX - directorVector.startX;
         double b = directorVector.endY - directorVector.startY;
-        double vectorLength = Math.sqrt(a*a + b*b);
+        double vectorLength = Math.sqrt(a * a + b * b);
 
-        double normalizedX =  a / Math.abs(vectorLength);
-        double normalizedY =  b / Math.abs(vectorLength);
+        double normalizedX = a / Math.abs(vectorLength);
+        double normalizedY = b / Math.abs(vectorLength);
 
         Arrow drawingArrow = new Arrow();
 
@@ -320,7 +291,6 @@ public class MyCompassView extends View  {
 
     }
 
-
     private double degreesToRadians(double degree) {
         return (degree * (Math.PI / 180.0));
     }
@@ -329,15 +299,13 @@ public class MyCompassView extends View  {
         return (radians * (180 / Math.PI));
     }
 
-    private double convertToDegreesOnCircle(double degree){
-        if(degree <= 0) {
-            return (degree+=360);
-        }else{
+    private double convertToDegreesOnCircle(double degree) {
+        if (degree <= 0) {
+            return (degree += 360);
+        } else {
             return degree;
         }
     }
-
-
 
 
 }

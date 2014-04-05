@@ -45,7 +45,8 @@
             android:textColor="#7da4b3"
 
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="false"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -85,6 +86,16 @@
         android:textColor="#7da4b3"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placePostalView"
+        android:padding="3dp"
+        android:text="placePostal"
+        android:textColor="#7da4b3"
+        android:layout_below="@id/placePhoneView"
+        />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -113,18 +124,7 @@
         android:text="placeAddress"
         android:textColor="#15576b"
 
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/placePostalView"
-        android:padding="3dp"
-        android:text="placePostal"
-        android:textColor="#7da4b3"
-        android:layout_alignBottom="@+id/placeAddressView"
-        android:layout_alignParentEnd="true" />
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
 
     <TextView

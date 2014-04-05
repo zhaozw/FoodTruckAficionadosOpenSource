@@ -38,13 +38,13 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     protected Sensor mySensorMagnetometer;
     protected Context context;
     protected GeomagneticField mGeomagneticField;
+    protected ArrayList<FoodTruckData> mTheDataReceived;
 
     float[] matrixR = {};
     float[] matrixI = {};
     float[] valuesAccelerometer = {};
     float[] valuesMagneticField = {};
     float[] matrixValues = {};
-    float[] remappedMatrixValues = {};
 
     public FoodTruckListViewFragment() {
     }
@@ -52,7 +52,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
         //if we now have data, kill the loading screen.
-
+        mTheDataReceived = theDataReceived;
         if (theDataReceived == null) {
             foodTruckDataAdapter.setFoodTruckDataArrayList(FoodTruckStorage.getMyData(context));
         }else {
@@ -62,11 +62,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
 
-//        setRetainInstance(true);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
 
@@ -104,9 +101,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        // tried using a switch statement, also did not reach the second case where getType() == Sensor.TYPE_MAGNETIC_FIELD
-        //TODO: Consider using a switch statement instead and checking to see if it works after having added callbacks to have this
-        //TODO: (cont.) listFragment communicate with the ListView.
         synchronized (this) {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 for (int i = 0; i < 3; i++) {
@@ -130,24 +124,12 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
             if (success) {
                 SensorManager.getOrientation(matrixR, matrixValues);
-//                int x = (int) matrixValues[0];
-//                int y = (int) matrixValues[1];
-//                SensorManager.remapCoordinateSystem(matrixR, x, y, remappedMatrixValues);
-
-
             }
         }
     }
 
     @Override
     public float getDirection() {
-        //here is where you should give the direction,
-        //but also take into consideration the current orientation of landscape or portrait and
-        //change the variable accordingly.
-//        float[] matrixValuesCallback = matrixValues;
-//        float[] matrixR = {};
-//        SensorManager.getOrientation(matrixR, remappedMatrixValues);
-//        double trueNorthHeading = computeTrueNorth((float) magneticNorthHeading);
         return matrixValues[0]; //this is from the sensor updating
     }
 
@@ -211,7 +193,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onPause();
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
-        FoodTruckStorage.getMyData(getActivity());  //no
+
     }
 
     @Override
@@ -244,20 +226,5 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
         FoodTruckData.setUserLatitude(userLatitudeDouble);
         FoodTruckData.setUserLongitude(userLongitudeDouble);
-        updateGeomagneticField(location);
-    }
-
-    private void updateGeomagneticField(Location aLocation) {
-        mGeomagneticField = new GeomagneticField((float) aLocation.getLatitude(),
-                (float) aLocation.getLongitude(), (float) aLocation.getAltitude(),
-                aLocation.getTime());
-    }
-
-    private float computeTrueNorth(float heading) {
-        if (mGeomagneticField != null) {
-            return heading + mGeomagneticField.getDeclination();
-        } else {
-            return heading;
-        }
     }
 }
