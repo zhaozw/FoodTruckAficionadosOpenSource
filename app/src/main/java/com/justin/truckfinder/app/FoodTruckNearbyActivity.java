@@ -13,9 +13,7 @@ import android.widget.ProgressBar;
 
 
 public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener{
-
-    private ProgressBar mProgressBar;
-
+    ProgressBar mProgressBar;
     @Override
     public void setContentView(View view) {
         init().addView(view);
@@ -40,7 +38,6 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
     protected ProgressBar getProgressBar(){
         return mProgressBar;
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

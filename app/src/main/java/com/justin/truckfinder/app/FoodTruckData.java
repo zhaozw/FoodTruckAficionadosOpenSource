@@ -34,6 +34,8 @@ public class FoodTruckData implements Serializable{
     private static double userLongitude;
     private static float[] valuesAccelerometer;
     private static float[] valuesMagneticField;
+    private static float rotateDegrees;
+    private static float rotatePlaceDegrees;
 
     private static float[] matrixR;
     private static float[] matrixI;
@@ -54,6 +56,21 @@ public class FoodTruckData implements Serializable{
     public FoodTruckData() {
     }
 
+    public static float getRotateDegrees() {
+        return rotateDegrees;
+    }
+
+    public static void setRotateDegrees(float rotateDegrees) {
+        FoodTruckData.rotateDegrees = rotateDegrees;
+    }
+
+    public static float getRotatePlaceDegrees() {
+        return rotatePlaceDegrees;
+    }
+
+    public static void setRotatePlaceDegrees(float rotatePlaceDegrees) {
+        FoodTruckData.rotatePlaceDegrees = rotatePlaceDegrees;
+    }
 
     public LatLng getUserLatLng() {
         return userLatLng;

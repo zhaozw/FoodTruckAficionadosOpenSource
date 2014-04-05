@@ -22,7 +22,8 @@ public class MyCompassView extends View {
     private Context myContext;
     private Paint paint;
     private Bitmap compassBitmap;
-    private final int STROKE_MAX = 30;
+    private Bitmap newPointerBitmap;
+    private final int STROKE_MAX = 15;
     private final int STROKE_MIN = 1;
     private boolean growStroke = true;
     private int glowStrokeWidth = STROKE_MIN;
@@ -34,7 +35,8 @@ public class MyCompassView extends View {
     protected float[] matrixValues = {};
     private float mDirection;
     protected GeomagneticField mGeomagneticField;
-
+    public float mTextAngleInDegrees;
+    public float mTextPlaceAngleInDegrees;
 
     private static final double RADIANS_TO_DEGREES = (180 / Math.PI);
     private static final double DEGREES_TO_RADIANS = (Math.PI / 180);
@@ -66,6 +68,9 @@ public class MyCompassView extends View {
         super.onLayout(changed, left, top, right, bottom);
         compassBitmap = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.newcompass);
         compassBitmap = Bitmap.createScaledBitmap(compassBitmap, getWidth(), getHeight(), true);
+        newPointerBitmap = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.newpointermod);
+        newPointerBitmap = Bitmap.createScaledBitmap(newPointerBitmap, getWidth(), getHeight(),true);
+
     }
 
     public MyCompassView(Context context) {
@@ -135,8 +140,11 @@ public class MyCompassView extends View {
 //        double angleInDegrees = angleInRadians * RADIANS_TO_DEGREES;
 
         float angleInDegrees = (float) Math.toDegrees(Math.atan2(lineEndMagNorthX - centerCircleX, lineEndMagNorthY - centerCircleY));
-
-
+        float placeInDegrees = (float) Math.toDegrees(Math.atan2(lineEndPlaceStaticX - centerCircleX, lineEndPlaceStaticY - centerCircleY));
+        mTextAngleInDegrees = angleInDegrees;
+        mTextPlaceAngleInDegrees = placeInDegrees;
+        FoodTruckData.setRotateDegrees(mTextAngleInDegrees);
+        FoodTruckData.setRotatePlaceDegrees(mTextPlaceAngleInDegrees);
         //todo: integrate this fix into the interpolate method
 
 //        Point endPlaceStatic = new Point (lineEndPlaceStaticX, lineEndPlaceStaticY);
@@ -147,7 +155,7 @@ public class MyCompassView extends View {
 
 
         // drawing circle, line, etc.
-        paint.setColor(Color.argb(255, 1, 200, 50));
+        paint.setColor(Color.argb(255, 1, 175, 175));
         paint.setStrokeWidth(glowStrokeWidth);
 
         //
@@ -155,16 +163,18 @@ public class MyCompassView extends View {
         //
 
         float interpolatedDegrees = interpolate(currentRotationInDegrees, angleInDegrees);
-        canvas.drawCircle(centerCircleX, getHeight() - centerCircleY, centerRadius, paint);
+        canvas.drawCircle(centerCircleX, getHeight() - centerCircleY, centerRadius-8, paint);
         canvas.rotate(interpolatedDegrees, lineStartX, lineStartY);
         canvas.drawBitmap(compassBitmap, 0, 0, paint);
-        canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndPlaceStaticX, getHeight() - lineEndPlaceStaticY, paint);
-
+//        canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndPlaceStaticX, getHeight() - lineEndPlaceStaticY -3, paint);
+        canvas.rotate(placeInDegrees, lineStartX, lineStartY);
+        canvas.drawBitmap(newPointerBitmap, 0, 0, paint);
         currentPoint = endMagNorth;
         currentRotationInDegrees = interpolatedDegrees;
         // draw debug info
+
         if (DEBUG) {
-            //draw magnorth
+            //draw magNorth
             canvas.rotate(-interpolatedDegrees, lineStartX, lineStartY);
             paint.setColor(Color.argb(255, 255, 0, 0));
             paint.setStrokeWidth(10);
@@ -174,9 +184,7 @@ public class MyCompassView extends View {
             paint.setStrokeWidth(10);
             canvas.drawLine(0, getHeight(), 40, getHeight() - 40, paint);
         }
-
         invalidate();
-
     }
 
     public static class Point {
@@ -187,12 +195,10 @@ public class MyCompassView extends View {
             this.x = x;
             this.y = y;
         }
-
-
     }
 
 
-    private static final float WEIGHT = 0.25f;
+    private static final float WEIGHT = 0.015f;
 
     protected static Point interpolate(Point startPoint, Point endPoint) {
         float changeX = endPoint.x - startPoint.x;
@@ -210,9 +216,10 @@ public class MyCompassView extends View {
     }
 
     protected static float interpolate(float startDegree, float endDegree) {
+        startDegree = (float) convertToDegreesOnCircle(startDegree);
+        endDegree = (float) convertToDegreesOnCircle(endDegree);
         float change = endDegree - startDegree;
         float interpChange = WEIGHT * change;
-
         return interpChange + startDegree;
     }
 
@@ -299,12 +306,11 @@ public class MyCompassView extends View {
         return (radians * (180 / Math.PI));
     }
 
-    private double convertToDegreesOnCircle(double degree) {
-        if (degree <= 0) {
-            return (degree += 360);
-        } else {
-            return degree;
+    protected static double convertToDegreesOnCircle(double degree) {
+        if (degree < 0) {
+            degree += 360;
         }
+        return degree;
     }
 
 

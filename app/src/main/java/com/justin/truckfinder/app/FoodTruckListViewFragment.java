@@ -3,7 +3,6 @@ package com.justin.truckfinder.app;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
-import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
  */
 
 public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener {
-    ProgressBar progress;
+    ProgressBar mProgressBar;
 
     protected float from;
     protected float  to;
@@ -37,8 +36,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     protected Sensor mySensorAccelerometer;
     protected Sensor mySensorMagnetometer;
     protected Context context;
-    protected GeomagneticField mGeomagneticField;
     protected ArrayList<FoodTruckData> mTheDataReceived;
+    protected Bundle mSavedState;
 
     float[] matrixR = {};
     float[] matrixI = {};
@@ -58,6 +57,24 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         }else {
             foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
         }
+    }
+
+
+    @Override
+    public void setListShown(boolean shown) {
+        super.setListShown(shown);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
     }
 
     @Override
@@ -164,8 +181,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
@@ -173,7 +190,9 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onViewCreated(view, savedInstanceState);
 
         //for the first time, see if they have data while you're waiting for new data.
+        if(savedInstanceState != null){
 
+        }
         foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
         foodTruckDataAdapter.setSensorListener(this);
@@ -191,6 +210,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onPause() {
         super.onPause();
+
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
 

@@ -55,7 +55,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placePhoneView;
         public TextView placeOpenNowView;
         public TextView placePostalView;
-//        public TextView placeExtraView;
+        public TextView placeExtraView;
         public MyCompassView myCompassView;
 //        public NetworkImageView placeThumbnail;
     }
@@ -79,18 +79,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
 
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
-            //row.addView
 
-           // ((RelativeLayout)row).addView
-            /*
-                        android:scaleType="fitEnd"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:id="@+id/placeThumbnailView"
-            android:background="@drawable/newcompass"
-            android:layout_alignParentEnd="true"
-             */
-            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, context.getResources().getDisplayMetrics());
+            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, context.getResources().getDisplayMetrics());
 
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
@@ -113,7 +103,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeOpenNowView = (TextView) row.findViewById(R.id.placeOpenNowView);
             foodTruckDataHolder.placePhoneView = (TextView) row.findViewById(R.id.placePhoneView);
             foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
-//            foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
+            foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
             foodTruckDataHolder.myCompassView = myCompassView;
 
 
@@ -128,9 +118,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
 
-//        FoodTruckData foodTruck = getItem(aPosition);
-//        ((RelativeLayout) row).
-
         foodTruckDataHolder.placeNameView.setText(foodTruck.getPlaceName());
         foodTruckDataHolder.placeDistanceView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + "mi (" + Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft)");
 
@@ -142,10 +129,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.placeOpenNowView.setText("Open: " + String.valueOf(foodTruck.getIsOpenNow()));
         foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
         foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude(), foodTruck.getLatitude(), foodTruck.getLongitude());
+        foodTruckDataHolder.placeExtraView.setText(String.valueOf(FoodTruckData.getRotateDegrees()));
+        foodTruckDataHolder.placePostalView.setText(String.valueOf(FoodTruckData.getRotatePlaceDegrees()));
         //todo: give myCompassView the sensor data to do the calculation (you already gave it the vectors)
-
-
-//        foodTruckDataHolder.placeThumbnail.setImageUrl(foodTruck.getIconUrl(),imageLoader);
 
         return row;
     }
