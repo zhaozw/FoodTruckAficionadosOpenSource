@@ -253,7 +253,7 @@ public class FoodTruckDataGetter {
                     incompleteFoodTrucks.addAll(listOfFoodTrucks);
                     //Line below to be used only for debugging when necessary
 //                    FoodTruckStorage.saveMyData(context, incompleteFoodTrucks);
-                    notifyOfDataChanged();
+//                    notifyOfDataChanged();
                     performAdditionalGoogleSearches();
 
                 } catch (Exception e) {
@@ -460,8 +460,6 @@ public class FoodTruckDataGetter {
                             e.printStackTrace();
                             Log.e("Calculating distance", "there was an error");
                         }
-
-
                     }
 
 

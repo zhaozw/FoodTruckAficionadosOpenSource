@@ -151,7 +151,7 @@ public class MyCompassView extends View {
 
         //interpolate north smoothly
         Point endMagNorth = new Point(lineEndMagNorthX, lineEndMagNorthY);
-        Point smoothPoint = interpolate(currentPoint, endMagNorth);
+//        Point smoothPoint = interpolate(currentPoint, endMagNorth);
 
 
         // drawing circle, line, etc.
@@ -161,8 +161,8 @@ public class MyCompassView extends View {
         //
         //  Make y be the height - y, because y draws downward
         //
-
-        float interpolatedDegrees = interpolate(currentRotationInDegrees, angleInDegrees);
+        double interpolatedDegreesDouble = interpolate(currentRotationInDegrees, angleInDegrees);
+        float interpolatedDegrees = (float) interpolatedDegreesDouble;
         canvas.drawCircle(centerCircleX, getHeight() - centerCircleY, centerRadius-8, paint);
         canvas.rotate(interpolatedDegrees, lineStartX, lineStartY);
         canvas.drawBitmap(compassBitmap, 0, 0, paint);
@@ -197,29 +197,30 @@ public class MyCompassView extends View {
         }
     }
 
+    // WEIGHT = 0.015f; pretty good weight for canvas rotation when using delay game
 
-    private static final float WEIGHT = 0.015f;
+    private static final double WEIGHT = .2f;
 
-    protected static Point interpolate(Point startPoint, Point endPoint) {
-        float changeX = endPoint.x - startPoint.x;
-        float changeY = endPoint.y - startPoint.y;
-        float distance = (float) Math.sqrt((changeX * changeX) + (changeY * changeY));
-        if (distance > WEIGHT) {
-            float ratio = WEIGHT / distance;
-            float xMove = ratio * changeX;
-            float yMove = ratio * changeY;
-            return new Point(startPoint.x + xMove, startPoint.y + yMove);
+//    protected static Point interpolate(Point startPoint, Point endPoint) {
+//        float changeX = endPoint.x - startPoint.x;
+//        float changeY = endPoint.y - startPoint.y;
+//        float distance = (float) Math.sqrt((changeX * changeX) + (changeY * changeY));
+//        if (distance > WEIGHT) {
+//            float ratio = WEIGHT / distance;
+//            float xMove = ratio * changeX;
+//            float yMove = ratio * changeY;
+//            return new Point(startPoint.x + xMove, startPoint.y + yMove);
+//
+//        } else {
+//            return new Point(endPoint.x, endPoint.y);
+//        }
+//    }
 
-        } else {
-            return new Point(endPoint.x, endPoint.y);
-        }
-    }
-
-    protected static float interpolate(float startDegree, float endDegree) {
-        startDegree = (float) convertToDegreesOnCircle(startDegree);
-        endDegree = (float) convertToDegreesOnCircle(endDegree);
-        float change = endDegree - startDegree;
-        float interpChange = WEIGHT * change;
+    protected static double interpolate(double startDegree, double endDegree) {
+        startDegree = (double) convertToDegreesOnCircle(startDegree);
+        endDegree = (double) convertToDegreesOnCircle(endDegree);
+        double change = endDegree - startDegree;
+        double interpChange = WEIGHT * change;
         return interpChange + startDegree;
     }
 

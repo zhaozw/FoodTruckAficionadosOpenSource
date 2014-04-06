@@ -80,7 +80,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
 
-            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, context.getResources().getDisplayMetrics());
+            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
 
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
