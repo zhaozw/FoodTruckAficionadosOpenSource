@@ -1,5 +1,7 @@
 package com.justin.truckfinder.app;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
@@ -30,13 +32,17 @@ public class FoodTruckData implements Serializable{
     private String postalCode;
     private String phoneNumberFormatted;
     private String photoPlacesReference;
+    private String photoPlacesURL;
+    private String detailsPlacesReference;
+    private NetworkImageView photoPlacesVolleyNetworkImageView;
     private static double userLatitude;
     private static double userLongitude;
     private static float[] valuesAccelerometer;
     private static float[] valuesMagneticField;
     private static float rotateDegrees;
     private static float rotatePlaceDegrees;
-
+    private ImageLoader imageLoader;
+    private static boolean isPhotoReference = false;
     private static float[] matrixR;
     private static float[] matrixI;
     private static float[] matrixValues;
@@ -46,8 +52,13 @@ public class FoodTruckData implements Serializable{
     private double calculateDistanceMiles;
 
 
+    public static boolean isIsPhotoReference() {
+        return isPhotoReference;
+    }
 
-
+    public static void setIsPhotoReference(boolean isPhotoReference) {
+        FoodTruckData.isPhotoReference = isPhotoReference;
+    }
 
     public FoodTruckData(String fourSquareName) {
         this.fourSquareName = fourSquareName;
@@ -72,6 +83,14 @@ public class FoodTruckData implements Serializable{
         FoodTruckData.rotatePlaceDegrees = rotatePlaceDegrees;
     }
 
+    public ImageLoader getImageLoader() {
+        return imageLoader;
+    }
+
+    public void setImageLoader(ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
+    }
+
     public LatLng getUserLatLng() {
         return userLatLng;
     }
@@ -80,12 +99,31 @@ public class FoodTruckData implements Serializable{
         this.userLatLng = userLatLng;
     }
 
+
+
+    public String getDetailsPlacesReference() {
+        return detailsPlacesReference;
+    }
+
+    public String getPhotoPlacesURL() {
+        return photoPlacesURL;
+    }
+
+    public void setPhotoPlacesURL(String photoPlacesURL) {
+        this.photoPlacesURL = photoPlacesURL;
+    }
+
+    public void setDetailsPlacesReference(String detailsPlacesReference) {
+        this.detailsPlacesReference = detailsPlacesReference;
+    }
+
     public String getPhotoPlacesReference() {
         return photoPlacesReference;
     }
 
     public void setPhotoPlacesReference(String photoPlacesReference) {
         this.photoPlacesReference = photoPlacesReference;
+        FoodTruckData.isPhotoReference = true;
     }
 
     public static float[] getValuesAccelerometer() {

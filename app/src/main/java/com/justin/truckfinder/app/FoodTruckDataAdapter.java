@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
+
 import java.util.ArrayList;
 
 /**
@@ -57,7 +59,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placePostalView;
         public TextView placeExtraView;
         public MyCompassView myCompassView;
-//        public NetworkImageView placeThumbnail;
+        public NetworkImageView placeNetworkImageView;
     }
 
     @Override
@@ -104,6 +106,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placePhoneView = (TextView) row.findViewById(R.id.placePhoneView);
             foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
             foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
+            foodTruckDataHolder.placeNetworkImageView = (NetworkImageView) row.findViewById(R.id.volleyImageListView);
             foodTruckDataHolder.myCompassView = myCompassView;
 
 
@@ -128,9 +131,15 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
         foodTruckDataHolder.placeOpenNowView.setText("Open: " + String.valueOf(foodTruck.getIsOpenNow()));
         foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
+        foodTruckDataHolder.placeExtraView.setText("extra");
+
+        if(foodTruck.getPhotoPlacesURL() == null){
+            foodTruckDataHolder.placeNetworkImageView.setDefaultImageResId(R.drawable.ic_launcher);
+        }else if(foodTruck.getPhotoPlacesURL() != null) {
+            FoodTruckData foodTruckImage = this.foodTruckDataArrayList.get(mPosition + foodTruckDataArrayList.size());
+            foodTruckDataHolder.placeNetworkImageView.setImageUrl(foodTruckImage.getPhotoPlacesURL(), foodTruckImage.getImageLoader());
+        }
         foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude(), foodTruck.getLatitude(), foodTruck.getLongitude());
-        foodTruckDataHolder.placeExtraView.setText(String.valueOf(FoodTruckData.getRotateDegrees()));
-        foodTruckDataHolder.placePostalView.setText(String.valueOf(FoodTruckData.getRotatePlaceDegrees()));
         //todo: give myCompassView the sensor data to do the calculation (you already gave it the vectors)
 
         return row;

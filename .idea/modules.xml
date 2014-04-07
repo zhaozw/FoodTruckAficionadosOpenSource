@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratch.iml" filepath="$PROJECT_DIR$/foodtruckfromscratch.iml" />
       <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratch2.iml" filepath="$PROJECT_DIR$/foodtruckfromscratch2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratchDesktop.iml" filepath="$PROJECT_DIR$/foodtruckfromscratchDesktop.iml" />
       <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratchimport.iml" filepath="$PROJECT_DIR$/foodtruckfromscratchimport.iml" />
     </modules>
   </component>

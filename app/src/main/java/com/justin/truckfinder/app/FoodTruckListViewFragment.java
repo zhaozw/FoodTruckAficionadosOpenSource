@@ -53,7 +53,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         //if we now have data, kill the loading screen.
         mTheDataReceived = theDataReceived;
         if (theDataReceived == null) {
-            foodTruckDataAdapter.setFoodTruckDataArrayList(FoodTruckStorage.getMyData(context));
+            foodTruckDataAdapter.setFoodTruckDataArrayList(FoodTruckStorage.getMyFoodTruckData(context));
         }else {
             foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
         }
@@ -193,18 +193,14 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         if(savedInstanceState != null){
 
         }
-        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows, new ArrayList<FoodTruckData>());
+        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows_plain, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
         foodTruckDataAdapter.setSensorListener(this);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-//            FoodTruckData foodTruckData;
-//        //call back to the parent activity with the selected item
-//            // put callback code --> map fragment
-//            selectedListenerCallback.OnItemSelected();
-//            foodTruckData = ((FoodTruckDataAdapter)getListAdapter()).getItem(position);
+
     }
 
     @Override

@@ -1,12 +1,15 @@
 package com.justin.truckfinder.app;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.util.LruCache;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.LatLng;
@@ -42,6 +45,7 @@ public class FoodTruckDataGetter {
 
     private static ArrayList<FoodTruckData> listOfFoodTrucks;
     private static ArrayList<FoodTruckData> incompleteFoodTrucks;
+    private static ArrayList<PlacesPhotoData> arrayOfPhotos;
     private static OnDataReceivedListener callback;
     private String myAPIGoogle;
     private static String myAPIFoursquare;
@@ -50,7 +54,9 @@ public class FoodTruckDataGetter {
     private static RequestQueue requestQueue;
     private static double userLatitude;
     private static double userLongitude;
+    private static String phoneNumberFormatted;
     private static LatLng userLatLng;
+    private static ImageLoader mImageLoader;
     //
     // Singleton pattern here:
     //
@@ -90,6 +96,7 @@ public class FoodTruckDataGetter {
         GPSLocation = aDeviceLocation;
         incompleteFoodTrucks = new ArrayList<FoodTruckData>();
         listOfFoodTrucks = new ArrayList<FoodTruckData>();
+        arrayOfPhotos = new ArrayList<PlacesPhotoData>();
 
         performFoursquareFoodTruckRequestFoursquare();
 
@@ -103,7 +110,7 @@ public class FoodTruckDataGetter {
     private static final String categoryID = "4bf58dd8d48988d1cb941735"; // foursquare Food Truck category ID
     private static final String clientID = "MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY";
     private static final String clientSecret = "3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2";
-    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=750&categoryId="+categoryID+"&client_id="+clientID+"&client_secret="+ clientSecret;
+    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=1000&categoryId="+categoryID+"&client_id="+clientID+"&client_secret="+ clientSecret;
 
     private static void performFoursquareFoodTruckRequestFoursquare() {
 
@@ -145,13 +152,13 @@ public class FoodTruckDataGetter {
                     JSONArray resultArray = jsonResponse.getJSONArray("venues");
                     incompleteFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     // TODO: TEMPORARILY PARSING FOR 5 FOOD TRUCK DATA OBJECTS
-                    int lengthArray = 0;
-                    if(resultArray.length() <= 10){
-                        lengthArray = resultArray.length();
-                    }else{
-                        lengthArray = 20;
-                    }
-                    for (int i = 0; i < lengthArray; i++) {
+//                    int lengthArray = 0;
+//                    if(resultArray.length() <= 10){
+//                        lengthArray = resultArray.length();
+//                    }else{
+//                        lengthArray = 20;
+//                    }
+                    for (int i = 0; i < resultArray.length(); i++) {
 
                         FoodTruckData foodTruckData = new FoodTruckData("unknown");
                         JSONObject aResult = resultArray.getJSONObject(i);
@@ -252,7 +259,7 @@ public class FoodTruckDataGetter {
                     }
                     incompleteFoodTrucks.addAll(listOfFoodTrucks);
                     //Line below to be used only for debugging when necessary
-//                    FoodTruckStorage.saveMyData(context, incompleteFoodTrucks);
+//                    FoodTruckStorage.saveMyFoodTruckData(context, incompleteFoodTrucks);
 //                    notifyOfDataChanged();
                     performAdditionalGoogleSearches();
 
@@ -270,7 +277,7 @@ public class FoodTruckDataGetter {
         Iterator<FoodTruckData> i = incompleteFoodTrucks.iterator();
         while (i.hasNext()){
             FoodTruckData foodTruckData = i.next();
-            nearbySearchGooglePlaces(foodTruckData.getFourSquareName());
+            nearbySearchGooglePlaces(foodTruckData.getFourSquareName(), foodTruckData.getPhoneNumberFormatted());
             i.remove();
         }
     }
@@ -285,28 +292,24 @@ public class FoodTruckDataGetter {
     private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor="+SENSOR+"&key="+ GOOGLE_PLACES_API_KEY;
 
 //      private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=food&name=torchys";
-    private static void nearbySearchGooglePlaces(String aFoursquareName) {
-
+    private static void nearbySearchGooglePlaces(String aFoursquareName, String aFormattedPhoneNumber) {
+    phoneNumberFormatted = aFormattedPhoneNumber;
     String myAPIGoogle = "ERROR";
         StringBuilder stringBuilderGoog = new StringBuilder(myAPIGooglePartial);
-        // &location=30.256496,-97.747128
-        // &radius=750
-        // &keyword=truck,food"
+
         try {
-//            StringBuilder stringBuilder = new StringBuilder(myAPIGooglePartial);
+
             stringBuilderGoog.append("&location=" + GPSLocation);
             stringBuilderGoog.append("&radius=750");
-//            stringBuilder.append("&keyword=" +
+
             stringBuilderGoog.append("&keyword=food");
-//            stringBuilder.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
+
             stringBuilderGoog.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
 
 
             myAPIGoogle = stringBuilderGoog.toString();
 
-//            myAPIGoogle.replace("+",",");
-//            myAPIGoogle.replace("%27","");
-//            myAPIGoogle.replace("%2","");
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -343,8 +346,12 @@ public class FoodTruckDataGetter {
 
                         FoodTruckData foodTruckData = new FoodTruckData();
 
-                        JSONObject aResult = resultArray.getJSONObject(i);
-                        JSONObject geometry = aResult.getJSONObject("geometry");
+                        //added for "photos" which has an array and an object within it
+
+
+
+                        JSONObject aResultArray = resultArray.getJSONObject(i);
+                        JSONObject geometry = aResultArray.getJSONObject("geometry");
                         JSONObject location = geometry.getJSONObject("location");
 
 
@@ -362,13 +369,20 @@ public class FoodTruckDataGetter {
                             Log.e("USERLONG", "there was an error with USerLong");
                         }
 
-//                        try {
-//
-//                            foodTruckData.setUserLatLng(userLatLng);
-//                        }catch (Exception e) {
-//                            e.printStackTrace();
-//                            Log.e("USERLAT", "there was an error with USerLat");
-//                        }
+
+                        try {
+                            foodTruckData.setUserLatLng(userLatLng);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("USERLAT", "there was an error with USerLat");
+                        }
+
+                        try{
+                            foodTruckData.setPhoneNumberFormatted(phoneNumberFormatted);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Log.e("PhoneNumberFormatted", "there was a phone error");
+                        }
 
                         try {
                             Double latitude = location.getDouble("lat");
@@ -386,29 +400,26 @@ public class FoodTruckDataGetter {
                             Log.v("VOLLEY", "google longitude exception");
                         }
 
-
-                        if(foodTruckData.getIconUrl().equals("unknown")) {
                             try {
-                                String iconUrl = aResult.getString("icon");
+                                String iconUrl = aResultArray.getString("icon");
                                 foodTruckData.setIconUrl(iconUrl);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Log.v("VOLLEY", "Icon URL exception");
                                 foodTruckData.setIconUrl("not available");
                             }
-                        }
 
-//                        if(foodTruckData.getPlaceName().equals("unknown")) {
+
                             try {
-                                String placeName = aResult.getString("name");
+                                String placeName = aResultArray.getString("name");
                                 foodTruckData.setPlaceName(placeName);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Log.v("VOLLEY", "placeName FS error");
                             }
-//                        }
+
                         try {
-                            JSONObject openingHours = aResult.getJSONObject("opening_hours");
+                            JSONObject openingHours = aResultArray.getJSONObject("opening_hours");
                             boolean openNowBool = openingHours.getBoolean("open_now");
                             foodTruckData.setOpenNow(openNowBool);
                         } catch (JSONException e) {
@@ -418,7 +429,7 @@ public class FoodTruckDataGetter {
                         }
 
                         try {
-                            Double ratingValue = aResult.getDouble("rating");
+                            Double ratingValue = aResultArray.getDouble("rating");
                             foodTruckData.setRating(ratingValue);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -427,14 +438,14 @@ public class FoodTruckDataGetter {
                         }
 
                         try {
-                            String vicinityAddress = aResult.getString("vicinity");
+                            String vicinityAddress = aResultArray.getString("vicinity");
                             foodTruckData.setVicinityAddress(vicinityAddress);
                         }catch (JSONException e){
                             e.printStackTrace();
                             Log.v("VOLLEY", "vicinity address error");
                         }
                         try {
-                            int priceLevelInt = aResult.getInt("price_level");
+                            int priceLevelInt = aResultArray.getInt("price_level");
                             foodTruckData.setPriceLevel(priceLevelInt);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -443,13 +454,15 @@ public class FoodTruckDataGetter {
                         }
 
                         try{
-                            JSONObject photos = aResult.getJSONObject("photos");
-                            String photoReference = photos.getString("photo_reference");
-                            foodTruckData.setPhotoPlacesReference(photoReference);
+                            JSONArray jsonArrayPhoto = aResultArray.getJSONArray("photos");
+                            JSONObject jsonObject = jsonArrayPhoto.getJSONObject(i);
+                            String placesReferencePhoto = jsonObject.getString("photo_reference");
+                            foodTruckData.setPhotoPlacesReference(placesReferencePhoto);
                         }catch (JSONException e){
                             e.printStackTrace();
-                            Log.v("VOLLEY", "photo_reference error");
+                            Log.v("VOLLEY", "new photo reference error");
                         }
+
 
                         //FoodTruckDataGetter.this.listOfFoodTrucks.add(foodTruckDataArrayList);
                         someFoodTrucks.add(foodTruckData);
@@ -464,8 +477,9 @@ public class FoodTruckDataGetter {
 
 
                     listOfFoodTrucks.addAll(someFoodTrucks);
-                    FoodTruckStorage.saveMyData(context, listOfFoodTrucks);
-
+                    FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
+                    //TODO add feature that uses the code below to retrieve images
+//                    performGooglePhotosRequests();
                     notifyOfDataChanged();
 
                 } catch (Exception e) {
@@ -475,6 +489,73 @@ public class FoodTruckDataGetter {
         };
     }
 
+    private static void performGooglePhotosRequests() {
+
+        Iterator<FoodTruckData> i = listOfFoodTrucks.iterator();
+        while (i.hasNext()) {
+            FoodTruckData foodTruckData = i.next();
+            volleyGooglePlacesGetter(foodTruckData.getPhotoPlacesReference());
+        }
+    }
+
+    // SANITY CHECK https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRnAAAAYz2WamgLIFUvOUHss4JQlIm4UUeIx4hnTyZJnJVmAMDofX_JuAjFR5ZezzEMqykbcHOheCr3-OVCooEui8651Ah2fzmazGGiuPt_54qTdNQwLe9Azi6WRkQlOvRQMxx_Gf1heF9gMlXYrD8yXLKZEhIQ53kT8bhMLhVVB8vSf9v7ghoU5ZpLEMxMA3dzsm-SJ7Abzd_u14g&sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E
+
+    private static final String GOOGLE_PLACES_PHOTOS = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=";
+    private static final String GOOGLE_SENSOR = "&sensor=true";
+
+
+    public static void volleyGooglePlacesGetter(String aPlacesPhotoReferenceKey) {
+
+
+        String myGooglePlacesPhotoAPI = GOOGLE_PLACES_PHOTOS + aPlacesPhotoReferenceKey + GOOGLE_SENSOR + "&key=" + GOOGLE_PLACES_API_KEY;
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+
+        JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, myGooglePlacesPhotoAPI, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                // TODO Auto-generated method stub
+
+
+                FoodTruckData foodTruckDataGooglePhotos = new FoodTruckData();
+                ArrayList<FoodTruckData> googlePlacePhotos;
+
+                googlePlacePhotos = new ArrayList<FoodTruckData>(listOfFoodTrucks.size());
+                try {
+                    foodTruckDataGooglePhotos.setPhotoPlacesURL(response.toString());
+                    foodTruckDataGooglePhotos.setImageLoader(mImageLoader);
+                    googlePlacePhotos.add(foodTruckDataGooglePhotos);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                listOfFoodTrucks.addAll(googlePlacePhotos);
+                FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
+                notifyOfDataChanged();
+            }
+
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        queue.add(jsonObjRequest);
+        mImageLoader = new ImageLoader(queue, new ImageLoader.ImageCache() {
+            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(10);
+            public void putBitmap(String url, Bitmap bitmap) {
+                mCache.put(url, bitmap);
+            }
+            public Bitmap getBitmap(String url) {
+                return mCache.get(url);
+            }
+        });
+    }
 
 
     protected static Response.ErrorListener errorListener = new Response.ErrorListener() {
