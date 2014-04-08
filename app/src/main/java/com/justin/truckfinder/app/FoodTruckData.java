@@ -23,7 +23,7 @@ public class FoodTruckData implements Serializable{
     private String iconUrl = "unknown";
     private String placeName;
     private String fourSquareName = "--";
-    private boolean openNow = true;
+    private boolean openNow = Boolean.parseBoolean(null);
     private int priceLevel = 0;
     private double rating = 0;
     private String vicinityAddress = "--";

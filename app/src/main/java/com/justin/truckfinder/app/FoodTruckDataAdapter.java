@@ -87,7 +87,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
             RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize,boxSize);
-            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_END);
+            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_START);
+            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            compassLayout.addRule(RelativeLayout.ABOVE);
             myCompassView.setLayoutParams(compassLayout);
             myCompassView.setBackgroundResource(R.drawable.newcompass);
             myCompassView.setSensorDataCallback(sensorListener);
@@ -124,12 +126,29 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.placeNameView.setText(foodTruck.getPlaceName());
         foodTruckDataHolder.placeDistanceView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + "mi (" + Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft)");
 
-        foodTruckDataHolder.placePriceView.setText(String.valueOf("Price: " + foodTruck.getPriceLevel()));
-        foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating: " + foodTruck.getRating()));
+        if(Integer.valueOf((int) foodTruck.getPriceLevel()) == null){
+            foodTruckDataHolder.placePriceView.setText(String.valueOf("$ 0-4: " + foodTruck.getPriceLevel())+ "$");
+        }else {
+            foodTruckDataHolder.placePriceView.setText("- -");
+        }
+        if(Integer.valueOf((int) foodTruck.getRating()) == null){
+            foodTruckDataHolder.placeRatingView.setText(String.valueOf("* 1-5: " + foodTruck.getRating())+ "*");
+        }else {
+            foodTruckDataHolder.placeRatingView.setText("- -");
+        }
+
         foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
 
         foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
-        foodTruckDataHolder.placeOpenNowView.setText("Open: " + String.valueOf(foodTruck.getIsOpenNow()));
+        if(foodTruck.getIsOpenNow() == true){
+            foodTruckDataHolder.placeOpenNowView.setText("Currently Open");
+        }
+        if(foodTruck.getIsOpenNow() == false){
+            foodTruckDataHolder.placeOpenNowView.setText("Currently Closed");
+        }
+        if(foodTruck.getIsOpenNow() == Boolean.parseBoolean(null)){
+            foodTruckDataHolder.placeOpenNowView.setText("Status Unavailable");
+        }
         foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
         foodTruckDataHolder.placeExtraView.setText("extra");
 

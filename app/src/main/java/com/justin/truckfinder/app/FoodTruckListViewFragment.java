@@ -13,8 +13,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -22,7 +25,7 @@ import java.util.ArrayList;
  * Created by justindelta on 3/17/14.
  */
 
-public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener {
+public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener, View.OnClickListener{
     ProgressBar mProgressBar;
 
     protected float from;
@@ -38,7 +41,9 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     protected Context context;
     protected ArrayList<FoodTruckData> mTheDataReceived;
     protected Bundle mSavedState;
-
+    protected Button mReturnButton = null;
+    protected Button mPerformButton = null;
+    protected Spinner mSpinner = null;
     float[] matrixR = {};
     float[] matrixI = {};
     float[] valuesAccelerometer = {};
@@ -59,6 +64,40 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         }
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+
+        valuesAccelerometer = new float[3];
+        valuesMagneticField = new float[3];
+        matrixR = new float[9];
+        matrixI = new float[9];
+        matrixValues = new float[3];
+
+        Bundle extras = getActivity().getIntent().getExtras();
+
+        if(extras != null){
+            String detailValue = extras.getString("KeyForSending");
+            if(detailValue != null){
+                Toast.makeText(this, detailValue, Toast.LENGTH_SHORT).show();
+            }
+        }
+        mSpinner = (Spinner) findViewById(R.id.spinnerSelection);
+        mReturnButton.setOnClickListener({
+                Intent
+
+        });
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
 
     @Override
     public void setListShown(boolean shown) {
@@ -77,20 +116,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-
-        valuesAccelerometer = new float[3];
-        valuesMagneticField = new float[3];
-        matrixR = new float[9];
-        matrixI = new float[9];
-        matrixValues = new float[3];
-
-    }
 
     @Override
     public void onLocationChanged(Location location) {
@@ -156,6 +182,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     }
 
+
     protected interface OnItemSelectedListener {
         public void OnItemSelected();
     }
@@ -193,7 +220,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         if(savedInstanceState != null){
 
         }
-        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_listfragment_rows_plain, new ArrayList<FoodTruckData>());
+        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
         foodTruckDataAdapter.setSensorListener(this);
     }
@@ -202,6 +229,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public void onListItemClick(ListView l, View v, int position, long id) {
 
     }
+
 
     @Override
     public void onPause() {
