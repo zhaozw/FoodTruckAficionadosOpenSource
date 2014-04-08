@@ -130,15 +130,20 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         mPosition = aPosition;
 
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
+        String foodTruckNameLineOne = "";
+        String foodTruckNameLineTwo = "";
         if(foodTruck.getPlaceName().length() > 17){
-            String foodTruckNameLineOne = "";
-            String foodTruckNameLineTwo = "";
             foodTruckNameLineOne = foodTruck.getPlaceName().substring(0,17);
             foodTruckNameLineTwo = foodTruck.getPlaceName().substring(17,foodTruck.getPlaceName().length());
             foodTruckDataHolder.placeNameView.setText(foodTruckNameLineOne + "...");
             foodTruckDataHolder.placeNameViewTwo.setText("..." + foodTruckNameLineTwo);
-        }else{
+            foodTruckDataHolder.placeNameViewThree.setText("");
+            foodTruckNameLineOne = "";
+            foodTruckNameLineTwo = "";
+        }else if (foodTruck.getPlaceName().length() <= 17){
             foodTruckDataHolder.placeNameViewThree.setText((foodTruck.getPlaceName()));
+            foodTruckDataHolder.placeNameView.setText("");
+            foodTruckDataHolder.placeNameViewTwo.setText("");
 
         }
 

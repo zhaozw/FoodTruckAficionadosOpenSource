@@ -54,15 +54,15 @@ public class FoodTruckDataGetter {
     private static RequestQueue requestQueue;
     private static double userLatitude;
     private static double userLongitude;
-    private static String phoneNumberFormatted;
-    private static LatLng userLatLng;
+    protected static LatLng userLatLng;
     private static ImageLoader mImageLoader;
+
+
     //
     // Singleton pattern here:
     //
     private static FoodTruckDataGetter FOOD_GETTER_REFERENCE;
     private FoodTruckDataGetter(){
-
     }
     protected static FoodTruckDataGetter getInstance() {
         if (FOOD_GETTER_REFERENCE == null) {
@@ -70,8 +70,9 @@ public class FoodTruckDataGetter {
         }
         return FOOD_GETTER_REFERENCE;
     }
-    // SANITY CHECK https://api.foursquare.com/v2/venues/search?ll=30.256496,-97.747128&radius=750&categoryId=4bf58dd8d48988d1cb941735&client_id=MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY&client_secret=3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2&v=20140310
 
+
+    // SANITY CHECK https://api.foursquare.com/v2/venues/search?ll=30.256496,-97.747128&radius=750&categoryId=4bf58dd8d48988d1cb941735&client_id=MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY&client_secret=3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2&v=20140310
     // SANITY CHECK 2 (placement of parameters)
     // String myAPI = "https://api.foursquare.com/v2/venues/search?&radius=750&categoryId=4bf58dd8d48988d1cb941735&client_id=MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY&client_secret=3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2&v=20140310&ll=30.256496,-97.74712";
 
@@ -97,10 +98,7 @@ public class FoodTruckDataGetter {
         incompleteFoodTrucks = new ArrayList<FoodTruckData>();
         listOfFoodTrucks = new ArrayList<FoodTruckData>();
         arrayOfPhotos = new ArrayList<PlacesPhotoData>();
-
         performFoursquareFoodTruckRequestFoursquare();
-
-
     }
 
     private static void notifyOfDataChanged(){
@@ -115,7 +113,6 @@ public class FoodTruckDataGetter {
     private static void performFoursquareFoodTruckRequestFoursquare() {
 
         try {
-//"ll=30.256496,-97.74712"
             try {
                 StringBuilder stringBuilder = new StringBuilder(myAPIfoursquarePartial);
                 stringBuilder.append("&v=" + getCurrentDateString());
@@ -143,21 +140,12 @@ public class FoodTruckDataGetter {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-
                     // Extract the Place descriptions from the results
                     //Parsing the JSON
-
                     JSONObject jsonInitial = response;
                     JSONObject jsonResponse = jsonInitial.getJSONObject("response");
                     JSONArray resultArray = jsonResponse.getJSONArray("venues");
                     incompleteFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
-                    // TODO: TEMPORARILY PARSING FOR 5 FOOD TRUCK DATA OBJECTS
-//                    int lengthArray = 0;
-//                    if(resultArray.length() <= 10){
-//                        lengthArray = resultArray.length();
-//                    }else{
-//                        lengthArray = 20;
-//                    }
                     for (int i = 0; i < resultArray.length(); i++) {
 
                         FoodTruckData foodTruckData = new FoodTruckData("unknown");
@@ -255,21 +243,15 @@ public class FoodTruckDataGetter {
                         }
 
                         incompleteFoodTrucks.add(foodTruckData);
-                        //this is where the next thing should happen.
                     }
                     incompleteFoodTrucks.addAll(listOfFoodTrucks);
-                    //Line below to be used only for debugging when necessary
-//                    FoodTruckStorage.saveMyFoodTruckData(context, incompleteFoodTrucks);
-//                    notifyOfDataChanged();
                     performAdditionalGoogleSearches();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
         };
-
     }
 
     private static void performAdditionalGoogleSearches(){
@@ -293,7 +275,7 @@ public class FoodTruckDataGetter {
 
 //      private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=food&name=torchys";
     private static void nearbySearchGooglePlaces(String aFoursquareName, String aFormattedPhoneNumber) {
-    phoneNumberFormatted = aFormattedPhoneNumber;
+
     String myAPIGoogle = "ERROR";
         StringBuilder stringBuilderGoog = new StringBuilder(myAPIGooglePartial);
 
@@ -321,7 +303,7 @@ public class FoodTruckDataGetter {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                     myAPIGoogle,
                     null,
-                    createMyGooglePlacesReqSuccessListener(),
+                    createMyGooglePlacesReqSuccessListener(aFormattedPhoneNumber),
                     errorListener);
 
             requestQueue.add(jsonObjectRequest); //hey go get the data
@@ -331,7 +313,7 @@ public class FoodTruckDataGetter {
 
     }
 
-    private static Response.Listener<JSONObject> createMyGooglePlacesReqSuccessListener() {
+    private static Response.Listener<JSONObject> createMyGooglePlacesReqSuccessListener(String aFormattedPhoneNumber) {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -377,12 +359,13 @@ public class FoodTruckDataGetter {
                             Log.e("USERLAT", "there was an error with USerLat");
                         }
 
-                        try{
-                            foodTruckData.setPhoneNumberFormatted(phoneNumberFormatted);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            Log.e("PhoneNumberFormatted", "there was a phone error");
-                        }
+                        //TODO ask spawrks what the best way to fix this would be
+//                        try{
+//                            foodTruckData.setPhoneNumberFormatted(aFormattedPhoneNumber);
+//                        }catch (Exception e){
+//                            e.printStackTrace();
+//                            Log.e("PhoneNumberFormatted", "there was a phone error");
+//                        }
 
                         try {
                             Double latitude = location.getDouble("lat");
