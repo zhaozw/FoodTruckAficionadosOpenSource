@@ -1,5 +1,6 @@
 package com.justin.truckfinder.app;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,7 +11,12 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.hardware.GeomagneticField;
 import android.location.Location;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 
 /**
  * Created by justindelta on 3/26/14.
@@ -58,6 +64,8 @@ public class MyCompassView extends View {
     public void setSensorDataCallback(SensorDataRequestListener callback) {
         sensorDataCallback = callback;
     }
+
+
 
     protected float getDirection() {
         return sensorDataCallback.getDirection();
@@ -313,6 +321,5 @@ public class MyCompassView extends View {
         }
         return degree;
     }
-
 
 }

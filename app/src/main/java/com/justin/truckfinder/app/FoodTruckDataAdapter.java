@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -64,6 +67,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placeExtraView;
         public MyCompassView myCompassView;
         public NetworkImageView placeNetworkImageView;
+        public ImageButton imageButton;
     }
 
     @Override
@@ -117,6 +121,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
             foodTruckDataHolder.placeNetworkImageView = (NetworkImageView) row.findViewById(R.id.googlePlacesView);
             foodTruckDataHolder.myCompassView = myCompassView;
+            foodTruckDataHolder.imageButton = (ImageButton) row.findViewById(R.id.mapsButtonImplicit);
 
             row.setTag(foodTruckDataHolder);
 
@@ -127,6 +132,22 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         mPosition = aPosition;
 
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
+
+        foodTruckDataHolder.imageButton.setTag(foodTruckDataHolder);
+
+        foodTruckDataHolder.imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO Auto-generated method stub
+                FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
+                foodTruckDataHolder.imageButton.setImageResource(R.drawable.mapsiconcustom);
+                Toast.makeText(context, "B 1 button Clicked" + mPosition,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
 
         String foodTruckNameLineOne = "";
         String foodTruckNameLineTwo = "";

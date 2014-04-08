@@ -15,7 +15,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -29,8 +32,10 @@ import java.util.List;
  */
 //TODO ROTATION FIX FOR ALL 4 DIFFERENT ORIENTATIONS. IMPLICIT INTENT TO MAPS. UI ADJUSTMENTS. OPTIMIZATIONS
 public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener{
-    ProgressBar mProgressBar;
 
+    ProgressBar mProgressBar;
+    static final String SOME_VALUE = "int_value";
+    static final String SOME_OTHER_VALUE = "string_value";
     protected float from;
     protected float  to;
     private FoodTruckDataAdapter foodTruckDataAdapter;
@@ -48,13 +53,27 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     protected Button mPerformButton = null;
     protected Spinner mSpinner = null;
     float[] matrixR = {};
+    float[] matrixRremapped = {};
     float[] matrixI = {};
     float[] valuesAccelerometer = {};
     float[] valuesMagneticField = {};
     float[] matrixValues = {};
+    static RotationHelper mRotationHelper;
 
     public FoodTruckListViewFragment() {
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // Save custom values into the bundle
+        int someIntValue = 1;
+        String someStringValue = "string";
+        outState.putInt(SOME_VALUE, someIntValue);
+        outState.putString(SOME_OTHER_VALUE, someStringValue);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
@@ -79,7 +98,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         matrixR = new float[9];
         matrixI = new float[9];
         matrixValues = new float[3];
-
+        matrixRremapped = new float[9];
+        setRetainInstance(true);
 //        Bundle extras = getActivity().getIntent().getExtras();
 //
 //        if(extras != null){
@@ -146,11 +166,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.setListShown(shown);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -208,10 +223,25 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
                     valuesMagneticField);
 
             if (success) {
+//                String rotation = RotationHelper.getRotation(context);
+//
+//
+//                if(rotation.equals("ROTATION_90")) {
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+//                }
+//                if(rotation.equals("ROTATION_180")) {
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
+//                }
+//                if(rotation.equals("ROTATION_270")){
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
+//                }else if(rotation.equals("ROTATION_0")){
+//                    return;
+//                }
                 SensorManager.getOrientation(matrixR, matrixValues);
             }
         }
     }
+
 
     @Override
     public float getDirection() {
