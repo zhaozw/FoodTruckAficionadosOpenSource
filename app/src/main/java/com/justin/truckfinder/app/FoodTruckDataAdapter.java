@@ -17,14 +17,15 @@ import java.util.ArrayList;
  * Created by justindelta on 3/17/14.
  */
 public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
+    // necessary?
     private static final String TAG = FoodTruckDataAdapter.class.getSimpleName();
+    // necessary.
     private Context context;
     private int mLayoutResourceId;
     private ArrayList<FoodTruckData> foodTruckDataArrayList;
     private LayoutInflater layoutInflater;
     private MyCompassView.SensorDataRequestListener sensorListener;
     public int mPosition;
-
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
         super(aContext, aResource);
@@ -74,11 +75,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     public View getView(int aPosition, View aConvertView, ViewGroup aParent){
         FoodTruckDataHolder foodTruckDataHolder;
 
-
         View row = aConvertView;
 
         //inflate layout for a single view
-//        LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         if(aConvertView == null){
             row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
@@ -100,8 +99,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             myCompassView.setSensorDataCallback(sensorListener);
             aRelativeLayout.addView(myCompassView);
 
-//            //new class that draws something (line point or square) to screen FIRST. then add
-//            // how I want it to draw
+            // new class that draws something (line point or square) to screen FIRST. then add
+            // how I want it to draw
 
             foodTruckDataHolder = new FoodTruckDataHolder();
             foodTruckDataHolder.placeNameView = (TextView) row.findViewById(R.id.placeNameView);
@@ -116,11 +115,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placePhoneView = (TextView) row.findViewById(R.id.placePhoneView);
             foodTruckDataHolder.placePostalView = (TextView) row.findViewById(R.id.placePostalView);
             foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
-            foodTruckDataHolder.placeNetworkImageView = (NetworkImageView) row.findViewById(R.id.volleyImageListView);
+            foodTruckDataHolder.placeNetworkImageView = (NetworkImageView) row.findViewById(R.id.googlePlacesView);
             foodTruckDataHolder.myCompassView = myCompassView;
 
-
-//            foodTruckDataHolder.placeThumbnailView = (NetworkImageView) row.findViewById(R.id.placeThumbnailView);
             row.setTag(foodTruckDataHolder);
 
         }else{
@@ -130,41 +127,55 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         mPosition = aPosition;
 
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
+
         String foodTruckNameLineOne = "";
         String foodTruckNameLineTwo = "";
+
+        // necessary to ensure that the UI isn't being widened too much by devices with smaller screens
+        // FOR ALL THE FOLLOWING SETTEXT, IT IS IMPERATIVE THAT "sp" be used as the textSize type in the XML
+        // TO ENSURE THAT THE SIZE OF THE TEXT WILL BE TRANSFORMED IN ACCORDANCE WITH ANY CHANGES IN ACCESSIBILITY SETTINGS
+        // FOR THE OS FONT SIZE
         if(foodTruck.getPlaceName().length() > 17){
             foodTruckNameLineOne = foodTruck.getPlaceName().substring(0,17);
             foodTruckNameLineTwo = foodTruck.getPlaceName().substring(17,foodTruck.getPlaceName().length());
             foodTruckDataHolder.placeNameView.setText(foodTruckNameLineOne + "...");
             foodTruckDataHolder.placeNameViewTwo.setText("..." + foodTruckNameLineTwo);
             foodTruckDataHolder.placeNameViewThree.setText("");
+            // necessary otherwise other placeNames were being overwritten or scrambled
             foodTruckNameLineOne = "";
             foodTruckNameLineTwo = "";
         }else if (foodTruck.getPlaceName().length() <= 17){
             foodTruckDataHolder.placeNameViewThree.setText((foodTruck.getPlaceName()));
+            // necessary otherwise other placeNames were being overwritten or scrambled
             foodTruckDataHolder.placeNameView.setText("");
             foodTruckDataHolder.placeNameViewTwo.setText("");
-
         }
 
+        // String.format here is allowing me to use "%.2f" to indicate that the float will be converted to a string to 2 decimal places
         foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " miles");
         foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft");
 
         if(String.valueOf((int) foodTruck.getPriceLevel()) == null){
             foodTruckDataHolder.placePriceView.setText("- -");
         }else {
-            foodTruckDataHolder.placePriceView.setText(String.valueOf("Price (0-4) = $" + foodTruck.getPriceLevel()));
-
+            foodTruckDataHolder.placePriceView.setText(String.valueOf("Price (0-4) = " + foodTruck.getPriceLevel()));
         }
+
+        // for UI readability
         if(String.valueOf((int) foodTruck.getRating()) == null){
             foodTruckDataHolder.placeRatingView.setText("- -");
         }else {
-            foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating (1-5) = " + foodTruck.getRating())+ "*");
+            foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating (1-5) = " + foodTruck.getRating()));
         }
 
+        // every string with vicinity address was ending with ", Austin" which is 8 characters in length, thus
+        // the successful removal of a substring that is already too long
         foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length()-8));
 
-        foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
+        //TODO need to make sure that phone numbers provided by fourSquare are being saved to the ArrayList for each corresponding foodTruckData object
+        foodTruckDataHolder.placePhoneView.setText("Call " + foodTruck.getPhoneNumberFormatted());
+
+
         if(foodTruck.getIsOpenNow() == true){
             foodTruckDataHolder.placeOpenNowView.setText("Currently Open");
         }
@@ -174,6 +185,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         if(foodTruck.getIsOpenNow() == Boolean.parseBoolean(null)){
             foodTruckDataHolder.placeOpenNowView.setText("Status Unavailable");
         }
+
         if(foodTruck.getPostalCode() != null) {
             foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
         }else{

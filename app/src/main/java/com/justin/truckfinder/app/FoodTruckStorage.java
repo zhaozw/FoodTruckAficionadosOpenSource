@@ -69,37 +69,4 @@ public class FoodTruckStorage {
         }
         return null;
     }
-
-    protected static boolean saveMyPhotoData(Context aContext, ArrayList<PlacesPhotoData> myPhotoData) {
-        try {
-            FileOutputStream fos = aContext.openFileOutput(DATA_FILE_ARRAY, Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(myPhotoData);
-            oos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
-    }
-
-    protected static ArrayList<PlacesPhotoData> getMyPhotoData(Context aContext) {
-        try {
-            FileInputStream mFileInputStream = aContext.openFileInput(DATA_FILE_ARRAY);
-            ObjectInputStream mObjectInputStream = new ObjectInputStream(mFileInputStream);
-            Object readObject = mObjectInputStream.readObject();
-            mObjectInputStream.close();
-
-            if(readObject != null && readObject instanceof ArrayList) {
-                return (ArrayList<PlacesPhotoData>) readObject;
-            }
-        } catch (IOException anIOException) {
-            anIOException.printStackTrace();
-        } catch (ClassNotFoundException aClassNotFoundException) {
-            aClassNotFoundException.printStackTrace();
-        }
-        return null;
-    }
-
 }

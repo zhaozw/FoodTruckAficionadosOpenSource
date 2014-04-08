@@ -1,8 +1,6 @@
 package com.justin.truckfinder.app;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,34 +14,32 @@ public class FoodTruckData implements Serializable{
 
 
     //This is the data i want to display. Encapsulating only the data that I need.
-
-
+    //necessary
     private double latitude = 0;
     private double longitude = 0;
-    private String iconUrl = "unknown";
     private String placeName;
     private String fourSquareName = "--";
     private boolean openNow = Boolean.parseBoolean(null);
     private int priceLevel = 0;
     private double rating = 0;
-    private String vicinityAddress = "--";
-    private double distanceToPlaceFoursquare;
-    private LatLng userLatLng;
+    private String vicinityAddress;
     private String postalCode;
     private String phoneNumberFormatted;
     private String photoPlacesReference;
     private String photoPlacesURL;
-    private String detailsPlacesReference;
-    private NetworkImageView photoPlacesVolleyNetworkImageView;
     private static double userLatitude;
     private static double userLongitude;
-    private static float[] valuesAccelerometer;
-    private static float[] valuesMagneticField;
+    // necessary if using image network request (volley)
+    private ImageLoader imageLoader;
+    //TODO add try/catch in Google FoodTruckDataGetter for future scalability using Place Details
+    private String detailsPlacesReference;
+    //TODO determine if rotateDegrees and rotatePlaceDegrees are necessary
     private static float rotateDegrees;
     private static float rotatePlaceDegrees;
-    private ImageLoader imageLoader;
+    protected static float[] valuesAccelerometer;
+    protected static float[] valuesMagneticField;
 
-
+    // necessary
     private double calculateDistanceFeet;
     private double calculateDistanceMiles;
 
@@ -55,64 +51,24 @@ public class FoodTruckData implements Serializable{
     public FoodTruckData() {
     }
 
-    public static float getRotateDegrees() {
+
+
+    //TODO getters/setters used by myCompassView necessary for rotate and accel/magnetic?
+    public static double getRotateDegrees() {
         return rotateDegrees;
     }
 
-    public static void setRotateDegrees(float rotateDegrees) {
-        FoodTruckData.rotateDegrees = rotateDegrees;
+    public static void setRotateDegrees(float aRotateDegrees) {
+        rotateDegrees = aRotateDegrees;
     }
 
-    public static float getRotatePlaceDegrees() {
+    public static double getRotatePlaceDegrees() {
         return rotatePlaceDegrees;
     }
 
-    public static void setRotatePlaceDegrees(float rotatePlaceDegrees) {
-        FoodTruckData.rotatePlaceDegrees = rotatePlaceDegrees;
+    public static void setRotatePlaceDegrees(float aRotatePlaceDegrees) {
+        rotatePlaceDegrees = aRotatePlaceDegrees;
     }
-
-    public ImageLoader getImageLoader() {
-        return imageLoader;
-    }
-
-    public void setImageLoader(ImageLoader imageLoader) {
-        this.imageLoader = imageLoader;
-    }
-
-    public LatLng getUserLatLng() {
-        return userLatLng;
-    }
-
-    public void setUserLatLng(LatLng userLatLng) {
-        this.userLatLng = userLatLng;
-    }
-
-
-
-    public String getDetailsPlacesReference() {
-        return detailsPlacesReference;
-    }
-
-    public String getPhotoPlacesURL() {
-        return photoPlacesURL;
-    }
-
-    public void setPhotoPlacesURL(String photoPlacesURL) {
-        this.photoPlacesURL = photoPlacesURL;
-    }
-
-    public void setDetailsPlacesReference(String detailsPlacesReference) {
-        this.detailsPlacesReference = detailsPlacesReference;
-    }
-
-    public String getPhotoPlacesReference() {
-        return photoPlacesReference;
-    }
-
-    public void setPhotoPlacesReference(String photoPlacesReference) {
-        this.photoPlacesReference = photoPlacesReference;
-    }
-
     public static float[] getValuesAccelerometer() {
         return valuesAccelerometer;
     }
@@ -128,6 +84,33 @@ public class FoodTruckData implements Serializable{
     public static void setValuesMagneticField(float[] valuesMagneticField) {
         FoodTruckData.valuesMagneticField = valuesMagneticField;
     }
+
+    // TODO If using image volley, these are necessary.
+    public ImageLoader getImageLoader() {
+        return imageLoader;
+    }
+
+    public void setImageLoader(ImageLoader imageLoader) {
+        this.imageLoader = imageLoader;
+    }
+
+    public String getPhotoPlacesURL() {
+        return photoPlacesURL;
+    }
+
+    public void setPhotoPlacesURL(String photoPlacesURL) {
+        this.photoPlacesURL = photoPlacesURL;
+    }
+
+    public String getPhotoPlacesReference() {
+        return photoPlacesReference;
+    }
+
+    public void setPhotoPlacesReference(String photoPlacesReference) {
+        this.photoPlacesReference = photoPlacesReference;
+    }
+
+    // These are always necessary.
     public static double getUserLatitude() {
         return userLatitude;
     }
@@ -152,8 +135,6 @@ public class FoodTruckData implements Serializable{
         this.postalCode = postalCode;
     }
 
-
-
     public String getPhoneNumberFormatted() {
         return phoneNumberFormatted;
     }
@@ -176,14 +157,6 @@ public class FoodTruckData implements Serializable{
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
-    }
-
-    public String getIconUrl() {
-        return iconUrl;
-    }
-
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
     }
 
     public String getPlaceName() {
@@ -232,14 +205,6 @@ public class FoodTruckData implements Serializable{
 
     public void setVicinityAddress(String vicinityAddress) {
         this.vicinityAddress = vicinityAddress;
-    }
-
-    public double getDistanceToPlaceFourSquare() {
-        return distanceToPlaceFoursquare;
-    }
-
-    public double setDistanceToPlaceFourSquare(double aDistanceToPlace){
-        return this.distanceToPlaceFoursquare = aDistanceToPlace * 3.2808;
     }
 
     public double degreesToRadians(double degree) {
@@ -292,7 +257,6 @@ public class FoodTruckData implements Serializable{
     public void setDistanceCalculatedFeet(double aCalculateDistance) {
         this.calculateDistanceFeet = aCalculateDistance;
     }
-
     public double getDistanceCalculatedFeet() {
         return calculateDistanceFeet;
     }
