@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#f2f6cd">
+    android:background="#f2f6cd"
+    android:id="@+id/mainRelativeLayout">
 
     <com.android.volley.toolbox.NetworkImageView
         android:layout_width="wrap_content"
@@ -16,19 +17,24 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/mapsbuttoncustom"
+        android:background="@drawable/mapsbuttoncustomnew"
         android:id="@+id/mapsButtonImplicit"
         android:layout_alignParentRight="true"
+        android:scaleX=".8"
+        android:scaleY=".8"
         android:layout_centerVertical="true"/>
 
     <TextView
-        android:layout_width="125dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="3dp"
-        android:id="@+id/placeDistanceView"
-
+        android:paddingEnd="3dp"
+        android:paddingBottom="3dp"
+        android:paddingRight="3dp"
+        android:paddingStart="3dp"
+        android:id="@+id/placeDistanceMilesView"
+        android:paddingLeft="8dp"
         android:textColor="#15576b"
-        android:textSize="13sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         android:layout_gravity="bottom"
 
@@ -36,33 +42,73 @@
 
         android:layout_alignBaseline="@id/googlePlacesView"
         android:textAlignment="center" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="3dp"
+        android:paddingBottom="3dp"
+        android:paddingRight="3dp"
+        android:paddingStart="3dp"
+        android:id="@+id/placeDistanceFeetView"
+        android:paddingLeft="8dp"
+        android:textColor="#15576b"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:layout_gravity="bottom"
+        android:layout_below="@id/placeDistanceMilesView"
+        android:layout_alignParentLeft="true"
+        android:text="9323 miles"
+        android:layout_alignBaseline="@id/googlePlacesView"
+        android:textAlignment="center" />
+
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/placeInformation"
         android:layout_centerInParent="true">
-
         <TextView
             android:id="@+id/placeNameView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
-            android:text="placeName"
             android:textColor="#15576b"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:scrollHorizontally="false"
+            android:maxLines="2"
+            android:text="asdjasdjads"
+            />
 
+        <TextView
+            android:id="@+id/placeNameViewTwo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="3dp"
+            android:paddingLeft="8dp"
+            android:paddingStart="3dp"
+            android:paddingRight="3dp"
+            android:paddingEnd="3dp"
+            android:paddingTop="1dp"
+            android:textColor="#15576b"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:scrollHorizontally="false"
+            android:maxLines="1"
+            android:layout_below="@id/placeNameView"
+            android:layout_alignWithParentIfMissing="true"
+
+            />
         <TextView
             android:id="@+id/placeAddressView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/placeNameView"
             android:padding="3dp"
-            android:text="Addresssssssss"
             android:textColor="#15576b"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_below="@id/placeNameViewTwo"/>
+
         <TextView
             android:id="@+id/placePriceView"
             android:layout_width="wrap_content"
@@ -71,19 +117,18 @@
             android:padding="3dp"
             android:text="price"
             android:textColor="#7da4b3"
-            android:textSize="13sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/placeRatingView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/placeAddressView"
-            android:layout_toRightOf="@id/placePriceView"
+            android:layout_below="@id/placePriceView"
             android:padding="3dp"
             android:text="rating"
             android:textColor="#7da4b3"
-            android:textSize="13sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
         <TextView
             android:id="@+id/placePhoneView"
@@ -93,7 +138,7 @@
             android:padding="3dp"
             android:text="placePhone"
             android:textColor="#7da4b3"
-            android:textSize="13sp"/>
+            android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/placeOpenNowView"
@@ -103,7 +148,25 @@
             android:padding="3dp"
             android:text="placeOpen"
             android:textColor="#7da4b3"
-            android:textSize="13sp" />
+            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/placePostalView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/placeOpenNowView"
+            android:padding="3dp"
+
+            android:textColor="#7da4b3"
+            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/placeExtraView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/placePostalView"
+            android:padding="3dp"
+
+            android:textColor="#7da4b3"
+            android:textSize="15sp" />
 
 
 

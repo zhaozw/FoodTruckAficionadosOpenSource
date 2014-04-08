@@ -3,6 +3,9 @@ package com.justin.truckfinder.app;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,6 +13,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,12 +24,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Created by justindelta on 3/17/14.
  */
 
-public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener, View.OnClickListener{
+public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener{
     ProgressBar mProgressBar;
 
     protected float from;
@@ -77,27 +82,66 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         matrixI = new float[9];
         matrixValues = new float[3];
 
-        Bundle extras = getActivity().getIntent().getExtras();
-
-        if(extras != null){
-            String detailValue = extras.getString("KeyForSending");
-            if(detailValue != null){
-                Toast.makeText(this, detailValue, Toast.LENGTH_SHORT).show();
-            }
-        }
-        mSpinner = (Spinner) findViewById(R.id.spinnerSelection);
-        mReturnButton.setOnClickListener({
-                Intent
-
-        });
+//        Bundle extras = getActivity().getIntent().getExtras();
+//
+//        if(extras != null){
+//            String detailValue = extras.getString("KeyForSending");
+//            if(detailValue != null){
+//                Toast.makeText(this, Integer.parseInt(detailValue), Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//        mSpinner = (Spinner) findViewById(R.id.spinnerSelection);
+//        mReturnButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                Intent returnIntent = new Intent();
+//                String mySelection = mSpinner.getSelectedItem().toString();
+//                returnIntent.putExtra("KeyForReturning",mySelection);
+//                setResult(RESULT_OK, returnIntent);
+//                finish();
+//            }
+//        });
+//
+//        mPerformButton = (Button) findViewById(R.id.mapsButtonImplicit);
+//        mPerformButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//            int position = mSpinner.getSelectedItemPosition();
+//            Intent implicitIntent = null;
+//            switch (position){
+//                case 0:
+//
+//                    implicitIntent = new Intent(Intent.ACTION_VIEW,
+//                            Uri.parse("geo:");
+//                    break;
+//
+//            }
+//
+//            if(implicitIntent != null){
+//                if(isIntentAvailable(implicitIntent) == true){
+//                    startActivity(implicitIntent);
+//                }else {
+//                    Toast.makeText(view.getContext(), "no application is available", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//        });
 
     }
 
-    @Override
-    public void onClick(View v) {
+    public PackageManager packageManager;
 
+    public PackageManager getPackageManager() {
+        return packageManager;
     }
 
+    public boolean isIntentAvailable(Intent intent){
+        PackageManager packageManager = getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+        boolean isIntentSafe = activities.size() > 0;
+        return  isIntentSafe;
+    }
 
     @Override
     public void setListShown(boolean shown) {

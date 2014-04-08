@@ -42,23 +42,11 @@ public class FoodTruckData implements Serializable{
     private static float rotateDegrees;
     private static float rotatePlaceDegrees;
     private ImageLoader imageLoader;
-    private static boolean isPhotoReference = false;
-    private static float[] matrixR;
-    private static float[] matrixI;
-    private static float[] matrixValues;
-    private static double azimuthIsDirection;
+
 
     private double calculateDistanceFeet;
     private double calculateDistanceMiles;
 
-
-    public static boolean isIsPhotoReference() {
-        return isPhotoReference;
-    }
-
-    public static void setIsPhotoReference(boolean isPhotoReference) {
-        FoodTruckData.isPhotoReference = isPhotoReference;
-    }
 
     public FoodTruckData(String fourSquareName) {
         this.fourSquareName = fourSquareName;
@@ -123,7 +111,6 @@ public class FoodTruckData implements Serializable{
 
     public void setPhotoPlacesReference(String photoPlacesReference) {
         this.photoPlacesReference = photoPlacesReference;
-        FoodTruckData.isPhotoReference = true;
     }
 
     public static float[] getValuesAccelerometer() {

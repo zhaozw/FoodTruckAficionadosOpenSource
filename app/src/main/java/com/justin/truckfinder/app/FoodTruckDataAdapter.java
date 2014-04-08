@@ -50,7 +50,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
     public class FoodTruckDataHolder {
         public TextView placeNameView;
-        public TextView placeDistanceView;
+        public TextView placeNameViewTwo;
+        public TextView placeDistanceMilesView;
+        public TextView placeDistanceFeetView;
         public TextView placeRatingView;
         public TextView placePriceView;
         public TextView placeAddressView;
@@ -89,7 +91,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize,boxSize);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_START);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             compassLayout.addRule(RelativeLayout.ABOVE);
+            compassLayout.addRule(RelativeLayout.CENTER_IN_PARENT);
             myCompassView.setLayoutParams(compassLayout);
             myCompassView.setBackgroundResource(R.drawable.newcompass);
             myCompassView.setSensorDataCallback(sensorListener);
@@ -100,7 +104,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             foodTruckDataHolder = new FoodTruckDataHolder();
             foodTruckDataHolder.placeNameView = (TextView) row.findViewById(R.id.placeNameView);
-            foodTruckDataHolder.placeDistanceView = (TextView) row.findViewById(R.id.placeDistanceView);
+            foodTruckDataHolder.placeNameViewTwo = (TextView) row.findViewById(R.id.placeNameViewTwo);
+            foodTruckDataHolder.placeDistanceMilesView = (TextView) row.findViewById(R.id.placeDistanceMilesView);
+            foodTruckDataHolder.placeDistanceFeetView = (TextView) row.findViewById(R.id.placeDistanceFeetView);
             foodTruckDataHolder.placePriceView = (TextView) row.findViewById(R.id.placePriceView);
             foodTruckDataHolder.placeRatingView = (TextView) row.findViewById(R.id.placeRatingView);
             foodTruckDataHolder.placeAddressView = (TextView) row.findViewById(R.id.placeAddressView);
@@ -122,22 +128,30 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         mPosition = aPosition;
 
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
+        if(foodTruck.getPlaceName().length() > 17){
+            String foodTruckNameLineOne;
+            String foodTruckNameLineTwo;
+            foodTruckNameLineOne = foodTruck.getPlaceName().substring(0,17);
+            foodTruckNameLineTwo = foodTruck.getPlaceName().substring(17,foodTruck.getPlaceName().length());
+            foodTruckDataHolder.placeNameView.setText(foodTruckNameLineOne + "...");
+            foodTruckDataHolder.placeNameViewTwo.setText("..." + foodTruckNameLineTwo);
+        }
+        foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " miles");
+        foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft");
 
-        foodTruckDataHolder.placeNameView.setText(foodTruck.getPlaceName());
-        foodTruckDataHolder.placeDistanceView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + "mi (" + Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft)");
-
-        if(Integer.valueOf((int) foodTruck.getPriceLevel()) == null){
-            foodTruckDataHolder.placePriceView.setText(String.valueOf("$ 0-4: " + foodTruck.getPriceLevel())+ "$");
-        }else {
+        if(String.valueOf((int) foodTruck.getPriceLevel()) == null){
             foodTruckDataHolder.placePriceView.setText("- -");
-        }
-        if(Integer.valueOf((int) foodTruck.getRating()) == null){
-            foodTruckDataHolder.placeRatingView.setText(String.valueOf("* 1-5: " + foodTruck.getRating())+ "*");
         }else {
+            foodTruckDataHolder.placePriceView.setText(String.valueOf("Price (0-4) = $" + foodTruck.getPriceLevel()));
+
+        }
+        if(String.valueOf((int) foodTruck.getRating()) == null){
             foodTruckDataHolder.placeRatingView.setText("- -");
+        }else {
+            foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating (1-5) = " + foodTruck.getRating())+ "*");
         }
 
-        foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
+        foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length()-8));
 
         foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
         if(foodTruck.getIsOpenNow() == true){
@@ -149,15 +163,19 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         if(foodTruck.getIsOpenNow() == Boolean.parseBoolean(null)){
             foodTruckDataHolder.placeOpenNowView.setText("Status Unavailable");
         }
-        foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
-        foodTruckDataHolder.placeExtraView.setText("extra");
-
-        if(foodTruck.getPhotoPlacesURL() == null){
-            foodTruckDataHolder.placeNetworkImageView.setDefaultImageResId(R.drawable.ic_launcher);
-        }else if(foodTruck.getPhotoPlacesURL() != null) {
-            FoodTruckData foodTruckImage = this.foodTruckDataArrayList.get(mPosition + foodTruckDataArrayList.size());
-            foodTruckDataHolder.placeNetworkImageView.setImageUrl(foodTruckImage.getPhotoPlacesURL(), foodTruckImage.getImageLoader());
+        if(foodTruck.getPostalCode() != null) {
+            foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
+        }else{
+            foodTruckDataHolder.placePostalView.setText(" ");
         }
+        foodTruckDataHolder.placeExtraView.setText(" ");
+
+//        if(foodTruck.getPhotoPlacesURL() == null){
+//            foodTruckDataHolder.placeNetworkImageView.setDefaultImageResId(R.drawable.ic_launcher);
+//        }else if(foodTruck.getPhotoPlacesURL() != null) {
+//            FoodTruckData foodTruckImage = this.foodTruckDataArrayList.get(mPosition + foodTruckDataArrayList.size());
+//            foodTruckDataHolder.placeNetworkImageView.setImageUrl(foodTruckImage.getPhotoPlacesURL(), foodTruckImage.getImageLoader());
+//        }
         foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude(), foodTruck.getLatitude(), foodTruck.getLongitude());
         //todo: give myCompassView the sensor data to do the calculation (you already gave it the vectors)
 
