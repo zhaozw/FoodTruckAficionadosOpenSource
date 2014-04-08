@@ -73,15 +73,28 @@
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:textColor="#15576b"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:textStyle="bold"
             android:scrollHorizontally="false"
-            android:maxLines="2"
-            android:text="asdjasdjads"
             />
 
         <TextView
-            android:id="@+id/placeNameViewTwo"
+        android:id="@+id/placeNameViewTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="3dp"
+        android:paddingLeft="8dp"
+        android:paddingStart="3dp"
+        android:paddingRight="3dp"
+        android:paddingEnd="3dp"
+        android:paddingTop="1dp"
+        android:textColor="#15576b"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_below="@id/placeNameView"
+        />
+        <TextView
+            android:id="@+id/placeNameViewThree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="3dp"
@@ -91,12 +104,8 @@
             android:paddingEnd="3dp"
             android:paddingTop="1dp"
             android:textColor="#15576b"
-            android:textSize="15sp"
+            android:textSize="19sp"
             android:textStyle="bold"
-            android:scrollHorizontally="false"
-            android:maxLines="1"
-            android:layout_below="@id/placeNameView"
-            android:layout_alignWithParentIfMissing="true"
 
             />
         <TextView

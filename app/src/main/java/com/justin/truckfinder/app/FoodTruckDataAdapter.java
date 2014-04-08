@@ -51,6 +51,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     public class FoodTruckDataHolder {
         public TextView placeNameView;
         public TextView placeNameViewTwo;
+        public TextView placeNameViewThree;
         public TextView placeDistanceMilesView;
         public TextView placeDistanceFeetView;
         public TextView placeRatingView;
@@ -105,6 +106,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder = new FoodTruckDataHolder();
             foodTruckDataHolder.placeNameView = (TextView) row.findViewById(R.id.placeNameView);
             foodTruckDataHolder.placeNameViewTwo = (TextView) row.findViewById(R.id.placeNameViewTwo);
+            foodTruckDataHolder.placeNameViewThree = (TextView) row.findViewById(R.id.placeNameViewThree);
             foodTruckDataHolder.placeDistanceMilesView = (TextView) row.findViewById(R.id.placeDistanceMilesView);
             foodTruckDataHolder.placeDistanceFeetView = (TextView) row.findViewById(R.id.placeDistanceFeetView);
             foodTruckDataHolder.placePriceView = (TextView) row.findViewById(R.id.placePriceView);
@@ -129,13 +131,17 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
         if(foodTruck.getPlaceName().length() > 17){
-            String foodTruckNameLineOne;
-            String foodTruckNameLineTwo;
+            String foodTruckNameLineOne = "";
+            String foodTruckNameLineTwo = "";
             foodTruckNameLineOne = foodTruck.getPlaceName().substring(0,17);
             foodTruckNameLineTwo = foodTruck.getPlaceName().substring(17,foodTruck.getPlaceName().length());
             foodTruckDataHolder.placeNameView.setText(foodTruckNameLineOne + "...");
             foodTruckDataHolder.placeNameViewTwo.setText("..." + foodTruckNameLineTwo);
+        }else{
+            foodTruckDataHolder.placeNameViewThree.setText((foodTruck.getPlaceName()));
+
         }
+
         foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " miles");
         foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft");
 
