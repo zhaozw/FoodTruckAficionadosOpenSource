@@ -101,66 +101,9 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         matrixValues = new float[3];
         matrixRremapped = new float[9];
         setRetainInstance(true);
-//        Bundle extras = getActivity().getIntent().getExtras();
-//
-//        if(extras != null){
-//            String detailValue = extras.getString("KeyForSending");
-//            if(detailValue != null){
-//                Toast.makeText(this, Integer.parseInt(detailValue), Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//
-//        mSpinner = (Spinner) findViewById(R.id.spinnerSelection);
-//        mReturnButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//                Intent returnIntent = new Intent();
-//                String mySelection = mSpinner.getSelectedItem().toString();
-//                returnIntent.putExtra("KeyForReturning",mySelection);
-//                setResult(RESULT_OK, returnIntent);
-//                finish();
-//            }
-//        });
-//
-//        mPerformButton = (Button) findViewById(R.id.mapsButtonImplicit);
-//        mPerformButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//            int position = mSpinner.getSelectedItemPosition();
-//            Intent implicitIntent = null;
-//            switch (position){
-//                case 0:
-//
-//                    implicitIntent = new Intent(Intent.ACTION_VIEW,
-//                            Uri.parse("geo:");
-//                    break;
-//
-//            }
-//
-//            if(implicitIntent != null){
-//                if(isIntentAvailable(implicitIntent) == true){
-//                    startActivity(implicitIntent);
-//                }else {
-//                    Toast.makeText(view.getContext(), "no application is available", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//        });
 
     }
 
-    public PackageManager packageManager;
-
-    public PackageManager getPackageManager() {
-        return packageManager;
-    }
-
-    public boolean isIntentAvailable(Intent intent){
-        PackageManager packageManager = getPackageManager();
-        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
-        boolean isIntentSafe = activities.size() > 0;
-        return  isIntentSafe;
-    }
 
     @Override
     public void setListShown(boolean shown) {
@@ -288,10 +231,10 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST);
     }
 
+    IntentsData intentsData;
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         //for the first time, see if they have data while you're waiting for new data.
         if(savedInstanceState != null){
 
@@ -299,10 +242,18 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_rows, new ArrayList<FoodTruckData>());
         setListAdapter(foodTruckDataAdapter);
         foodTruckDataAdapter.setSensorListener(this);
+
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+
+
 
     }
 

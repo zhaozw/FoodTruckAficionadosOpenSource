@@ -24,6 +24,14 @@
         android:scaleX="1.1"
         android:scaleY="1.1"
         android:layout_marginRight="10dp"/>
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerSelection"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:entries="@array/actions"
+        android:layout_alignStart="@+id/mapsButtonImplicit" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -176,12 +184,5 @@
 
 
     </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
 
-
-
-        </RelativeLayout>
 </RelativeLayout>

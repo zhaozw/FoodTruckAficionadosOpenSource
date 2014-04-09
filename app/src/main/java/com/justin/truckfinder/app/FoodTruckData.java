@@ -40,7 +40,7 @@ public class FoodTruckData implements Serializable{
     private static float rotatePlaceDegrees;
     protected static float[] valuesAccelerometer;
     protected static float[] valuesMagneticField;
-    public static Intent intentMap;
+
 
     // necessary
     private double calculateDistanceFeet;
@@ -54,13 +54,6 @@ public class FoodTruckData implements Serializable{
     public FoodTruckData() {
     }
 
-    public static Intent getIntentMap() {
-        return intentMap;
-    }
-
-    public static void setIntentMap(Intent anIntentMap) {
-        intentMap = anIntentMap;
-    }
 
     //TODO getters/setters used by myCompassView necessary for rotate and accel/magnetic?
     public static double getRotateDegrees() {

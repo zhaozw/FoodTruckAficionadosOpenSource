@@ -31,6 +31,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private MyCompassView.SensorDataRequestListener sensorListener;
     public int mPosition;
     public FoodTruckNearbyActivity foodTruckNearbyActivity;
+    public IntentsData intentsData;
 
 
     public interface IntentListener{
@@ -158,6 +159,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
                     data = String.format("%s?z=%s", data, 11);
 
                 intent.setData(Uri.parse(data));
+                intentsData.setIntentForGeo(intent);
                 // startActivity(intent) WON'T WORK, so far.
 
             }
@@ -255,12 +257,21 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         return row;
     }
 
+    View.OnClickListener PopupListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view){
+            Integer viewPosition = (Integer) view.getTag();
+        }
+    };
+
     //TODO find out why there is a recursion warning and a better way of implementing the following, if any
     public FoodTruckData getFoodTruckData(){
         FoodTruckData foodTruckNew = getFoodTruckData();
         return foodTruckNew;
     }
 
+    public void launchIntent(){
 
+    }
 
 }

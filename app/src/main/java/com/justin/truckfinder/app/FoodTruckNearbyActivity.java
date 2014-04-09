@@ -5,18 +5,29 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import java.util.List;
 
 
 public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener, FoodTruckListViewFragment.OnIntentSelectedListener{
     ProgressBar mProgressBar;
 
+    private Button mReturnButton = null;
+    private Button mPerformButton = null;
+    private Spinner mSpinner = null;
 
     @Override
     public void setContentView(View view) {
@@ -43,13 +54,14 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
         return mProgressBar;
     }
 
-
-
+    public void setProgressBar(ProgressBar mProgressBar) {
+        this.mProgressBar = mProgressBar;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getProgressBar();
+//        setProgressBar(getProgressBar());
         setContentView(R.layout.activity_food_truck_nearby);
         if (findViewById(R.id.container) != null) {
             if (savedInstanceState != null) {
@@ -62,8 +74,65 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
                     .commit();
         }
 
+//                Bundle extras = getActivity().getIntent().getExtras();
+//
+//        if(extras != null){
+//            String detailValue = extras.getString("KeyForSending");
+//            if(detailValue != null){
+//                Toast.makeText(this, Integer.parseInt(detailValue), Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//        mSpinner = (Spinner) findViewById(R.id.spinnerSelection);
+//        mReturnButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                Intent returnIntent = new Intent();
+//                String mySelection = mSpinner.getSelectedItem().toString();
+//                returnIntent.putExtra("KeyForReturning",mySelection);
+//                setResult(RESULT_OK, returnIntent);
+//                finish();
+//            }
+//        });
+//
+//        mPerformButton = (Button) findViewById(R.id.mapsButtonImplicit);
+//        mPerformButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//            int position = mSpinner.getSelectedItemPosition();
+//            Intent implicitIntent = null;
+//            switch (position){
+//                case 0:
+//                    //nothing selected
+//                    break;
+//                case 1:
+//                    //go to GEO
+//                    implicitIntent = new Intent(Intent.ACTION_VIEW, Uri.parse());
+//                    break;
+//                case 2:
+//                    // call food truck
+//                    implicitIntent = new Intent(Intent.ACTION_VIEW,
+//                            Uri.parse("geotel:"));
+//                    break;
+//            }
+//            if(implicitIntent != null){
+//                if(isIntentAvailable(implicitIntent) == true){
+//                    startActivity(implicitIntent);
+//                }else {
+//                    Toast.makeText(view.getContext(), "no application is available", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//        }
+//        });
     }
 
+    public boolean isIntentAvailable(Intent intent){
+        PackageManager packageManager = getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
+        boolean isIntentSafe = activities.size() > 0;
+        return  isIntentSafe;
+    }
 
     public void startActivityForIntent(Intent intent){
         startActivity(intent);
