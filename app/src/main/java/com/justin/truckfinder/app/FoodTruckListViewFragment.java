@@ -63,6 +63,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public FoodTruckListViewFragment() {
     }
 
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // Save custom values into the bundle
@@ -254,9 +255,12 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     }
 
-
     protected interface OnItemSelectedListener {
         public void OnItemSelected();
+    }
+
+    protected interface OnIntentSelectedListener {
+        public void OnIntentReceived();
     }
 
     @Override

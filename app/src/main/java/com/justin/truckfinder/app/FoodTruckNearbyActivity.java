@@ -3,6 +3,8 @@ package com.justin.truckfinder.app;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 
-public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener{
+public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener, FoodTruckListViewFragment.OnIntentSelectedListener{
     ProgressBar mProgressBar;
 
 
@@ -59,6 +61,13 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
                     .add(R.id.container, new FoodTruckListViewFragment())
                     .commit();
         }
+
+    }
+
+
+    public void startActivityForIntent(Intent intent){
+        startActivity(intent);
+
     }
 
     @Override
@@ -80,9 +89,13 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void OnIntentReceived() {
+        startActivity(FoodTruckData.getIntentMap());
+    }
 
 
-/**
+    /**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {

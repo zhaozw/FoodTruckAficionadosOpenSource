@@ -1,6 +1,8 @@
 package com.justin.truckfinder.app;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,7 +17,7 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
 
-/**
+/*
  * Created by justindelta on 3/17/14.
  */
 public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
@@ -29,6 +30,12 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private LayoutInflater layoutInflater;
     private MyCompassView.SensorDataRequestListener sensorListener;
     public int mPosition;
+    public FoodTruckNearbyActivity foodTruckNearbyActivity;
+
+
+    public interface IntentListener{
+        public void passIntent();
+    }
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
         super(aContext, aResource);
@@ -131,9 +138,10 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         mPosition = aPosition;
 
-        FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
+        final FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
 
         foodTruckDataHolder.imageButton.setTag(foodTruckDataHolder);
+        foodTruckDataHolder.placePhoneView.setTag(foodTruckDataHolder);
 
         foodTruckDataHolder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,8 +149,29 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
                 // TODO Auto-generated method stub
                 FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
                 foodTruckDataHolder.imageButton.setImageResource(R.drawable.mapsiconcustom);
-                Toast.makeText(context, "B 1 button Clicked" + mPosition,
+                Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
                         Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                String data = String.format("geo:%s,%s", foodTruck.getLatitude(), foodTruck.getLongitude());
+
+                    data = String.format("%s?z=%s", data, 11);
+
+                intent.setData(Uri.parse(data));
+                // startActivity(intent) WON'T WORK, so far.
+
+            }
+        });
+
+        foodTruckDataHolder.placePhoneView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO Auto-generated method stub
+                FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
+                foodTruckDataHolder.imageButton.setImageResource(R.drawable.mapsiconcustom);
+                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
+                        Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -225,6 +254,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         return row;
     }
+
+    //TODO find out why there is a recursion warning and a better way of implementing the following, if any
     public FoodTruckData getFoodTruckData(){
         FoodTruckData foodTruckNew = getFoodTruckData();
         return foodTruckNew;
