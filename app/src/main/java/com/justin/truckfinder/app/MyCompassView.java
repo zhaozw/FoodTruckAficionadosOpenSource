@@ -1,6 +1,5 @@
 package com.justin.truckfinder.app;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,12 +10,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.hardware.GeomagneticField;
 import android.location.Location;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.Display;
-import android.view.Surface;
 import android.view.View;
-import android.view.WindowManager;
 
 /**
  * Created by justindelta on 3/26/14.
@@ -51,6 +46,7 @@ public class MyCompassView extends View {
     private float[] mOrientation = new float[3];
 
     static Point currentPoint = new Point(1, 1);
+    static Point currentPlacePoint = new Point(1, 1);
     static float currentRotationInDegrees = 0.0f;
 
 
@@ -146,12 +142,36 @@ public class MyCompassView extends View {
 //        double angleInRadians = Math.atan2(deltaY, deltaX);
 //        double angleInDegrees = angleInRadians * RADIANS_TO_DEGREES;
 
-        float angleInDegrees = (float) Math.toDegrees(Math.atan2(lineEndMagNorthX - centerCircleX, lineEndMagNorthY - centerCircleY));
-        float placeInDegrees = (float) Math.toDegrees(Math.atan2(lineEndPlaceStaticX - centerCircleX, lineEndPlaceStaticY - centerCircleY));
+
+
+        //old point interpolation
+
+//        Point magPoint = new Point(lineEndMagNorthX - centerCircleX, lineEndMagNorthY - centerCircleY);
+//        Point interpMagPoint = interpolate(currentPoint,magPoint);
+//        currentPoint = interpMagPoint;
+//
+//        Point placePoint = new Point(lineEndPlaceStaticX - centerCircleX, lineEndPlaceStaticY - centerCircleY);
+//        Point interpPlacePoint = interpolate(currentPlacePoint,placePoint);
+//        currentPlacePoint = interpPlacePoint;
+//
+//        float angleInDegrees = (float) Math.toDegrees(Math.atan2(interpMagPoint.x, interpMagPoint.y));
+//        float placeInDegrees = (float) Math.toDegrees(Math.atan2(interpPlacePoint.x, interpPlacePoint.y));
+
+
+
+        double angleInRadians = Math.atan2(lineEndMagNorthX - centerCircleX, lineEndMagNorthY - centerCircleY); //angle from -pi to +pi
+        if(angleInRadians < 0){
+            angleInRadians += Math.PI * 2;
+        }
+        float angleInDegrees = (float) Math.toDegrees(angleInRadians);
+        double placeInRadians = Math.atan2(lineEndPlaceStaticX - centerCircleX, lineEndPlaceStaticY - centerCircleY);
+        if(placeInRadians < 0){
+            placeInRadians += Math.PI * 2;
+        }
+
+        float placeInDegrees = (float) Math.toDegrees(placeInRadians);
         mTextAngleInDegrees = angleInDegrees;
         mTextPlaceAngleInDegrees = placeInDegrees;
-        FoodTruckData.setRotateDegrees(mTextAngleInDegrees);
-        FoodTruckData.setRotatePlaceDegrees(mTextPlaceAngleInDegrees);
         //todo: integrate this fix into the interpolate method
 
 //        Point endPlaceStatic = new Point (lineEndPlaceStaticX, lineEndPlaceStaticY);
@@ -207,7 +227,7 @@ public class MyCompassView extends View {
 
     // WEIGHT = 0.015f; pretty good weight for canvas rotation when using delay game
 
-    private static final double WEIGHT = .2f;
+    private static final float WEIGHT = .2f;
 
 //    protected static Point interpolate(Point startPoint, Point endPoint) {
 //        float changeX = endPoint.x - startPoint.x;
@@ -225,10 +245,16 @@ public class MyCompassView extends View {
 //    }
 
     protected static double interpolate(double startDegree, double endDegree) {
-        startDegree = (double) convertToDegreesOnCircle(startDegree);
-        endDegree = (double) convertToDegreesOnCircle(endDegree);
+
+
+
+
+//        startDegree = (double) convertToDegreesOnCircle(startDegree);
+//        endDegree = (double) convertToDegreesOnCircle(endDegree);
         double change = endDegree - startDegree;
         double interpChange = WEIGHT * change;
+
+        Log.v("TAG", String.valueOf(startDegree) + ":" + String.valueOf(endDegree) + ":" + String.valueOf(interpChange + startDegree));
         return interpChange + startDegree;
     }
 

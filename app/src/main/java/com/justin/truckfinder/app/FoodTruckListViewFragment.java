@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,17 +13,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
-import android.view.Surface;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /*
  * Created by justindelta on 3/17/14.
@@ -149,14 +143,13 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 for (int i = 0; i < 3; i++) {
                     valuesAccelerometer[i] = event.values[i];
-                    FoodTruckData.setValuesAccelerometer(valuesAccelerometer);
+
                 }
             }
 
             if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                 for (int i = 0; i < 3; i++) {
                     valuesMagneticField[i] = event.values[i];
-                    FoodTruckData.setValuesMagneticField(valuesMagneticField);
                 }
             }
 

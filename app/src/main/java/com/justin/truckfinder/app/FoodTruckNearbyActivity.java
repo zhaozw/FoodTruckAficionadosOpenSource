@@ -3,11 +3,9 @@ package com.justin.truckfinder.app;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -160,7 +157,7 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
 
     @Override
     public void OnIntentReceived() {
-        startActivity(FoodTruckData.getIntentMap());
+//        startActivity(FoodTruckData.getIntentMap());
     }
 
 

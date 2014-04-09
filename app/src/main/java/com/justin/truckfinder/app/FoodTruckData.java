@@ -1,7 +1,5 @@
 package com.justin.truckfinder.app;
 
-import android.content.Intent;
-
 import com.android.volley.toolbox.ImageLoader;
 
 import java.io.IOException;
@@ -19,7 +17,7 @@ public class FoodTruckData implements Serializable{
     //necessary
     private double latitude = 0;
     private double longitude = 0;
-    private String placeName;
+    private String placeName; // google places name
     private String fourSquareName = "--";
     private boolean openNow = Boolean.parseBoolean(null);
     private int priceLevel = 0;
@@ -35,56 +33,12 @@ public class FoodTruckData implements Serializable{
     private ImageLoader imageLoader;
     //TODO add try/catch in Google FoodTruckDataGetter for future scalability using Place Details
     private String detailsPlacesReference;
-    //TODO determine if rotateDegrees and rotatePlaceDegrees are necessary
-    private static float rotateDegrees;
-    private static float rotatePlaceDegrees;
-    protected static float[] valuesAccelerometer;
-    protected static float[] valuesMagneticField;
-
-
-    // necessary
-    private double calculateDistanceFeet;
-    private double calculateDistanceMiles;
-
-
-    public FoodTruckData(String fourSquareName) {
-        this.fourSquareName = fourSquareName;
-    }
 
     public FoodTruckData() {
     }
 
-
-    //TODO getters/setters used by myCompassView necessary for rotate and accel/magnetic?
-    public static double getRotateDegrees() {
-        return rotateDegrees;
-    }
-
-    public static void setRotateDegrees(float aRotateDegrees) {
-        rotateDegrees = aRotateDegrees;
-    }
-
-    public static double getRotatePlaceDegrees() {
-        return rotatePlaceDegrees;
-    }
-
-    public static void setRotatePlaceDegrees(float aRotatePlaceDegrees) {
-        rotatePlaceDegrees = aRotatePlaceDegrees;
-    }
-    public static float[] getValuesAccelerometer() {
-        return valuesAccelerometer;
-    }
-
-    public static void setValuesAccelerometer(float[] valuesAccelerometer) {
-        FoodTruckData.valuesAccelerometer = valuesAccelerometer;
-    }
-
-    public static float[] getValuesMagneticField() {
-        return valuesMagneticField;
-    }
-
-    public static void setValuesMagneticField(float[] valuesMagneticField) {
-        FoodTruckData.valuesMagneticField = valuesMagneticField;
+    public FoodTruckData(String fourSquareName) {
+        this.fourSquareName = fourSquareName;
     }
 
     // TODO If using image volley, these are necessary.
@@ -217,21 +171,26 @@ public class FoodTruckData implements Serializable{
         return (radians * 180 / Math.PI);
     }
 
-    public void setCalculatedDistanceToPlace(double aUserLatitudeStart, double aUserLongitudeStart) {
+
+
+    public double getDistanceCalculatedFeet() {
+        return getDistanceCalculatedMiles() * 5280;
+    }
+
+    public double getDistanceCalculatedMiles() {
+
 
         // Location of Destination in GPS coordinates
         double placeLatitudeEnd = getLatitude();
         double placeLongitudeEnd = getLongitude();
 
         double calculateDistanceMiles;
-        double calculateDistanceFeet;
-        double calculateDistanceKilometers;
 
-        double theta = aUserLongitudeStart - placeLongitudeEnd;
+        double theta = getUserLongitude() - placeLongitudeEnd;
 
-        calculateDistanceMiles = Math.sin(degreesToRadians(aUserLatitudeStart))
+        calculateDistanceMiles = Math.sin(degreesToRadians(getUserLatitude()))
                 * Math.sin(degreesToRadians(placeLatitudeEnd))
-                + Math.cos(degreesToRadians(aUserLatitudeStart))
+                + Math.cos(degreesToRadians(getUserLatitude()))
                 * Math.cos(degreesToRadians(placeLatitudeEnd))
                 * Math.cos(degreesToRadians(theta));
 
@@ -244,31 +203,12 @@ public class FoodTruckData implements Serializable{
         // Note: Nautical = distance * 0.8684.
         String units = "Miles";
         // not necessary unless people outside the USA want Kilometers.
-        if (units.equals("Kilometers")) {
-            calculateDistanceKilometers = calculateDistanceMiles * 1.609344;
-        }
+//        if (units.equals("Kilometers")) {
+//            calculateDistanceKilometers = calculateDistanceMiles * 1.609344;
+//        }
 
-        setDistanceCalculatedMiles(calculateDistanceMiles);
-        //convert to feet 1 mile = 5280 feet
-        calculateDistanceFeet = calculateDistanceMiles * 5280;
-
-        setDistanceCalculatedFeet(calculateDistanceFeet);
-
-    }
-
-    public void setDistanceCalculatedFeet(double aCalculateDistance) {
-        this.calculateDistanceFeet = aCalculateDistance;
-    }
-    public double getDistanceCalculatedFeet() {
-        return calculateDistanceFeet;
-    }
-
-    public void setDistanceCalculatedMiles(double aCalculateDistance) {
-        this.calculateDistanceMiles = aCalculateDistance;
-    }
-
-    public double getDistanceCalculatedMiles() {
         return calculateDistanceMiles;
+
     }
 
 

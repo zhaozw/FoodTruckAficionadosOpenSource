@@ -154,13 +154,12 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
                         Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
-                String data = String.format("geo:%s,%s", foodTruck.getLatitude(), foodTruck.getLongitude());
+                String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
 
-                    data = String.format("%s?z=%s", data, 11);
 
-                intent.setData(Uri.parse(data));
-                intentsData.setIntentForGeo(intent);
-                // startActivity(intent) WON'T WORK, so far.
+                String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(),"LAbel");
+                Intent geoItent = new Intent(Intent.ACTION_VIEW,Uri.parse(withQuery));
+                context.startActivity(geoItent);
 
             }
         });

@@ -191,7 +191,8 @@ public class FoodTruckDataGetter {
                         incompleteFoodTrucks.add(foodTruckData);
                     }
 
-                    incompleteFoodTrucks.addAll(listOfFoodTrucks);
+                    //pretty sure we dont want to do this, please delete later
+                    //incompleteFoodTrucks.addAll(listOfFoodTrucks);
                     performAdditionalGoogleSearches();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -206,26 +207,29 @@ public class FoodTruckDataGetter {
         Iterator<FoodTruckData> i = incompleteFoodTrucks.iterator();
         while (i.hasNext()) {
             FoodTruckData foodTruckData = i.next();
-            nearbySearchGooglePlaces(foodTruckData.getFourSquareName(), foodTruckData.getPhoneNumberFormatted());
-            i.remove();
+            nearbySearchGooglePlaces(foodTruckData);
         }
     }
 
     // SANITY CHECK:
-    // https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=750&keyword=truck,food&name=torchys
+    // https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=1000&keyword=truck,food&name=torchys
 
     private static final String GOOGLE_PLACES_API_KEY = "AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E";
     private static final String SENSOR = "true";
     private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=" + SENSOR + "&key=" + GOOGLE_PLACES_API_KEY;
 
-    private static void nearbySearchGooglePlaces(String aFoursquareName, String aFormattedPhoneNumber) {
+    private static void nearbySearchGooglePlaces(FoodTruckData partialFoodTruck) {
+
+
+        String aFoursquareName = partialFoodTruck.getFourSquareName();
+        String aFormattedPhoneNumber = partialFoodTruck.getPhoneNumberFormatted();
 
         String myAPIGoogle = "ERROR";
         StringBuilder stringBuilderGoog = new StringBuilder(myAPIGooglePartial);
 
         try {
             stringBuilderGoog.append("&location=" + GPSLocation);
-            stringBuilderGoog.append("&radius=750");
+            stringBuilderGoog.append("&radius=1000");
             stringBuilderGoog.append("&keyword=food");
             stringBuilderGoog.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
 
@@ -236,30 +240,34 @@ public class FoodTruckDataGetter {
         }
 
         try {
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+            CustomJSONRequest jsonObjectRequest = new CustomJSONRequest(Request.Method.GET,
                     myAPIGoogle,
                     null,
-                    createMyGooglePlacesReqSuccessListener(aFormattedPhoneNumber),
+                    createMyGooglePlacesReqSuccessListener(),
                     errorListener);
 
+            jsonObjectRequest.setTag("HEREISMYTAG");
             requestQueue.add(jsonObjectRequest); //hey go get the data
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static Response.Listener<JSONObject> createMyGooglePlacesReqSuccessListener(String aFormattedPhoneNumber) {
+    private static Response.Listener<JSONObject> createMyGooglePlacesReqSuccessListener() {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     // Extract the Place descriptions from the results
                     //Parsing the JSON
+                    Log.e("ERROR" , response.toString());
                     ArrayList<FoodTruckData> someFoodTrucks;
                     JSONObject jsonInitial = response;
                     JSONArray resultArray = jsonInitial.getJSONArray("results");
                     someFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
+
+                        //Get the particular foodTruckData object from incomplete food trucks
 
                         FoodTruckData foodTruckData = new FoodTruckData();
 
@@ -267,19 +275,6 @@ public class FoodTruckDataGetter {
                         JSONObject geometry = aResultArray.getJSONObject("geometry");
                         JSONObject location = geometry.getJSONObject("location");
 
-                        try {
-                            foodTruckData.setUserLatitude(userLatitude);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("USERLAT", "there was an error with USerLat");
-                        }
-
-                        try {
-                            foodTruckData.setUserLongitude(userLongitude);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("USERLONG", "there was an error with USerLong");
-                        }
 
                         //TODO ask spawrks what the best way to fix this would be
 //                        try{
@@ -361,15 +356,17 @@ public class FoodTruckDataGetter {
                         // check placement
                         someFoodTrucks.add(foodTruckData);
 
-                        try {
-                            foodTruckData.setCalculatedDistanceToPlace(userLatitude, userLongitude);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("Calculating distance", "there was an error");
-                        }
                     }
 
                     listOfFoodTrucks.addAll(someFoodTrucks);
+                    //remove it from incomplete.
+
+                    ///OR
+                    //
+                    // dot use incomplete at all, just use listOfFoodTrucks. and then always just
+                    // pull in new data into it, pick items out, perform search, and then update THE SAME
+                    // OBJECT with extra data.
+
                     FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
                     //TODO add feature that uses the code below to retrieve images
 //                    performGooglePhotosRequests();
