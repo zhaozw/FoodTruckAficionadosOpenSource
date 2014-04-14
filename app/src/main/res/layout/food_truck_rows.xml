@@ -15,15 +15,14 @@
         android:layout_centerVertical="true"/>
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@drawable/mapsiconcustom"
         android:id="@+id/mapsButtonImplicit"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:scaleX="1.1"
-        android:scaleY="1.1"
-        android:layout_marginRight="10dp"/>
+        android:layout_alignStart="@+id/placeDistanceFeetView"
+        android:layout_alignParentBottom="true"
+        android:padding="3dp"
+        android:layout_alignTop="@+id/phoneButtonImplicit" />
     <!--<Spinner-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
@@ -33,6 +32,15 @@
         <!--android:entries="@array/actions"-->
         <!--android:layout_alignStart="@+id/mapsButtonImplicit" />-->
 
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_launcher"
+        android:id="@+id/phoneButtonImplicit"
+        android:layout_alignParentBottom="true"
+        android:padding="3dp"
+        android:layout_toRightOf="@id/mapsButtonImplicit"
+        android:layout_alignParentEnd="true" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,17 +48,17 @@
         android:paddingBottom="3dp"
         android:paddingRight="3dp"
         android:paddingStart="3dp"
+        android:paddingTop="10dp"
         android:id="@+id/placeDistanceMilesView"
         android:paddingLeft="8dp"
         android:textColor="#15576b"
         android:textSize="15sp"
         android:textStyle="bold"
         android:layout_gravity="bottom"
-
-        android:layout_alignParentLeft="true"
-
+        android:layout_alignParentRight="true"
         android:layout_alignBaseline="@id/googlePlacesView"
         android:textAlignment="center" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -65,17 +73,16 @@
         android:textStyle="bold"
         android:layout_gravity="bottom"
         android:layout_below="@id/placeDistanceMilesView"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:text="9323 miles"
         android:layout_alignBaseline="@id/googlePlacesView"
         android:textAlignment="center" />
-
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/placeInformation"
-        android:layout_centerInParent="true">
+        android:layout_alignParentLeft="true">
         <TextView
             android:id="@+id/placeNameView"
             android:layout_width="wrap_content"
@@ -108,7 +115,7 @@
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:textColor="#15576b"
-            android:textSize="19sp"
+            android:textSize="17sp"
             android:textStyle="bold"
 
             />

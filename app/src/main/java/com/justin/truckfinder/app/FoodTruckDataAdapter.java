@@ -101,10 +101,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
             RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize,boxSize);
-            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_START);
-            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+//            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_START);
+            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            compassLayout.addRule(RelativeLayout.ABOVE);
             compassLayout.addRule(RelativeLayout.CENTER_IN_PARENT);
             myCompassView.setLayoutParams(compassLayout);
             myCompassView.setBackgroundResource(R.drawable.newcompass);
@@ -186,22 +185,22 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         // FOR ALL THE FOLLOWING SETTEXT, IT IS IMPERATIVE THAT "sp" be used as the textSize type in the XML
         // TO ENSURE THAT THE SIZE OF THE TEXT WILL BE TRANSFORMED IN ACCORDANCE WITH ANY CHANGES IN ACCESSIBILITY SETTINGS
         // FOR THE OS FONT SIZE
-        if(foodTruck.getPlaceName().length() > 17){
-            foodTruckNameLineOne = foodTruck.getPlaceName().substring(0,17);
-            foodTruckNameLineTwo = foodTruck.getPlaceName().substring(17,foodTruck.getPlaceName().length());
-            foodTruckDataHolder.placeNameView.setText(foodTruckNameLineOne + "...");
-            foodTruckDataHolder.placeNameViewTwo.setText("..." + foodTruckNameLineTwo);
-            foodTruckDataHolder.placeNameViewThree.setText("");
-            // necessary otherwise other placeNames were being overwritten or scrambled
-            foodTruckNameLineOne = "";
-            foodTruckNameLineTwo = "";
-        }else if (foodTruck.getPlaceName().length() <= 17){
-            foodTruckDataHolder.placeNameViewThree.setText((foodTruck.getPlaceName()));
-            // necessary otherwise other placeNames were being overwritten or scrambled
-            foodTruckDataHolder.placeNameView.setText("");
-            foodTruckDataHolder.placeNameViewTwo.setText("");
-        }
-
+//        if(foodTruck.getPlaceName().length() > 17){
+//            foodTruckNameLineOne = foodTruck.getPlaceName().substring(0,17);
+//            foodTruckNameLineTwo = foodTruck.getPlaceName().substring(17,foodTruck.getPlaceName().length());
+//            foodTruckDataHolder.placeNameView.setText(foodTruckNameLineOne + "...");
+//            foodTruckDataHolder.placeNameViewTwo.setText("..." + foodTruckNameLineTwo);
+//            foodTruckDataHolder.placeNameViewThree.setText("");
+//            // necessary otherwise other placeNames were being overwritten or scrambled
+//            foodTruckNameLineOne = "";
+//            foodTruckNameLineTwo = "";
+//        }else if (foodTruck.getPlaceName().length() <= 17){
+//            foodTruckDataHolder.placeNameViewThree.setText((foodTruck.getPlaceName()));
+//            // necessary otherwise other placeNames were being overwritten or scrambled
+//            foodTruckDataHolder.placeNameView.setText("");
+//            foodTruckDataHolder.placeNameViewTwo.setText("");
+//        }
+        foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getPlaceName());
         // String.format here is allowing me to use "%.2f" to indicate that the float will be converted to a string to 2 decimal places
         foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " miles");
         foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft");

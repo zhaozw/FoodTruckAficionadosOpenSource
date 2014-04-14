@@ -140,6 +140,7 @@ public class FoodTruckDataGetter {
                     JSONObject jsonResponse = jsonInitial.getJSONObject("response");
                     JSONArray resultArray = jsonResponse.getJSONArray("venues");
                     incompleteFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
+//                    listOfFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
     //TODO DETERMINE WHAT DATA CAN BE CARRIED OVER AND USED WITH GOOGLE PLACES, ESPECIALLY PHONE NUMBER
                         FoodTruckData foodTruckData = new FoodTruckData("unknown");
@@ -189,6 +190,7 @@ public class FoodTruckDataGetter {
                         }
 
                         incompleteFoodTrucks.add(foodTruckData);
+//                        listOfFoodTrucks.add(foodTruckData);
                     }
 
                     //pretty sure we dont want to do this, please delete later
@@ -223,6 +225,7 @@ public class FoodTruckDataGetter {
 
         String aFoursquareName = partialFoodTruck.getFourSquareName();
         String aFormattedPhoneNumber = partialFoodTruck.getPhoneNumberFormatted();
+        int indexPosition = 0;
 
         String myAPIGoogle = "ERROR";
         StringBuilder stringBuilderGoog = new StringBuilder(myAPIGooglePartial);
@@ -246,7 +249,12 @@ public class FoodTruckDataGetter {
                     createMyGooglePlacesReqSuccessListener(),
                     errorListener);
 
-            jsonObjectRequest.setTag("HEREISMYTAG");
+            for (int i = incompleteFoodTrucks.size(); i > 0; i--){
+                indexPosition = i;
+                jsonObjectRequest.setTag("HEREISMYTAG" + String.valueOf(incompleteFoodTrucks.get(indexPosition)));
+            }
+
+//            jsonObjectRequest.setTag("HEREISMYTAG");
             requestQueue.add(jsonObjectRequest); //hey go get the data
         } catch (Exception e) {
             e.printStackTrace();
@@ -261,15 +269,19 @@ public class FoodTruckDataGetter {
                     // Extract the Place descriptions from the results
                     //Parsing the JSON
                     Log.e("ERROR" , response.toString());
+
                     ArrayList<FoodTruckData> someFoodTrucks;
                     JSONObject jsonInitial = response;
                     JSONArray resultArray = jsonInitial.getJSONArray("results");
+                    JSONArray resultTag = jsonInitial.getJSONArray("HEREISMYTAG");
+
                     someFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
 
                         //Get the particular foodTruckData object from incomplete food trucks
+//                          incompleteFoodTrucks.indexOf(FoodTruckData.)
 
-                        FoodTruckData foodTruckData = new FoodTruckData();
+
 
                         JSONObject aResultArray = resultArray.getJSONObject(i);
                         JSONObject geometry = aResultArray.getJSONObject("geometry");
