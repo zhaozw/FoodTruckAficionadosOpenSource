@@ -53,6 +53,7 @@ public class FoodTruckDataGetter {
     private static double userLongitude;
     // LatLng are from the volley library, allowing one object to contain latitude and Longitude
     private static ImageLoader mImageLoader;
+    private static int indexPosition;
     //
     // Singleton pattern here:
     //
@@ -98,13 +99,13 @@ public class FoodTruckDataGetter {
     }
 
     private static void notifyOfDataChanged() {
-        callback.onDataReceived(listOfFoodTrucks);
+        callback.onDataReceived(incompleteFoodTrucks);
     }
 
     private static final String categoryID = "4bf58dd8d48988d1cb941735"; // foursquare Food Truck category ID
     private static final String clientID = "MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY";
     private static final String clientSecret = "3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2";
-    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=1000&categoryId=" + categoryID + "&client_id=" + clientID + "&client_secret=" + clientSecret;
+    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=750&categoryId=" + categoryID + "&client_id=" + clientID + "&client_secret=" + clientSecret;
 
     private static void performFoursquareFoodTruckRequestFoursquare() {
 
@@ -225,14 +226,14 @@ public class FoodTruckDataGetter {
 
         String aFoursquareName = partialFoodTruck.getFourSquareName();
         String aFormattedPhoneNumber = partialFoodTruck.getPhoneNumberFormatted();
-        int indexPosition = 0;
+
 
         String myAPIGoogle = "ERROR";
         StringBuilder stringBuilderGoog = new StringBuilder(myAPIGooglePartial);
 
         try {
             stringBuilderGoog.append("&location=" + GPSLocation);
-            stringBuilderGoog.append("&radius=1000");
+            stringBuilderGoog.append("&radius=750");
             stringBuilderGoog.append("&keyword=food");
             stringBuilderGoog.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
 
@@ -249,10 +250,9 @@ public class FoodTruckDataGetter {
                     createMyGooglePlacesReqSuccessListener(),
                     errorListener);
 
-            for (int i = incompleteFoodTrucks.size(); i > 0; i--){
-                indexPosition = i;
-                jsonObjectRequest.setTag("HEREISMYTAG" + String.valueOf(incompleteFoodTrucks.get(indexPosition)));
-            }
+
+            indexPosition = incompleteFoodTrucks.indexOf(partialFoodTruck);
+            jsonObjectRequest.setTag(indexPosition);
 
 //            jsonObjectRequest.setTag("HEREISMYTAG");
             requestQueue.add(jsonObjectRequest); //hey go get the data
@@ -269,19 +269,15 @@ public class FoodTruckDataGetter {
                     // Extract the Place descriptions from the results
                     //Parsing the JSON
                     Log.e("ERROR" , response.toString());
-
-                    ArrayList<FoodTruckData> someFoodTrucks;
                     JSONObject jsonInitial = response;
+                    JSONObject jsonTag = response;
+                    int intTag = jsonTag.getInt("RESPONSEKEY");
                     JSONArray resultArray = jsonInitial.getJSONArray("results");
-                    JSONArray resultTag = jsonInitial.getJSONArray("HEREISMYTAG");
-
-                    someFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
 
                         //Get the particular foodTruckData object from incomplete food trucks
-//                          incompleteFoodTrucks.indexOf(FoodTruckData.)
-
-
+                        FoodTruckData foodTruckDataReference = incompleteFoodTrucks.get(intTag);
+                        FoodTruckData foodTruckData = incompleteFoodTrucks.set(intTag, foodTruckDataReference);
 
                         JSONObject aResultArray = resultArray.getJSONObject(i);
                         JSONObject geometry = aResultArray.getJSONObject("geometry");
@@ -352,7 +348,7 @@ public class FoodTruckDataGetter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "price_level error");
-                            foodTruckData.setPriceLevel(Integer.parseInt("--"));
+                            foodTruckData.setPriceLevel(Integer.valueOf("--"));
                         }
 
                         try {
@@ -366,11 +362,11 @@ public class FoodTruckDataGetter {
                         }
 
                         // check placement
-                        someFoodTrucks.add(foodTruckData);
+//                        incompleteFoodTrucks.set(intTag, foodTruckData);
 
                     }
 
-                    listOfFoodTrucks.addAll(someFoodTrucks);
+//                    incompleteFoodTrucks.addAll(someFoodTrucks);
                     //remove it from incomplete.
 
                     ///OR
@@ -379,7 +375,7 @@ public class FoodTruckDataGetter {
                     // pull in new data into it, pick items out, perform search, and then update THE SAME
                     // OBJECT with extra data.
 
-                    FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
+                    FoodTruckStorage.saveMyFoodTruckData(context, incompleteFoodTrucks);
                     //TODO add feature that uses the code below to retrieve images
 //                    performGooglePhotosRequests();
                     notifyOfDataChanged();

@@ -84,14 +84,14 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     }
 
     @Override
-    public View getView(int aPosition, View aConvertView, ViewGroup aParent){
+    public View getView(int aPosition, View aConvertView, ViewGroup aParent) {
         FoodTruckDataHolder foodTruckDataHolder;
 
         View row = aConvertView;
 
         //inflate layout for a single view
 
-        if(aConvertView == null){
+        if (aConvertView == null) {
             row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
 
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
@@ -100,7 +100,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
-            RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize,boxSize);
+            RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize, boxSize);
 //            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_START);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -132,7 +132,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             row.setTag(foodTruckDataHolder);
 
-        }else{
+        } else {
             foodTruckDataHolder = (FoodTruckDataHolder) row.getTag();
         }
 
@@ -156,8 +156,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
                 String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
 
 
-                String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(),"LAbel");
-                Intent geoItent = new Intent(Intent.ACTION_VIEW,Uri.parse(withQuery));
+                String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), "LAbel");
+                Intent geoItent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
                 context.startActivity(geoItent);
 
             }
@@ -174,8 +174,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             }
         });
-
-
 
 
         String foodTruckNameLineOne = "";
@@ -205,23 +203,26 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " miles");
         foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft");
 
-        if(String.valueOf((int) foodTruck.getPriceLevel()) == null){
+        if (String.valueOf((int) foodTruck.getPriceLevel()) == null) {
             foodTruckDataHolder.placePriceView.setText("- -");
-        }else {
+        } else {
             foodTruckDataHolder.placePriceView.setText(String.valueOf("Price (0-4) = " + foodTruck.getPriceLevel()));
         }
 
         // for UI readability
-        if(String.valueOf((int) foodTruck.getRating()) == null){
+        if (String.valueOf((int) foodTruck.getRating()) == null) {
             foodTruckDataHolder.placeRatingView.setText("- -");
-        }else {
+        } else {
             foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating (1-5) = " + foodTruck.getRating()));
         }
 
         // every string with vicinity address was ending with ", Austin" which is 8 characters in length, thus
         // the successful removal of a substring that is already too long
-        foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length()-8));
-
+        if (foodTruck.getVicinityAddress().length() > (7)){
+            foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - 8));
+        }else {
+            foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
+        }
         //TODO need to make sure that phone numbers provided by fourSquare are being saved to the ArrayList for each corresponding foodTruckData object
         foodTruckDataHolder.placePhoneView.setText("Call " + foodTruck.getPhoneNumberFormatted());
 

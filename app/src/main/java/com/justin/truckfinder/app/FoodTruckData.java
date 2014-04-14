@@ -23,6 +23,7 @@ public class FoodTruckData implements Serializable{
     private int priceLevel = 0;
     private double rating = 0;
     private String vicinityAddress;
+    private String foursquareAddress;
     private String postalCode;
     private String phoneNumberFormatted;
     private String photoPlacesReference;
@@ -33,6 +34,7 @@ public class FoodTruckData implements Serializable{
     private ImageLoader imageLoader;
     //TODO add try/catch in Google FoodTruckDataGetter for future scalability using Place Details
     private String detailsPlacesReference;
+    private int tagValue;
 
     public FoodTruckData() {
     }
@@ -81,6 +83,22 @@ public class FoodTruckData implements Serializable{
 
     public static void setUserLongitude(double userLng) {
         userLongitude = userLng;
+    }
+
+    public int getTagValue() {
+        return tagValue;
+    }
+
+    public void setTagValue(int tagValue) {
+        this.tagValue = tagValue;
+    }
+
+    public String getFoursquareAddress() {
+        return foursquareAddress;
+    }
+
+    public void setFoursquareAddress(String foursquareAddress) {
+        this.foursquareAddress = foursquareAddress;
     }
 
     public String getPostalCode() {
