@@ -29,6 +29,7 @@ public class FoodTruckData implements Serializable{
     private String phone;
     private String photoPlacesReference;
     private String photoPlacesURL;
+    private String fsTwitter;
     private static double userLatitude;
     private static double userLongitude;
     // necessary if using image network request (volley)
@@ -140,6 +141,14 @@ public class FoodTruckData implements Serializable{
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public String getFsTwitter() {
+        return fsTwitter;
+    }
+
+    public void setFsTwitter(String fsTwitter) {
+        this.fsTwitter = fsTwitter;
     }
 
     public String getPlaceName() {

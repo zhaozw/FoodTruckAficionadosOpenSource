@@ -94,7 +94,6 @@ public class FoodTruckDataGetter {
         requestQueue = Volley.newRequestQueue(context);
         GPSLocation = aDeviceLocation;
         listOfFoodTrucks = new ArrayList<FoodTruckData>();
-        listOfFoodTrucksOld = new ArrayList<FoodTruckData>();
         performFoursquareFoodTruckRequestFoursquare();
     }
 
@@ -155,6 +154,14 @@ public class FoodTruckDataGetter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "foursquare name catch JSONException error");
+                        }
+
+                        try{
+                            String fsFoodTruckTwitter = aResult.getString("twitter");
+                            foodTruckData.setFsTwitter(fsFoodTruckTwitter);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "fs Twitter error");
                         }
 
                         try{
@@ -274,7 +281,6 @@ public class FoodTruckDataGetter {
             indexPosition = listOfFoodTrucks.indexOf(partialFoodTruck);
             jsonObjectRequest.setTag(indexPosition);
 
-//            jsonObjectRequest.setTag("HEREISMYTAG");
             requestQueue.add(jsonObjectRequest); //hey go get the data
         } catch (Exception e) {
             e.printStackTrace();
@@ -379,11 +385,7 @@ public class FoodTruckDataGetter {
                             Log.v("JSONPARSE", "saveTagId error");
                         }
 
-                        // check placement
-
                     }
-
-//                    listOfFoodTrucks.addAll(someFoodTrucks);
                     //remove it from incomplete.
 
                     ///OR

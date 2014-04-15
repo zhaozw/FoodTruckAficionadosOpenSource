@@ -75,7 +75,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         public TextView placeExtraView;
         public MyCompassView myCompassView;
         public NetworkImageView placeNetworkImageView;
-        public ImageButton imageButton;
+        public ImageButton mapsImageButton;
+        public ImageButton phoneImageButton;
     }
 
     @Override
@@ -128,7 +129,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
             foodTruckDataHolder.placeNetworkImageView = (NetworkImageView) row.findViewById(R.id.googlePlacesView);
             foodTruckDataHolder.myCompassView = myCompassView;
-            foodTruckDataHolder.imageButton = (ImageButton) row.findViewById(R.id.mapsButtonImplicit);
+            foodTruckDataHolder.mapsImageButton = (ImageButton) row.findViewById(R.id.mapsButtonImplicit);
+            foodTruckDataHolder.phoneImageButton = (ImageButton) row.findViewById(R.id.phoneButtonImplicit);
 
             row.setTag(foodTruckDataHolder);
 
@@ -140,15 +142,18 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         final FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
 
-        foodTruckDataHolder.imageButton.setTag(foodTruckDataHolder);
+        foodTruckDataHolder.mapsImageButton.setTag(foodTruckDataHolder);
         foodTruckDataHolder.placePhoneView.setTag(foodTruckDataHolder);
+        foodTruckDataHolder.phoneImageButton.setTag(foodTruckDataHolder);
+        foodTruckDataHolder.myCompassView.setTag(foodTruckDataHolder);
 
-        foodTruckDataHolder.imageButton.setOnClickListener(new View.OnClickListener() {
+        // touching maps icon will offer option to launch to geo compatible implicit intent
+        foodTruckDataHolder.mapsImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO Auto-generated method stub
                 FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
-                foodTruckDataHolder.imageButton.setImageResource(R.drawable.mapsiconcustom);
+                foodTruckDataHolder.mapsImageButton.setImageResource(R.drawable.mapsiconcustom);
                 Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
                         Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
@@ -163,14 +168,59 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             }
         });
 
+        // touching compass icon will offer option to launch to geo compatible implicit intent
+        foodTruckDataHolder.myCompassView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO Auto-generated method stub
+                FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
+                foodTruckDataHolder.myCompassView.setVisibility(View.VISIBLE);
+                Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
+                        Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
+
+
+                String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), "LAbel");
+                Intent geoItent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
+                context.startActivity(geoItent);
+
+            }
+        });
+
+        // touching displayed phone number will offer option to call via implicit intent
         foodTruckDataHolder.placePhoneView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO Auto-generated method stub
                 FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
-                foodTruckDataHolder.imageButton.setImageResource(R.drawable.mapsiconcustom);
+                foodTruckDataHolder.mapsImageButton.setImageResource(R.id.placePhoneView);
                 Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
                         Toast.LENGTH_SHORT).show();
+
+                String phoneCall = "tel:" + foodTruck.getPhone();
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse(phoneCall));
+                context.startActivity(callIntent);
+
+            }
+        });
+
+        // touching displayed phone number will offer option to call via implicit intent
+        foodTruckDataHolder.phoneImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO Auto-generated method stub
+                FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
+                foodTruckDataHolder.phoneImageButton.setImageResource(R.drawable.ic_launcher);
+                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
+                        Toast.LENGTH_SHORT).show();
+
+                String phoneCall = "tel:" + foodTruck.getPhone();
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse(phoneCall));
+                context.startActivity(callIntent);
 
             }
         });
@@ -198,7 +248,11 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 //            foodTruckDataHolder.placeNameView.setText("");
 //            foodTruckDataHolder.placeNameViewTwo.setText("");
 //        }
-        foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getPlaceName());
+        if (foodTruck.getPlaceName() != null) {
+            foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getPlaceName());
+        }else {
+            foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getFourSquareName());
+        }
         // String.format here is allowing me to use "%.2f" to indicate that the float will be converted to a string to 2 decimal places
         foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " miles");
         foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft");
@@ -224,7 +278,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", Austin")){
             foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - 8));
-        } else {
+        } else if (foodTruck.getVicinityAddress() !=null) {
             foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
         }
 

@@ -241,28 +241,28 @@ public class MyCompassView extends View {
 //        }
 //    }
 
+    
     protected static double interpolate(double startDegree, double endDegree) {
 
 //        startDegree = (double) convertToDegreesOnCircle(startDegree);
 //        endDegree = (double) convertToDegreesOnCircle(endDegree);
 
-        double interpChange = 0;
-
-            double change = endDegree - startDegree;
-
-            interpChange = WEIGHT * change;
-        if (change == change) {
-
-            Log.v("TAG", String.format("%.3f", startDegree) + ":" + String.format("%.3f", endDegree) + ":" + String.format("%.3f", (interpChange + startDegree)));
-            return interpChange + startDegree;
-        }else {
-            Log.v("TAGELSE", String.format("%.3f", startDegree) + ":" + String.format("%.3f", endDegree) + ":" + String.format("%.3f", (interpChange + startDegree)));
-            return endDegree;
+        double changeAbs = Math.abs (endDegree - startDegree);
+        if(changeAbs > 180){
+            if (endDegree > startDegree){
+                startDegree += 360;
+            }else {
+                endDegree += 360;
+            }
         }
 
+        double interpChange =  startDegree + ((endDegree - startDegree) * WEIGHT);
+        float rangeZero = 360;
+        if (interpChange >= 0 && interpChange < 360)
+            return interpChange;
 
-
-
+        return (interpChange % rangeZero);
+//        Log.v("TAG", String.format("%.2f", startDegree) + ":" + String.format("%.2f", endDegree) + ":" + String.format("%.2f", (interpChange + startDegree)));
     }
 
 
