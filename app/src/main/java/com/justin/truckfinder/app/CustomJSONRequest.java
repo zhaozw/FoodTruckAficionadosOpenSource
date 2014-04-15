@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-/**
+/*
  * Created by justindelta on 4/9/14.
  */
 public class CustomJSONRequest extends JsonObjectRequest {

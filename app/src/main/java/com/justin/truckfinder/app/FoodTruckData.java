@@ -234,14 +234,11 @@ public class FoodTruckData implements Serializable{
         return (radians * 180 / Math.PI);
     }
 
-
-
     public double getDistanceCalculatedFeet() {
         return getDistanceCalculatedMiles() * 5280;
     }
 
     public double getDistanceCalculatedMiles() {
-
 
         // Location of Destination in GPS coordinates
         double placeLatitudeEnd = getLatitude();

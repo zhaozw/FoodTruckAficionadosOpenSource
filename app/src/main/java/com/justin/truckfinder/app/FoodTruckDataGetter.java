@@ -43,7 +43,6 @@ import java.util.Iterator;
 
 public class FoodTruckDataGetter {
 
-    private static ArrayList<FoodTruckData> listOfFoodTrucksOld;
     private static ArrayList<FoodTruckData> listOfFoodTrucks;
     private static OnDataReceivedListener callback;
     private static String myAPIFoursquare;
@@ -148,8 +147,7 @@ public class FoodTruckDataGetter {
 
                         JSONObject location = aResult.getJSONObject("location");
                         JSONObject contact = aResult.getJSONObject("contact");
-                        JSONObject fsmenu = aResult.getJSONObject("menu");
-                        JSONObject fsIdObj = aResult.getJSONObject("id");
+
 //                        JSONArray resultArrayCategories = aResult.getJSONArray("categories");
 
                         try {
@@ -201,7 +199,7 @@ public class FoodTruckDataGetter {
                         }
 
                         try {
-                            String fsId = fsIdObj.getString("id");
+                            String fsId = aResult.getString("id");
                             foodTruckData.setFsId(fsId);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -209,6 +207,7 @@ public class FoodTruckDataGetter {
                         }
 
                         try {
+                            JSONObject fsmenu = aResult.getJSONObject("menu");
                             String menuUrl = fsmenu.getString("url");
                             foodTruckData.setFsMenuUrl(menuUrl);
                         } catch (JSONException e) {
@@ -217,6 +216,7 @@ public class FoodTruckDataGetter {
                         }
 
                         try {
+                            JSONObject fsmenu = aResult.getJSONObject("menu");
                             String mobileUrl = fsmenu.getString("mobileUrl");
                             foodTruckData.setFsMobileUrl(mobileUrl);
                         } catch (JSONException e) {
@@ -249,7 +249,7 @@ public class FoodTruckDataGetter {
 
                         listOfFoodTrucks.add(foodTruckData);
                     }
-
+                    notifyOfDataChanged();
                     performAdditionalGoogleSearches();
 
                 } catch (Exception e) {
@@ -446,7 +446,7 @@ public class FoodTruckDataGetter {
     //TODO delete after showing to spawrks
     private static void performGooglePhotosRequests() {
 
-        Iterator<FoodTruckData> i = listOfFoodTrucksOld.iterator();
+        Iterator<FoodTruckData> i = listOfFoodTrucks.iterator();
         while (i.hasNext()) {
             FoodTruckData foodTruckData = i.next();
             volleyGooglePlacesGetter(foodTruckData.getPhotoPlacesReference());
@@ -475,7 +475,7 @@ public class FoodTruckDataGetter {
                 FoodTruckData foodTruckDataGooglePhotos = new FoodTruckData();
                 ArrayList<FoodTruckData> googlePlacePhotos;
 
-                googlePlacePhotos = new ArrayList<FoodTruckData>(listOfFoodTrucksOld.size());
+                googlePlacePhotos = new ArrayList<FoodTruckData>(listOfFoodTrucks.size());
                 try {
                     foodTruckDataGooglePhotos.setPhotoPlacesURL(response.toString());
                     foodTruckDataGooglePhotos.setImageLoader(mImageLoader);
@@ -484,8 +484,8 @@ public class FoodTruckDataGetter {
                     e.printStackTrace();
                 }
 
-                listOfFoodTrucksOld.addAll(googlePlacePhotos);
-                FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucksOld);
+                listOfFoodTrucks.addAll(googlePlacePhotos);
+                FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
                 notifyOfDataChanged();
             }
 

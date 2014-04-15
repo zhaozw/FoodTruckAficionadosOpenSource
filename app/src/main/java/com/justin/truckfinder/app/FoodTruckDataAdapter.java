@@ -97,15 +97,13 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
 
-            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
+            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 85, context.getResources().getDisplayMetrics());
 
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
             RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize, boxSize);
-//            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_START);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            compassLayout.addRule(RelativeLayout.CENTER_IN_PARENT);
             myCompassView.setLayoutParams(compassLayout);
             myCompassView.setBackgroundResource(R.drawable.newcompass);
             myCompassView.setSensorDataCallback(sensorListener);
@@ -213,7 +211,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             public void onClick(View view) {
                 // TODO Auto-generated method stub
                 FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
-                foodTruckDataHolder.phoneImageButton.setImageResource(R.drawable.ic_launcher);
+                foodTruckDataHolder.phoneImageButton.setImageResource(R.drawable.phonetemp);
                 Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
                         Toast.LENGTH_SHORT).show();
 

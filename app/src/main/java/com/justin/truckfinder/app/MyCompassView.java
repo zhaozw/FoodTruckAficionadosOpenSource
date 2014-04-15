@@ -10,7 +10,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.hardware.GeomagneticField;
 import android.location.Location;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -224,7 +223,7 @@ public class MyCompassView extends View {
 
     // WEIGHT = 0.015f; pretty good weight for canvas rotation when using delay game
 
-    private static final float WEIGHT = .1f;
+    private static final float WEIGHT = .05f;
 
 //    protected static Point interpolate(Point startPoint, Point endPoint) {
 //        float changeX = endPoint.x - startPoint.x;
