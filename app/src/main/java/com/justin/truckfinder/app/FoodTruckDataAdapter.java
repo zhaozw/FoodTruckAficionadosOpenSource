@@ -218,14 +218,23 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         // every string with vicinity address was ending with ", Austin" which is 8 characters in length, thus
         // the successful removal of a substring that is already too long
-        if (foodTruck.getVicinityAddress().length() > (7)){
+        if (foodTruck.getVicinityAddress() == null && foodTruck.getFourSquareName() != null){
+            foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress());
+        }
+
+        if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", Austin")){
             foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - 8));
-        }else {
+        } else {
             foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
         }
-        //TODO need to make sure that phone numbers provided by fourSquare are being saved to the ArrayList for each corresponding foodTruckData object
-        foodTruckDataHolder.placePhoneView.setText("Call " + foodTruck.getPhoneNumberFormatted());
 
+
+        //TODO need to make sure that phone numbers provided by fourSquare are being saved to the ArrayList for each corresponding foodTruckData object
+        if(foodTruck.getPhoneNumberFormatted() == null){
+            foodTruckDataHolder.placePhoneView.setText("Phone Unavailable");
+        }else {
+            foodTruckDataHolder.placePhoneView.setText("Call " + foodTruck.getPhoneNumberFormatted());
+        }
 
         if(foodTruck.getIsOpenNow() == true){
             foodTruckDataHolder.placeOpenNowView.setText("Currently Open");

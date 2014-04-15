@@ -42,8 +42,8 @@ import java.util.Iterator;
 
 public class FoodTruckDataGetter {
 
+    private static ArrayList<FoodTruckData> listOfFoodTrucksOld;
     private static ArrayList<FoodTruckData> listOfFoodTrucks;
-    private static ArrayList<FoodTruckData> incompleteFoodTrucks;
     private static OnDataReceivedListener callback;
     private static String myAPIFoursquare;
     private static Context context;
@@ -93,13 +93,13 @@ public class FoodTruckDataGetter {
         this.userLongitude = aUserLongitude;
         requestQueue = Volley.newRequestQueue(context);
         GPSLocation = aDeviceLocation;
-        incompleteFoodTrucks = new ArrayList<FoodTruckData>();
         listOfFoodTrucks = new ArrayList<FoodTruckData>();
+        listOfFoodTrucksOld = new ArrayList<FoodTruckData>();
         performFoursquareFoodTruckRequestFoursquare();
     }
 
     private static void notifyOfDataChanged() {
-        callback.onDataReceived(incompleteFoodTrucks);
+        callback.onDataReceived(listOfFoodTrucks);
     }
 
     private static final String categoryID = "4bf58dd8d48988d1cb941735"; // foursquare Food Truck category ID
@@ -140,26 +140,51 @@ public class FoodTruckDataGetter {
                     JSONObject jsonInitial = response;
                     JSONObject jsonResponse = jsonInitial.getJSONObject("response");
                     JSONArray resultArray = jsonResponse.getJSONArray("venues");
-                    incompleteFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
-//                    listOfFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
+                    listOfFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
                     for (int i = 0; i < resultArray.length(); i++) {
     //TODO DETERMINE WHAT DATA CAN BE CARRIED OVER AND USED WITH GOOGLE PLACES, ESPECIALLY PHONE NUMBER
                         FoodTruckData foodTruckData = new FoodTruckData("unknown");
                         JSONObject aResult = resultArray.getJSONObject(i);
 
+                        JSONObject location = aResult.getJSONObject("location");
+                        JSONObject contact = aResult.getJSONObject("contact");
+
                         try {
                             String fourSquareName = aResult.getString("name");
                             foodTruckData.setFourSquareName(fourSquareName);
-                            foodTruckData.setPlaceName(fourSquareName);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "foursquare name catch JSONException error");
                         }
 
+                        try{
+                            double latitude = location.getDouble("lat");
+                            foodTruckData.setLatitude(latitude);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                            Log.v("FSVOLLEY", "FS Volley JSON Lat error");
+                        }
+
+                        try{
+                            double longitude = location.getDouble("lng");
+                            foodTruckData.setLongitude(longitude);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                            Log.v("FSVOLLEY", "FS Volley JSON Lng error");
+                        }
+
                         try {
-                            JSONObject contact = aResult.getJSONObject("contact");
                             String formattedPhone = contact.getString("formattedPhone");
                             foodTruckData.setPhoneNumberFormatted(formattedPhone);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "phoneNumberFormatted catch JSONException error");
+                            foodTruckData.setPhoneNumberFormatted("Phone Unavailable");
+                        }
+
+                        try {
+                            String phone = contact.getString("phone");
+                            foodTruckData.setPhone(phone);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "phoneNumber catch JSONException error");
@@ -167,13 +192,12 @@ public class FoodTruckDataGetter {
                         }
 
                         try {
-                            JSONObject location = aResult.getJSONObject("location");
                             String address = location.getString("address");
-                            foodTruckData.setVicinityAddress(address);
+                            foodTruckData.setFoursquareAddress(address);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "Address catch JSONException error");
-                            foodTruckData.setVicinityAddress("See Map");
+                            foodTruckData.setFoursquareAddress("See Map");
                         }
 
                         try {
@@ -190,12 +214,8 @@ public class FoodTruckDataGetter {
                             Log.e("USERLONG", "there was an error with USerLong");
                         }
 
-                        incompleteFoodTrucks.add(foodTruckData);
-//                        listOfFoodTrucks.add(foodTruckData);
+                        listOfFoodTrucks.add(foodTruckData);
                     }
-
-                    //pretty sure we dont want to do this, please delete later
-                    //incompleteFoodTrucks.addAll(listOfFoodTrucks);
                     performAdditionalGoogleSearches();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -207,7 +227,7 @@ public class FoodTruckDataGetter {
 
     private static void performAdditionalGoogleSearches() {
 
-        Iterator<FoodTruckData> i = incompleteFoodTrucks.iterator();
+        Iterator<FoodTruckData> i = listOfFoodTrucks.iterator();
         while (i.hasNext()) {
             FoodTruckData foodTruckData = i.next();
             nearbySearchGooglePlaces(foodTruckData);
@@ -251,7 +271,7 @@ public class FoodTruckDataGetter {
                     errorListener);
 
 
-            indexPosition = incompleteFoodTrucks.indexOf(partialFoodTruck);
+            indexPosition = listOfFoodTrucks.indexOf(partialFoodTruck);
             jsonObjectRequest.setTag(indexPosition);
 
 //            jsonObjectRequest.setTag("HEREISMYTAG");
@@ -276,21 +296,12 @@ public class FoodTruckDataGetter {
                     for (int i = 0; i < resultArray.length(); i++) {
 
                         //Get the particular foodTruckData object from incomplete food trucks
-                        FoodTruckData foodTruckDataReference = incompleteFoodTrucks.get(intTag);
-                        FoodTruckData foodTruckData = incompleteFoodTrucks.set(intTag, foodTruckDataReference);
+                        FoodTruckData foodTruckDataReference = listOfFoodTrucks.get(intTag);
+                        FoodTruckData foodTruckData = listOfFoodTrucks.set(intTag, foodTruckDataReference);
 
                         JSONObject aResultArray = resultArray.getJSONObject(i);
                         JSONObject geometry = aResultArray.getJSONObject("geometry");
                         JSONObject location = geometry.getJSONObject("location");
-
-
-                        //TODO ask spawrks what the best way to fix this would be
-//                        try{
-//                            foodTruckData.setPhoneNumberFormatted(aFormattedPhoneNumber);
-//                        }catch (Exception e){
-//                            e.printStackTrace();
-//                            Log.e("PhoneNumberFormatted", "there was a phone error");
-//                        }
 
                         try {
                             Double latitude = location.getDouble("lat");
@@ -361,21 +372,27 @@ public class FoodTruckDataGetter {
                             Log.v("VOLLEY", "new photo reference error");
                         }
 
+                        try{
+                            foodTruckData.setTagValue(intTag);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Log.v("JSONPARSE", "saveTagId error");
+                        }
+
                         // check placement
-//                        incompleteFoodTrucks.set(intTag, foodTruckData);
 
                     }
 
-//                    incompleteFoodTrucks.addAll(someFoodTrucks);
+//                    listOfFoodTrucks.addAll(someFoodTrucks);
                     //remove it from incomplete.
 
                     ///OR
                     //
-                    // dot use incomplete at all, just use listOfFoodTrucks. and then always just
+                    // dot use incomplete at all, just use listOfFoodTrucksOld. and then always just
                     // pull in new data into it, pick items out, perform search, and then update THE SAME
                     // OBJECT with extra data.
 
-                    FoodTruckStorage.saveMyFoodTruckData(context, incompleteFoodTrucks);
+                    FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
                     //TODO add feature that uses the code below to retrieve images
 //                    performGooglePhotosRequests();
                     notifyOfDataChanged();
@@ -398,7 +415,7 @@ public class FoodTruckDataGetter {
     //TODO delete after showing to spawrks
     private static void performGooglePhotosRequests() {
 
-        Iterator<FoodTruckData> i = listOfFoodTrucks.iterator();
+        Iterator<FoodTruckData> i = listOfFoodTrucksOld.iterator();
         while (i.hasNext()) {
             FoodTruckData foodTruckData = i.next();
             volleyGooglePlacesGetter(foodTruckData.getPhotoPlacesReference());
@@ -427,7 +444,7 @@ public class FoodTruckDataGetter {
                 FoodTruckData foodTruckDataGooglePhotos = new FoodTruckData();
                 ArrayList<FoodTruckData> googlePlacePhotos;
 
-                googlePlacePhotos = new ArrayList<FoodTruckData>(listOfFoodTrucks.size());
+                googlePlacePhotos = new ArrayList<FoodTruckData>(listOfFoodTrucksOld.size());
                 try {
                     foodTruckDataGooglePhotos.setPhotoPlacesURL(response.toString());
                     foodTruckDataGooglePhotos.setImageLoader(mImageLoader);
@@ -436,8 +453,8 @@ public class FoodTruckDataGetter {
                     e.printStackTrace();
                 }
 
-                listOfFoodTrucks.addAll(googlePlacePhotos);
-                FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
+                listOfFoodTrucksOld.addAll(googlePlacePhotos);
+                FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucksOld);
                 notifyOfDataChanged();
             }
 

@@ -22,10 +22,11 @@ public class FoodTruckData implements Serializable{
     private boolean openNow = Boolean.parseBoolean(null);
     private int priceLevel = 0;
     private double rating = 0;
-    private String vicinityAddress;
+    private String vicinityAddress = null;
     private String foursquareAddress;
     private String postalCode;
     private String phoneNumberFormatted;
+    private String phone;
     private String photoPlacesReference;
     private String photoPlacesURL;
     private static double userLatitude;
@@ -91,6 +92,14 @@ public class FoodTruckData implements Serializable{
 
     public void setTagValue(int tagValue) {
         this.tagValue = tagValue;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getFoursquareAddress() {

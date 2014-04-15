@@ -61,7 +61,6 @@ public class MyCompassView extends View {
     }
 
 
-
     protected float getDirection() {
         return sensorDataCallback.getDirection();
     }
@@ -72,7 +71,7 @@ public class MyCompassView extends View {
         compassBitmap = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.newcompass);
         compassBitmap = Bitmap.createScaledBitmap(compassBitmap, getWidth(), getHeight(), true);
         newPointerBitmap = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.newpointermod);
-        newPointerBitmap = Bitmap.createScaledBitmap(newPointerBitmap, getWidth(), getHeight(),true);
+        newPointerBitmap = Bitmap.createScaledBitmap(newPointerBitmap, getWidth(), getHeight(), true);
 
     }
 
@@ -135,13 +134,12 @@ public class MyCompassView extends View {
         float lineEndPlaceStaticY = centerCircleX + ((float) placeDirection.endX * centerRadius);
         float lineEndPlaceStaticX = centerCircleY + ((float) placeDirection.endY * centerRadius);
 
-        //calculate degrees between destination and true north
+        //calculate degrees between destination and mag north
 //        double deltaX = lineEndPlaceStaticX - lineEndMagNorthX;
 //        double deltaY = lineEndPlaceStaticY - lineEndMagNorthY;
 //
 //        double angleInRadians = Math.atan2(deltaY, deltaX);
 //        double angleInDegrees = angleInRadians * RADIANS_TO_DEGREES;
-
 
 
         //old point interpolation
@@ -158,14 +156,13 @@ public class MyCompassView extends View {
 //        float placeInDegrees = (float) Math.toDegrees(Math.atan2(interpPlacePoint.x, interpPlacePoint.y));
 
 
-
         double angleInRadians = Math.atan2(lineEndMagNorthX - centerCircleX, lineEndMagNorthY - centerCircleY); //angle from -pi to +pi
-        if(angleInRadians < 0){
+        if (angleInRadians < 0) {
             angleInRadians += Math.PI * 2;
         }
         float angleInDegrees = (float) Math.toDegrees(angleInRadians);
         double placeInRadians = Math.atan2(lineEndPlaceStaticX - centerCircleX, lineEndPlaceStaticY - centerCircleY);
-        if(placeInRadians < 0){
+        if (placeInRadians < 0) {
             placeInRadians += Math.PI * 2;
         }
 
@@ -191,7 +188,7 @@ public class MyCompassView extends View {
         //
         double interpolatedDegreesDouble = interpolate(currentRotationInDegrees, angleInDegrees);
         float interpolatedDegrees = (float) interpolatedDegreesDouble;
-        canvas.drawCircle(centerCircleX, getHeight() - centerCircleY, centerRadius-8, paint);
+        canvas.drawCircle(centerCircleX, getHeight() - centerCircleY, centerRadius - 8, paint);
         canvas.rotate(interpolatedDegrees, lineStartX, lineStartY);
         canvas.drawBitmap(compassBitmap, 0, 0, paint);
 //        canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndPlaceStaticX, getHeight() - lineEndPlaceStaticY -3, paint);
@@ -227,7 +224,7 @@ public class MyCompassView extends View {
 
     // WEIGHT = 0.015f; pretty good weight for canvas rotation when using delay game
 
-    private static final float WEIGHT = .2f;
+    private static final float WEIGHT = .015f;
 
 //    protected static Point interpolate(Point startPoint, Point endPoint) {
 //        float changeX = endPoint.x - startPoint.x;
@@ -246,17 +243,28 @@ public class MyCompassView extends View {
 
     protected static double interpolate(double startDegree, double endDegree) {
 
-
-
-
 //        startDegree = (double) convertToDegreesOnCircle(startDegree);
 //        endDegree = (double) convertToDegreesOnCircle(endDegree);
-        double change = endDegree - startDegree;
-        double interpChange = WEIGHT * change;
 
-        Log.v("TAG", String.valueOf(startDegree) + ":" + String.valueOf(endDegree) + ":" + String.valueOf(interpChange + startDegree));
-        return interpChange + startDegree;
+        double interpChange = 0;
+
+            double change = endDegree - startDegree;
+
+            interpChange = WEIGHT * change;
+        if (change == change) {
+
+            Log.v("TAG", String.format("%.3f", startDegree) + ":" + String.format("%.3f", endDegree) + ":" + String.format("%.3f", (interpChange + startDegree)));
+            return interpChange + startDegree;
+        }else {
+            Log.v("TAGELSE", String.format("%.3f", startDegree) + ":" + String.format("%.3f", endDegree) + ":" + String.format("%.3f", (interpChange + startDegree)));
+            return endDegree;
+        }
+
+
+
+
     }
+
 
 
     private class Arrow {
