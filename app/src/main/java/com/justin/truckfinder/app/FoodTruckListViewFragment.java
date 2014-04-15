@@ -203,14 +203,14 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public void onStart() {
         super.onStart();
         setNewLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
         try {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, this);
         } catch (Exception e) {
             e.printStackTrace();
             Log.v("ONSTART", "network provider location ERROR");
         }
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1, 1, this);
         //Sensor stuff
         mySensorAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mySensorMagnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -244,8 +244,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-
-
 
     }
 

@@ -15,14 +15,14 @@
         android:layout_centerVertical="true"/>
 
     <ImageButton
-        android:layout_width="40dp"
+        android:layout_width="35dp"
         android:layout_height="40dp"
         android:background="@drawable/mapsiconcustom"
         android:id="@+id/mapsButtonImplicit"
-        android:layout_alignStart="@+id/placeDistanceFeetView"
-        android:layout_alignParentBottom="true"
-        android:padding="3dp"
-        android:layout_alignTop="@+id/phoneButtonImplicit" />
+        android:layout_below="@+id/placeDistanceFeetView"
+        android:layout_alignParentRight="true"
+        android:padding="1dp"
+         />
     <!--<Spinner-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
@@ -33,14 +33,15 @@
         <!--android:layout_alignStart="@+id/mapsButtonImplicit" />-->
 
     <ImageButton
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/ic_launcher"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/phonetemp"
         android:id="@+id/phoneButtonImplicit"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/placeDistanceFeetView"
         android:padding="3dp"
-        android:layout_toRightOf="@id/mapsButtonImplicit"
-        android:layout_alignParentEnd="true" />
+        android:layout_toLeftOf="@id/mapsButtonImplicit"
+
+         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,9 +49,9 @@
         android:paddingBottom="3dp"
         android:paddingRight="3dp"
         android:paddingStart="3dp"
-        android:paddingTop="10dp"
+        android:paddingTop="3dp"
         android:id="@+id/placeDistanceMilesView"
-        android:paddingLeft="8dp"
+        android:paddingLeft="3dp"
         android:textColor="#15576b"
         android:textSize="15sp"
         android:textStyle="bold"
@@ -67,7 +68,7 @@
         android:paddingRight="3dp"
         android:paddingStart="3dp"
         android:id="@+id/placeDistanceFeetView"
-        android:paddingLeft="8dp"
+        android:paddingLeft="3dp"
         android:textColor="#15576b"
         android:textSize="13sp"
         android:textStyle="bold"
