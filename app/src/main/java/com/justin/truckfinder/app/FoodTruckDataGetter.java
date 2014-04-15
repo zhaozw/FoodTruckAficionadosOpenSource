@@ -289,11 +289,26 @@ public class FoodTruckDataGetter {
 
         try {
             stringBuilderGoog.append("&location=" + GPSLocation);
-            stringBuilderGoog.append("&radius=750");
+            stringBuilderGoog.append("&radius=850");
             stringBuilderGoog.append("&keyword=food");
             stringBuilderGoog.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
 
             myAPIGoogle = stringBuilderGoog.toString();
+            if(myAPIGoogle.contains("+%26")) {
+                myAPIGoogle = myAPIGoogle.replace("+%26","");
+            }
+            if(myAPIGoogle.contains("%21")){
+                myAPIGoogle = myAPIGoogle.replace("%21","");
+            }
+            if(myAPIGoogle.contains("%27")){
+                myAPIGoogle = myAPIGoogle.replace("%27",""); // %27 = '
+            }
+            if(myAPIGoogle.contains("Parking")){
+                return;
+            }
+            if(myAPIGoogle.contains("Poop")){
+                return;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -325,6 +340,8 @@ public class FoodTruckDataGetter {
                     // Extract the Place descriptions from the results
                     //Parsing the JSON
                     Log.e("ERROR" , response.toString());
+
+
                     JSONObject jsonInitial = response;
                     JSONObject jsonTag = response;
                     int intTag = jsonTag.getInt("RESPONSEKEY");
@@ -429,7 +446,7 @@ public class FoodTruckDataGetter {
                     FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
                     //TODO add feature that uses the code below to retrieve images
 //                    performGooglePhotosRequests();
-                    Toast.makeText(context, "Updated Food Trucks with more information.", Toast.LENGTH_LONG);
+//                    Toast.makeText(context, "Updated Food Trucks with more information.", Toast.LENGTH_SHORT).show();
                     notifyOfDataChanged();
 
                 } catch (Exception e) {
@@ -453,7 +470,7 @@ public class FoodTruckDataGetter {
         Iterator<FoodTruckData> i = listOfFoodTrucks.iterator();
         while (i.hasNext()) {
             FoodTruckData foodTruckData = i.next();
-            volleyGooglePlacesGetter(foodTruckData.getPhotoPlacesReference());
+            volleyGooglePlacesGetter(foodTruckData);
         }
     }
     // SANITY CHECK https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRnAAAAYz2WamgLIFUvOUHss4JQlIm4UUeIx4hnTyZJnJVmAMDofX_JuAjFR5ZezzEMqykbcHOheCr3-OVCooEui8651Ah2fzmazGGiuPt_54qTdNQwLe9Azi6WRkQlOvRQMxx_Gf1heF9gMlXYrD8yXLKZEhIQ53kT8bhMLhVVB8vSf9v7ghoU5ZpLEMxMA3dzsm-SJ7Abzd_u14g&sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E
@@ -462,8 +479,9 @@ public class FoodTruckDataGetter {
     private static final String GOOGLE_SENSOR = "&sensor=true";
 
 
-    public static void volleyGooglePlacesGetter(String aPlacesPhotoReferenceKey) {
+    public static void volleyGooglePlacesGetter(FoodTruckData aFoodTruckData) {
 
+        String aPlacesPhotoReferenceKey = aFoodTruckData.getPhotoPlacesURL();
 
         String myGooglePlacesPhotoAPI = GOOGLE_PLACES_PHOTOS + aPlacesPhotoReferenceKey + GOOGLE_SENSOR + "&key=" + GOOGLE_PLACES_API_KEY;
 
@@ -515,8 +533,4 @@ public class FoodTruckDataGetter {
             }
         });
     }
-
-
-
-
 }

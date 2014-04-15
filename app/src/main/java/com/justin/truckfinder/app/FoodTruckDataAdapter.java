@@ -173,8 +173,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
                 // TODO Auto-generated method stub
                 FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
                 foodTruckDataHolder.myCompassView.setVisibility(View.VISIBLE);
-                Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
+//                        Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
@@ -194,8 +194,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
                 // TODO Auto-generated method stub
                 FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
                 foodTruckDataHolder.mapsImageButton.setImageResource(R.id.placePhoneView);
-                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
+//                        Toast.LENGTH_SHORT).show();
 
                 String phoneCall = "tel:" + foodTruck.getPhone();
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
@@ -212,9 +212,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
                 // TODO Auto-generated method stub
                 FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
                 foodTruckDataHolder.phoneImageButton.setImageResource(R.drawable.phonetemp);
-                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
-                        Toast.LENGTH_SHORT).show();
-
+//                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
+//                        Toast.LENGTH_SHORT).show();
                 String phoneCall = "tel:" + foodTruck.getPhone();
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                 callIntent.setData(Uri.parse(phoneCall));
