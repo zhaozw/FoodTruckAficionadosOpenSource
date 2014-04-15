@@ -54,6 +54,7 @@ public class FoodTruckDataGetter {
     // LatLng are from the volley library, allowing one object to contain latitude and Longitude
     private static ImageLoader mImageLoader;
     private static int indexPosition;
+    private static String uniqueID;
     //
     // Singleton pattern here:
     //
@@ -280,7 +281,7 @@ public class FoodTruckDataGetter {
 
 
         String aFoursquareName = partialFoodTruck.getFourSquareName();
-        String aFormattedPhoneNumber = partialFoodTruck.getPhoneNumberFormatted();
+        String aFoursquareUniqueID = partialFoodTruck.getFsId();
 
 
         String myAPIGoogle = "ERROR";
@@ -307,6 +308,7 @@ public class FoodTruckDataGetter {
 
 
             indexPosition = listOfFoodTrucks.indexOf(partialFoodTruck);
+            uniqueID = aFoursquareUniqueID;
             jsonObjectRequest.setTag(indexPosition);
 
             requestQueue.add(jsonObjectRequest); //hey go get the data
@@ -327,6 +329,7 @@ public class FoodTruckDataGetter {
                     JSONObject jsonTag = response;
                     int intTag = jsonTag.getInt("RESPONSEKEY");
                     JSONArray resultArray = jsonInitial.getJSONArray("results");
+
                     for (int i = 0; i < resultArray.length(); i++) {
 
                         //Get the particular foodTruckData object from incomplete food trucks
@@ -336,6 +339,14 @@ public class FoodTruckDataGetter {
                         JSONObject aResultArray = resultArray.getJSONObject(i);
                         JSONObject geometry = aResultArray.getJSONObject("geometry");
                         JSONObject location = geometry.getJSONObject("location");
+
+                        try {
+                            String placeName = aResultArray.getString("name");
+                            foodTruckData.setPlaceName(placeName);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "placeName Google Places error");
+                        }
 
                         try {
                             Double latitude = location.getDouble("lat");
@@ -353,13 +364,6 @@ public class FoodTruckDataGetter {
                             Log.v("VOLLEY", "google longitude exception");
                         }
 
-                        try {
-                            String placeName = aResultArray.getString("name");
-                            foodTruckData.setPlaceName(placeName);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "placeName Google Places error");
-                        }
 
                         try {
                             JSONObject openingHours = aResultArray.getJSONObject("opening_hours");
