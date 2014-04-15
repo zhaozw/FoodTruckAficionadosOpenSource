@@ -260,14 +260,14 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         if (String.valueOf((int) foodTruck.getPriceLevel()) == null) {
             foodTruckDataHolder.placePriceView.setText("- -");
         } else {
-            foodTruckDataHolder.placePriceView.setText(String.valueOf("Price (0-4) = " + foodTruck.getPriceLevel()));
+            foodTruckDataHolder.placePriceView.setText(String.valueOf("Price: " + foodTruck.getPriceLevel() + " of 4"));
         }
 
         // for UI readability
         if (String.valueOf((int) foodTruck.getRating()) == null) {
             foodTruckDataHolder.placeRatingView.setText("- -");
         } else {
-            foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating (1-5) = " + foodTruck.getRating()));
+            foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating: " + foodTruck.getRating() + " of 5"));
         }
 
         // every string with vicinity address was ending with ", Austin" which is 8 characters in length, thus

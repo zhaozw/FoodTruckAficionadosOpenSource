@@ -224,7 +224,7 @@ public class MyCompassView extends View {
 
     // WEIGHT = 0.015f; pretty good weight for canvas rotation when using delay game
 
-    private static final float WEIGHT = .015f;
+    private static final float WEIGHT = .1f;
 
 //    protected static Point interpolate(Point startPoint, Point endPoint) {
 //        float changeX = endPoint.x - startPoint.x;
@@ -241,7 +241,7 @@ public class MyCompassView extends View {
 //        }
 //    }
 
-    
+
     protected static double interpolate(double startDegree, double endDegree) {
 
 //        startDegree = (double) convertToDegreesOnCircle(startDegree);

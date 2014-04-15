@@ -30,6 +30,9 @@ public class FoodTruckData implements Serializable{
     private String photoPlacesReference;
     private String photoPlacesURL;
     private String fsTwitter;
+    private String fsId;
+    private String fsMenuUrl;
+    private String fsMobileUrl;
     private static double userLatitude;
     private static double userLongitude;
     // necessary if using image network request (volley)
@@ -149,6 +152,30 @@ public class FoodTruckData implements Serializable{
 
     public void setFsTwitter(String fsTwitter) {
         this.fsTwitter = fsTwitter;
+    }
+
+    public String getFsId() {
+        return fsId;
+    }
+
+    public void setFsId(String fsId) {
+        this.fsId = fsId;
+    }
+
+    public String getFsMenuUrl() {
+        return fsMenuUrl;
+    }
+
+    public void setFsMenuUrl(String fsMenuUrl) {
+        this.fsMenuUrl = fsMenuUrl;
+    }
+
+    public String getFsMobileUrl() {
+        return fsMobileUrl;
+    }
+
+    public void setFsMobileUrl(String fsMobileUrl) {
+        this.fsMobileUrl = fsMobileUrl;
     }
 
     public String getPlaceName() {

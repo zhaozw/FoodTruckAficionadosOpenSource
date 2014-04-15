@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.LruCache;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -147,6 +148,9 @@ public class FoodTruckDataGetter {
 
                         JSONObject location = aResult.getJSONObject("location");
                         JSONObject contact = aResult.getJSONObject("contact");
+                        JSONObject fsmenu = aResult.getJSONObject("menu");
+                        JSONObject fsIdObj = aResult.getJSONObject("id");
+//                        JSONArray resultArrayCategories = aResult.getJSONArray("categories");
 
                         try {
                             String fourSquareName = aResult.getString("name");
@@ -186,7 +190,6 @@ public class FoodTruckDataGetter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "phoneNumberFormatted catch JSONException error");
-                            foodTruckData.setPhoneNumberFormatted("Phone Unavailable");
                         }
 
                         try {
@@ -195,7 +198,30 @@ public class FoodTruckDataGetter {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.v("VOLLEY", "phoneNumber catch JSONException error");
-                            foodTruckData.setPhoneNumberFormatted("Phone Unavailable");
+                        }
+
+                        try {
+                            String fsId = fsIdObj.getString("id");
+                            foodTruckData.setFsId(fsId);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "fsID catch JSONException error");
+                        }
+
+                        try {
+                            String menuUrl = fsmenu.getString("url");
+                            foodTruckData.setFsMenuUrl(menuUrl);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "fsMenuURL catch JSONException error");
+                        }
+
+                        try {
+                            String mobileUrl = fsmenu.getString("mobileUrl");
+                            foodTruckData.setFsMobileUrl(mobileUrl);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "fsMobileURL catch JSONException error");
                         }
 
                         try {
@@ -223,7 +249,9 @@ public class FoodTruckDataGetter {
 
                         listOfFoodTrucks.add(foodTruckData);
                     }
+
                     performAdditionalGoogleSearches();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -397,6 +425,7 @@ public class FoodTruckDataGetter {
                     FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
                     //TODO add feature that uses the code below to retrieve images
 //                    performGooglePhotosRequests();
+                    Toast.makeText(context, "Updated Food Trucks with more information.", Toast.LENGTH_LONG);
                     notifyOfDataChanged();
 
                 } catch (Exception e) {
