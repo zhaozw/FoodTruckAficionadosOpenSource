@@ -13,4 +13,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
+    <TextView
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/progressTextTwo"
+        android:padding="10dp"
+        android:textAlignment="center"
+        android:id="@+id/progressTextId2"
+        android:textColor="#15576b"
+        android:singleLine="false"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal" />
+
+    <ProgressBar
+        android:layout_centerInParent="true"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="260dp"
+        android:layout_height="225dp"
+        android:id="@+id/progressBar"
+        android:layout_gravity="center" />
+
+
 </RelativeLayout>

@@ -34,6 +34,26 @@ public class GeoUtils {
 
     }
 
+    public static float getModifiedTrueNorth(Location myLocation , float heading){
+
+        return heading;
+
+        //
+        //  If you want to make ANY true north adjustments, they would happen here.
+        //
+//        GeomagneticField geoField = null;
+//        if(myLocation != null){
+//            geoField= new  GeomagneticField((float) myLocation.getLatitude(),
+//                    (float) myLocation.getLongitude(), (float) myLocation.getAltitude(),
+//                    myLocation.getTime());
+//        }
+//        if (geoField != null) {
+//            return heading + geoField.getDeclination();
+//        } else {
+//            return heading;
+//        }
+    }
+
     private void updateGeomagneticField() {
         mGeomagneticField = new GeomagneticField((float) mLocation.getLatitude(),
                 (float) mLocation.getLongitude(), (float) mLocation.getAltitude(),

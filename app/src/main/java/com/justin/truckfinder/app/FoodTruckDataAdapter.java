@@ -31,7 +31,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private MyCompassView.SensorDataRequestListener sensorListener;
     public int mPosition;
     public FoodTruckNearbyActivity foodTruckNearbyActivity;
-    public IntentsData intentsData;
+
 
 
     public interface IntentListener{

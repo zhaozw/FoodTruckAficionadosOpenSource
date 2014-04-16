@@ -13,8 +13,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -35,13 +37,14 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     protected float  to;
     private FoodTruckDataAdapter foodTruckDataAdapter;
     private LocationManager locationManager;
+    protected Location lastUserLocation;
     protected String currentLocation;  //Format: "30.12341234,-90.11341234"
     private boolean retrievedLocation = false;
     private OnItemSelectedListener selectedListenerCallback;
     private SensorManager sensorManager;
     protected Sensor mySensorAccelerometer;
     protected Sensor mySensorMagnetometer;
-    protected Context context;
+    //protected Context context;
     protected ArrayList<FoodTruckData> mTheDataReceived;
     protected Bundle mSavedState;
     protected Button mReturnButton = null;
@@ -54,6 +57,11 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     float[] valuesMagneticField = {};
     float[] matrixValues = {};
 
+    boolean ROTATE_90 = false;
+    boolean ROTATE_270 = false;
+    boolean ROTATE_180 = false;
+
+
 
     public FoodTruckListViewFragment() {
     }
@@ -64,19 +72,44 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         // Save custom values into the bundle
         int someIntValue = 1;
         String someStringValue = "string";
+
         outState.putInt(SOME_VALUE, someIntValue);
         outState.putString(SOME_OTHER_VALUE, someStringValue);
+
+        //
+        //
+        //outState.putSerializable("MyKey",thingYouWantToSave);
+        //
+        //
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        //
+        //
+        //mTheDataReceived = savedInstanceState.getSerializable("MyKey");
+        //
+        //
+
+    }
 
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
+        //
+        //  Check to see if you have more than 0 data. if so, then
+        //
+
+//       get the progress bar and the quote
+//        myProgress.setVisibility(View.INVISIBLE);
+
+
         //if we now have data, kill the loading screen.
         mTheDataReceived = theDataReceived;
         if (theDataReceived == null) {
-            foodTruckDataAdapter.setFoodTruckDataArrayList(FoodTruckStorage.getMyFoodTruckData(context));
+            foodTruckDataAdapter.setFoodTruckDataArrayList(FoodTruckStorage.getMyFoodTruckData(getActivity()));
         }else {
             foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
         }
@@ -99,7 +132,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     }
 
-
     @Override
     public void setListShown(boolean shown) {
         super.setListShown(shown);
@@ -111,8 +143,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onActivityCreated(savedInstanceState);
 
     }
-
-
 
     @Override
     public void onLocationChanged(Location location) {
@@ -179,30 +209,36 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
                         the returned value here will be Surface.ROTATION_90.
                         */
                 //TODO test to see if the remapping works. Then test to see if it's remapping correctly.
-                View view = new View(context);
-                switch ((int) view.getRotation()) {
-                    case Surface.ROTATION_90:
-                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-                        SensorManager.getOrientation(matrixR, matrixValues);
-                    case Surface.ROTATION_180:
-                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
-                        SensorManager.getOrientation(matrixR, matrixValues);
-                    case Surface.ROTATION_270:
-                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
-                        SensorManager.getOrientation(matrixR, matrixValues);
-                    case Surface.ROTATION_0:
-                    default:
-                        SensorManager.getOrientation(matrixR, matrixValues);
+
+
+                if(ROTATE_90){
+                    //this is the right one for 90
+                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
+                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+                }else if(ROTATE_270){
+                    //this is the right one for 270
+                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+                }else if(ROTATE_180){
+                    //this is the right one for 180
+                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
+                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+                }else{
+                    SensorManager.getOrientation(matrixR, matrixValues);
                 }
-//                SensorManager.getOrientation(matrixR, matrixValues);
+
             }
         }
     }
 
 
+
     @Override
     public float getDirection() {
-        return matrixValues[0]; //this is from the sensor updating
+        return GeoUtils.getModifiedTrueNorth(lastUserLocation,matrixValues[0]);
+        //return matrixValues[0]; //this is from the sensor updating
     }
 
 
@@ -242,6 +278,43 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onResume();
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST);
+
+        if(getActivity() != null){
+            Object myObject = getActivity().getSystemService(Context.WINDOW_SERVICE);
+            WindowManager wm = (WindowManager) myObject;
+            Display d = wm.getDefaultDisplay();
+            int rotation = d.getRotation();
+
+            //Clean up this code to use a single int instead of multiple booleans.
+
+            switch (rotation) {
+                case Surface.ROTATION_90:
+                    ROTATE_90 = true;
+                    ROTATE_270 = false;
+                    ROTATE_180 = false;
+                    Log.e("ROT","ROTATION_90");
+                    break;
+                case Surface.ROTATION_180:
+                    ROTATE_90 = false;
+                    ROTATE_270 = false;
+                    ROTATE_180 = true;
+                    Log.e("ROT", "ROTATION_180");
+                    break;
+                case Surface.ROTATION_270:
+                    ROTATE_90 = false;
+                    ROTATE_270 = true;
+                    ROTATE_180 = false;
+                    Log.e("ROT", "ROTATION_270");
+                    break;
+                case Surface.ROTATION_0:
+                default:
+                    Log.e("ROT", "ROTATION_0");
+                    ROTATE_90 = false;
+                    ROTATE_270 = false;
+                    ROTATE_180 = false;
+                    break;
+            }
+        }
     }
 
     @Override
@@ -293,6 +366,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         if (location == null) {
             return;
         }
+
+        lastUserLocation = location;
 
         double userLatitudeDouble = location.getLatitude();
         double userLongitudeDouble = location.getLongitude();
