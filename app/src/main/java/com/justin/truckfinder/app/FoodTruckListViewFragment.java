@@ -13,6 +13,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -52,7 +53,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     float[] valuesAccelerometer = {};
     float[] valuesMagneticField = {};
     float[] matrixValues = {};
-    static RotationHelper mRotationHelper;
+
 
     public FoodTruckListViewFragment() {
     }
@@ -160,21 +161,40 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
                     valuesMagneticField);
 
             if (success) {
-//                String rotation = RotationHelper.getRotation(context);
-//
-//
-//                if(rotation.equals("ROTATION_90")) {
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-//                }
-//                if(rotation.equals("ROTATION_180")) {
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
-//                }
-//                if(rotation.equals("ROTATION_270")){
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
-//                }else if(rotation.equals("ROTATION_0")){
-//                    return;
-//                }
-                SensorManager.getOrientation(matrixR, matrixValues);
+            /*public int getRotation ()
+
+                        Added in API level 8
+                        Returns the rotation of the screen from its "natural" orientation.
+                        The returned value may be Surface.ROTATION_0 (no rotation), S
+                        urface.ROTATION_90, Surface.ROTATION_180, or
+                        Surface.ROTATION_270.
+                        For example, if a device has a naturally tall screen,
+                        and the user has turned it on its side to go into a landscape orientation,
+                        the value returned here may be either Surface.ROTATION_90 or
+                        Surface.ROTATION_270 depending on the direction it was turned.
+                        The angle is the rotation of the drawn graphics on the screen,
+                        which is the opposite direction of the physical rotation of the device.
+                        For example, if the device is rotated 90 degrees counter-clockwise,
+                        to compensate rendering will be rotated by 90 degrees clockwise and thus
+                        the returned value here will be Surface.ROTATION_90.
+                        */
+                //TODO test to see if the remapping works. Then test to see if it's remapping correctly.
+                View view = new View(context);
+                switch ((int) view.getRotation()) {
+                    case Surface.ROTATION_90:
+                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+                        SensorManager.getOrientation(matrixR, matrixValues);
+                    case Surface.ROTATION_180:
+                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
+                        SensorManager.getOrientation(matrixR, matrixValues);
+                    case Surface.ROTATION_270:
+                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
+                        SensorManager.getOrientation(matrixR, matrixValues);
+                    case Surface.ROTATION_0:
+                    default:
+                        SensorManager.getOrientation(matrixR, matrixValues);
+                }
+//                SensorManager.getOrientation(matrixR, matrixValues);
             }
         }
     }
