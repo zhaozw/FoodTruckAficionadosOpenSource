@@ -37,10 +37,10 @@
         android:layout_height="45dp"
         android:background="@drawable/phonetemp"
         android:id="@+id/phoneButtonImplicit"
+        android:contentDescription="hello"
         android:layout_below="@id/placeDistanceFeetView"
         android:padding="3dp"
         android:layout_toLeftOf="@id/mapsButtonImplicit"
-
          />
     <TextView
         android:layout_width="wrap_content"

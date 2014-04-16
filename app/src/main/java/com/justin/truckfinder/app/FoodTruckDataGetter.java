@@ -2,6 +2,7 @@ package com.justin.truckfinder.app;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.Toast;
@@ -18,6 +19,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -55,6 +60,7 @@ public class FoodTruckDataGetter {
     private static ImageLoader mImageLoader;
     private static int indexPosition;
     private static String uniqueID;
+    private static String foursquareNameStatic;
     //
     // Singleton pattern here:
     //
@@ -141,6 +147,7 @@ public class FoodTruckDataGetter {
                     JSONObject jsonResponse = jsonInitial.getJSONObject("response");
                     JSONArray resultArray = jsonResponse.getJSONArray("venues");
                     listOfFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
+
                     for (int i = 0; i < resultArray.length(); i++) {
     //TODO DETERMINE WHAT DATA CAN BE CARRIED OVER AND USED WITH GOOGLE PLACES, ESPECIALLY PHONE NUMBER
                         FoodTruckData foodTruckData = new FoodTruckData("unknown");
@@ -249,6 +256,7 @@ public class FoodTruckDataGetter {
                         }
 
                         listOfFoodTrucks.add(foodTruckData);
+//                        storeJson(response, foodTruckData.getFourSquareName());
                     }
                     notifyOfDataChanged();
                     performAdditionalGoogleSearches();
@@ -279,6 +287,7 @@ public class FoodTruckDataGetter {
 
     private static void nearbySearchGooglePlaces(FoodTruckData partialFoodTruck) {
 
+        foursquareNameStatic = partialFoodTruck.getFourSquareName() + partialFoodTruck.getFsId();
 
         String aFoursquareName = partialFoodTruck.getFourSquareName();
         String aFoursquareUniqueID = partialFoodTruck.getFsId();
@@ -332,6 +341,38 @@ public class FoodTruckDataGetter {
         }
     }
 
+    private static void storeJson(JSONObject json,String tag){
+
+
+
+        String jsonString = json.toString();
+        byte[] jsonArray = jsonString.getBytes();
+
+        File fileToSaveJson = new File(Environment.getExternalStorageDirectory().getPath(), tag);
+
+
+
+
+        BufferedOutputStream bos;
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(fileToSaveJson));
+            bos.write(jsonArray);
+            bos.flush();
+            bos.close();
+
+        } catch (FileNotFoundException e4) {
+            // TODO Auto-generated catch block
+            e4.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+//        finally {
+//            System.gc();
+//        }
+
+    }
+
     private static Response.Listener<JSONObject> createMyGooglePlacesReqSuccessListener() {
         return new Response.Listener<JSONObject>() {
             @Override
@@ -345,6 +386,7 @@ public class FoodTruckDataGetter {
                     JSONObject jsonInitial = response;
                     JSONObject jsonTag = response;
                     int intTag = jsonTag.getInt("RESPONSEKEY");
+//                    storeJson(response, String.valueOf(intTag)+foursquareNameStatic);
                     JSONArray resultArray = jsonInitial.getJSONArray("results");
 
                     for (int i = 0; i < resultArray.length(); i++) {
