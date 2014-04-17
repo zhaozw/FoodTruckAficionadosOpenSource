@@ -213,21 +213,25 @@
             android:id="@+id/placePostalView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/placePhoneView"
-            android:padding="9dp"
+            android:layout_below="@id/placeOpenNowView"
+            android:padding="7dp"
             android:textColor="#2A53C1"
-            android:textSize="15sp"
+            android:textSize="12sp"
+            android:text="Menu"
             android:layout_alignLeft="@id/placeAddressView"
+
             />
         <TextView
             android:id="@+id/placeExtraView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/placePhoneView"
-            android:padding="3dp"
+            android:layout_below="@id/placePostalView"
+            android:padding="7dp"
             android:layout_alignLeft="@id/placeAddressView"
             android:textColor="#2A53C1"
-            android:textSize="15sp" />
+            android:text="twitter"
+            android:textSize="12sp"
+            />
 
 
 

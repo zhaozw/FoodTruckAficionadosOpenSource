@@ -91,7 +91,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
 
-            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
+            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 85, context.getResources().getDisplayMetrics());
 
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
@@ -294,12 +294,25 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeOpenNowView.setText("Status Unavailable");
         }
 
-        if(foodTruck.getPostalCode() != null) {
-            foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
-        }else{
-            foodTruckDataHolder.placePostalView.setText(" ");
+//        if(foodTruck.getPostalCode() != null) {
+//            foodTruckDataHolder.placePostalView.setText(foodTruck.getPostalCode());
+//        }else{
+//            foodTruckDataHolder.placePostalView.setText(" ");
+//        }
+//        foodTruckDataHolder.placeExtraView.setText(" ");
+
+        if(foodTruck.getFsMenuUrl() != null){
+            foodTruckDataHolder.placePostalView.setText(foodTruck.getFsMenuUrl());
+        } else{
+            foodTruckDataHolder.placePostalView.setText("Menu Unavailable");
         }
-        foodTruckDataHolder.placeExtraView.setText(" ");
+
+        if(foodTruck.getFsTwitter() !=null){
+            foodTruckDataHolder.placeExtraView.setText(foodTruck.getFsTwitter());
+
+        }else {
+            foodTruckDataHolder.placeExtraView.setText("Twitter Handle Unavailable");
+        }
 
 //        if(foodTruck.getPhotoPlacesURL() == null){
 //            foodTruckDataHolder.placeNetworkImageView.setDefaultImageResId(R.drawable.ic_launcher);
