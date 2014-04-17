@@ -97,7 +97,10 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             myCompassView = new MyCompassView(context);
             RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize, boxSize);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+            compassLayout.addRule(RelativeLayout.BELOW, R.id.phoneButtonImplicit);
+            compassLayout.addRule(RelativeLayout.ALIGN_RIGHT, R.id.mapsButtonImplicit);
+
             myCompassView.setLayoutParams(compassLayout);
             myCompassView.setBackgroundResource(R.drawable.newcompass);
             myCompassView.setSensorDataCallback(sensorListener);
