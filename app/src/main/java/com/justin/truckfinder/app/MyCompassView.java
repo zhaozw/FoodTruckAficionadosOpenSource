@@ -22,8 +22,8 @@ public class MyCompassView extends View {
     private Paint paint;
     private Bitmap compassBitmap;
     private Bitmap newPointerBitmap;
-    private final int STROKE_MAX = 17;
-    private final int STROKE_MIN = 1;
+    private final int STROKE_MAX = 18;
+    private final int STROKE_MIN = 4;
     private boolean growStroke = true;
     private int glowStrokeWidth = STROKE_MIN;
 
@@ -178,7 +178,8 @@ public class MyCompassView extends View {
 
 
         // drawing circle, line, etc.
-        paint.setColor(Color.argb(255, 1, 175, 175));
+//        paint.setColor(Color.argb(255, 1, 175, 175));
+        paint.setColor(Color.argb(255, 1, 1, 175));
         paint.setStrokeWidth(glowStrokeWidth);
 
         //TODO interpolation causing the flip, different on different devices

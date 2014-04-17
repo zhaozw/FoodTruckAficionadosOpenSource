@@ -2,7 +2,6 @@ package com.justin.truckfinder.app;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -18,10 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -297,26 +292,19 @@ public class FoodTruckDataGetter {
 
         try {
             stringBuilderGoog.append("&location=" + GPSLocation);
-            stringBuilderGoog.append("&radius=850");
+            stringBuilderGoog.append("&radius=750");
             stringBuilderGoog.append("&keyword=food");
             stringBuilderGoog.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
 
             myAPIGoogle = stringBuilderGoog.toString();
-            if(myAPIGoogle.contains("+%26")) {
-                myAPIGoogle = myAPIGoogle.replace("+%26","");
-            }
-            if(myAPIGoogle.contains("%21")){
-                myAPIGoogle = myAPIGoogle.replace("%21","");
-            }
-            if(myAPIGoogle.contains("%27")){
-                myAPIGoogle = myAPIGoogle.replace("%27",""); // %27 = '
-            }
-            if(myAPIGoogle.contains("Parking")){
-                return;
-            }
             if(myAPIGoogle.contains("Poop")){
-                return;
+                myAPIGoogle = myAPIGoogle.replace("Poop","");
+
             }
+            if(myAPIGoogle.contains("poop")){
+                myAPIGoogle = myAPIGoogle.replace("poop","");
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -340,37 +328,6 @@ public class FoodTruckDataGetter {
         }
     }
 
-    private static void storeJson(JSONObject json,String tag){
-
-
-
-        String jsonString = json.toString();
-        byte[] jsonArray = jsonString.getBytes();
-
-        File fileToSaveJson = new File(Environment.getExternalStorageDirectory().getPath(), tag);
-
-
-
-
-        BufferedOutputStream bos;
-        try {
-            bos = new BufferedOutputStream(new FileOutputStream(fileToSaveJson));
-            bos.write(jsonArray);
-            bos.flush();
-            bos.close();
-
-        } catch (FileNotFoundException e4) {
-            // TODO Auto-generated catch block
-            e4.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-//        finally {
-//            System.gc();
-//        }
-
-    }
 
     private static Response.Listener<JSONObject> createMyGooglePlacesReqSuccessListener() {
         return new Response.Listener<JSONObject>() {
@@ -449,6 +406,16 @@ public class FoodTruckDataGetter {
                             e.printStackTrace();
                             Log.v("VOLLEY", "vicinity address error");
                         }
+
+                        try {
+                            String placeDetailsId = aResultArray.getString("reference");
+                            foodTruckData.setPlaceDetailsReference(placeDetailsId);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.v("VOLLEY", "placeDetailsId error");
+                            foodTruckData.setPriceLevel(Integer.valueOf("--"));
+                        }
+
                         try {
                             int priceLevelInt = aResultArray.getInt("price_level");
                             foodTruckData.setPriceLevel(priceLevelInt);
@@ -484,12 +451,13 @@ public class FoodTruckDataGetter {
                     // pull in new data into it, pick items out, perform search, and then update THE SAME
                     // OBJECT with extra data.
 
+
+
                     FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
                     //TODO add feature that uses the code below to retrieve images
 //                    performGooglePhotosRequests();
 //                    Toast.makeText(context, "Updated Food Trucks with more information.", Toast.LENGTH_SHORT).show();
                     notifyOfDataChanged();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -504,6 +472,8 @@ public class FoodTruckDataGetter {
             Log.v("VOLLEY", "ERROR WITH API");
         }
     };
+
+
 
 
     //TODO delete after showing to spawrks
@@ -575,9 +545,6 @@ public class FoodTruckDataGetter {
             }
         });
     }
-
-
-
 
 
 }

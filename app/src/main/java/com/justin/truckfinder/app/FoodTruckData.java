@@ -20,8 +20,8 @@ public class FoodTruckData implements Serializable{
     private String placeName; // google places name
     private String fourSquareName = "--";
     private boolean openNow = Boolean.parseBoolean(null);
-    private int priceLevel = 0;
-    private double rating = 0;
+    private int priceLevel = 9;
+    private double rating = 9;
     private String vicinityAddress = null;
     private String foursquareAddress;
     private String postalCode;
@@ -29,6 +29,7 @@ public class FoodTruckData implements Serializable{
     private String phone;
     private String photoPlacesReference;
     private String photoPlacesURL;
+    private String placeDetailsReference;
     private String fsTwitter;
     private String fsId;
     private String fsMenuUrl;
@@ -37,8 +38,11 @@ public class FoodTruckData implements Serializable{
     private static double userLongitude;
     // necessary if using image network request (volley)
     private ImageLoader imageLoader;
+    private int dayOfWeek[];
+    private String openHoursEachDay[];
+    private String closedHoursEachDAy[];
+
     //TODO add try/catch in Google FoodTruckDataGetter for future scalability using Place Details
-    private String detailsPlacesReference;
     private int tagValue;
 
     public FoodTruckData() {
@@ -67,6 +71,14 @@ public class FoodTruckData implements Serializable{
 
     public String getPhotoPlacesReference() {
         return photoPlacesReference;
+    }
+
+    public String getPlaceDetailsReference() {
+        return placeDetailsReference;
+    }
+
+    public void setPlaceDetailsReference(String placeDetailsReference) {
+        this.placeDetailsReference = placeDetailsReference;
     }
 
     public void setPhotoPlacesReference(String photoPlacesReference) {
@@ -114,6 +126,30 @@ public class FoodTruckData implements Serializable{
         this.foursquareAddress = foursquareAddress;
     }
 
+    public int[] getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(int[] dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    public String[] getOpenHoursEachDay() {
+        return openHoursEachDay;
+    }
+
+    public void setOpenHoursEachDay(String[] openHoursEachDay) {
+        this.openHoursEachDay = openHoursEachDay;
+    }
+
+    public String[] getClosedHoursEachDAy() {
+        return closedHoursEachDAy;
+    }
+
+    public void setClosedHoursEachDAy(String[] closedHoursEachDAy) {
+        this.closedHoursEachDAy = closedHoursEachDAy;
+    }
+
     public String getPostalCode() {
         return postalCode;
     }
@@ -129,6 +165,8 @@ public class FoodTruckData implements Serializable{
     public void setPhoneNumberFormatted(String phoneNumberFormatted) {
         this.phoneNumberFormatted = phoneNumberFormatted;
     }
+
+
 
     public double getLongitude() {
         return longitude;

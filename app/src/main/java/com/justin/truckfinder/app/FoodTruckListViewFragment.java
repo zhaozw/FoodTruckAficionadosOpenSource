@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -30,7 +31,8 @@ import java.util.ArrayList;
 //TODO ROTATION FIX FOR ALL 4 DIFFERENT ORIENTATIONS. IMPLICIT INTENT TO MAPS. UI ADJUSTMENTS. OPTIMIZATIONS
 public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener{
 
-    ProgressBar mProgressBar;
+    ProgressBar myProgress;
+    TextView myTextView;
     static final String SOME_VALUE = "int_value";
     static final String SOME_OTHER_VALUE = "string_value";
     protected float from;
@@ -56,6 +58,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     float[] valuesAccelerometer = {};
     float[] valuesMagneticField = {};
     float[] matrixValues = {};
+    protected int rotation = 0;
 
     boolean ROTATE_90 = false;
     boolean ROTATE_270 = false;
@@ -78,7 +81,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
         //
         //
-        //outState.putSerializable("MyKey",thingYouWantToSave);
+        outState.putSerializable("MyKey",mTheDataReceived);
         //
         //
         // Always call the superclass so it can save the view hierarchy state
@@ -90,7 +93,9 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onViewStateRestored(savedInstanceState);
         //
         //
-        //mTheDataReceived = savedInstanceState.getSerializable("MyKey");
+        if (mTheDataReceived !=null) {
+            mTheDataReceived = (ArrayList<FoodTruckData>) savedInstanceState.getSerializable("MyKey");
+        }
         //
         //
 
@@ -103,8 +108,11 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         //
 
 //       get the progress bar and the quote
-//        myProgress.setVisibility(View.INVISIBLE);
 
+//        if (theDataReceived != null) {
+//            myTextView.findViewById(R.id.progressTextId2).setVisibility(View.INVISIBLE);
+//            myProgress.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+//        }
 
         //if we now have data, kill the loading screen.
         mTheDataReceived = theDataReceived;
@@ -128,7 +136,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         matrixI = new float[9];
         matrixValues = new float[3];
         matrixRremapped = new float[9];
-        setRetainInstance(true);
+//        setRetainInstance(true);
 
     }
 
@@ -191,56 +199,70 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
                     valuesMagneticField);
 
             if (success) {
-            /*public int getRotation ()
+//                if(ROTATE_90){
+//                    //this is the right one for 90
+//                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
+//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+//                }else if(ROTATE_270){
+//                    //this is the right one for 270
+//                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+//                }else if(ROTATE_180){
+//                    //this is the right one for 180
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
+//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+//                }else{
+//                    SensorManager.getOrientation(matrixR, matrixValues);
+//                }
 
-                        Added in API level 8
-                        Returns the rotation of the screen from its "natural" orientation.
-                        The returned value may be Surface.ROTATION_0 (no rotation), S
-                        urface.ROTATION_90, Surface.ROTATION_180, or
-                        Surface.ROTATION_270.
-                        For example, if a device has a naturally tall screen,
-                        and the user has turned it on its side to go into a landscape orientation,
-                        the value returned here may be either Surface.ROTATION_90 or
-                        Surface.ROTATION_270 depending on the direction it was turned.
-                        The angle is the rotation of the drawn graphics on the screen,
-                        which is the opposite direction of the physical rotation of the device.
-                        For example, if the device is rotated 90 degrees counter-clockwise,
-                        to compensate rendering will be rotated by 90 degrees clockwise and thus
-                        the returned value here will be Surface.ROTATION_90.
-                        */
-                //TODO test to see if the remapping works. Then test to see if it's remapping correctly.
 
-
-                if(ROTATE_90){
-                    //this is the right one for 90
-                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
-                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-                }else if(ROTATE_270){
-                    //this is the right one for 270
-                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-                }else if(ROTATE_180){
-                    //this is the right one for 180
-                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
-                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-                }else{
-                    SensorManager.getOrientation(matrixR, matrixValues);
+                switch (rotation) {
+                    case Surface.ROTATION_90:
+                        //this is the right one for 90
+                        //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
+                        SensorManager.getOrientation(matrixRremapped, matrixValues);
+                        Log.e("ROT","ROTATION_90");
+                        break;
+                    case Surface.ROTATION_180:
+                        //this is the right one for 180
+                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
+                        SensorManager.getOrientation(matrixRremapped, matrixValues);
+                        Log.e("ROT", "ROTATION_180");
+                        break;
+                    case Surface.ROTATION_270:
+                        //this is the right one for 270
+                        SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+                        SensorManager.getOrientation(matrixRremapped, matrixValues);
+                        Log.e("ROT", "ROTATION_270");
+                        break;
+                    case Surface.ROTATION_0:
+                    default:
+                        Log.e("ROT", "ROTATION_0");
+                        SensorManager.getOrientation(matrixR, matrixValues);
+                        break;
                 }
 
             }
         }
     }
 
-
-
     @Override
     public float getDirection() {
-        return GeoUtils.getModifiedTrueNorth(lastUserLocation,matrixValues[0]);
-        //return matrixValues[0]; //this is from the sensor updating
+//        return GeoUtils.getModifiedTrueNorth(lastUserLocation,matrixValues[0]);
+        return matrixValues[0]; //this is from the sensor updating
     }
 
+    public void rotateAppropriately(int aRotation){
+        if (aRotation == 0){
+
+        }else if (aRotation == 1){
+
+        }
+
+    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -249,10 +271,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     protected interface OnItemSelectedListener {
         public void OnItemSelected();
-    }
-
-    protected interface OnIntentSelectedListener {
-        public void OnIntentReceived();
     }
 
     @Override
@@ -281,39 +299,50 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
         if(getActivity() != null){
             Object myObject = getActivity().getSystemService(Context.WINDOW_SERVICE);
-            WindowManager wm = (WindowManager) myObject;
-            Display d = wm.getDefaultDisplay();
-            int rotation = d.getRotation();
-
+            WindowManager windowManager = (WindowManager) myObject;
+            Display display = windowManager.getDefaultDisplay();
+            rotation = display.getRotation();
             //Clean up this code to use a single int instead of multiple booleans.
+            rotateAppropriately(rotation);
 
-            switch (rotation) {
-                case Surface.ROTATION_90:
-                    ROTATE_90 = true;
-                    ROTATE_270 = false;
-                    ROTATE_180 = false;
-                    Log.e("ROT","ROTATION_90");
-                    break;
-                case Surface.ROTATION_180:
-                    ROTATE_90 = false;
-                    ROTATE_270 = false;
-                    ROTATE_180 = true;
-                    Log.e("ROT", "ROTATION_180");
-                    break;
-                case Surface.ROTATION_270:
-                    ROTATE_90 = false;
-                    ROTATE_270 = true;
-                    ROTATE_180 = false;
-                    Log.e("ROT", "ROTATION_270");
-                    break;
-                case Surface.ROTATION_0:
-                default:
-                    Log.e("ROT", "ROTATION_0");
-                    ROTATE_90 = false;
-                    ROTATE_270 = false;
-                    ROTATE_180 = false;
-                    break;
-            }
+//            switch (rotation) {
+//                case Surface.ROTATION_90:
+//                    //this is the right one for 90
+//                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
+//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+////                    ROTATE_90 = true;
+////                    ROTATE_270 = false;
+////                    ROTATE_180 = false;
+//                    Log.e("ROT","ROTATION_90");
+//                    break;
+//                case Surface.ROTATION_180:
+//                    //this is the right one for 180
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
+//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+////                    ROTATE_90 = false;
+////                    ROTATE_270 = false;
+////                    ROTATE_180 = true;
+//                    Log.e("ROT", "ROTATION_180");
+//                    break;
+//                case Surface.ROTATION_270:
+//                    //this is the right one for 270
+//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
+//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
+////                    ROTATE_90 = false;
+////                    ROTATE_270 = true;
+////                    ROTATE_180 = false;
+//                    Log.e("ROT", "ROTATION_270");
+//                    break;
+//                case Surface.ROTATION_0:
+//                default:
+//                    Log.e("ROT", "ROTATION_0");
+//                    SensorManager.getOrientation(matrixR, matrixValues);
+////                    ROTATE_90 = false;
+////                    ROTATE_270 = false;
+////                    ROTATE_180 = false;
+//                    break;
+//            }
         }
     }
 

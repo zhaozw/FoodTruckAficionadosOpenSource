@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -32,11 +31,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     public int mPosition;
     public FoodTruckNearbyActivity foodTruckNearbyActivity;
 
-
-
-    public interface IntentListener{
-        public void passIntent();
-    }
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
         super(aContext, aResource);
@@ -97,7 +91,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
 
-            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 85, context.getResources().getDisplayMetrics());
+            int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
 
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
@@ -152,8 +146,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
                 // TODO Auto-generated method stub
                 FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
                 foodTruckDataHolder.mapsImageButton.setImageResource(R.drawable.mapsiconcustom);
-                Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
+//                        Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
@@ -251,18 +245,18 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getFourSquareName());
         }
         // String.format here is allowing me to use "%.2f" to indicate that the float will be converted to a string to 2 decimal places
-        foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " miles");
-        foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " ft");
+        foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " Miles");
+        foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " Feet");
 
-        if (String.valueOf((int) foodTruck.getPriceLevel()) == null) {
-            foodTruckDataHolder.placePriceView.setText("- -");
+        if (foodTruck.getPriceLevel() == 9) {
+            foodTruckDataHolder.placePriceView.setText("Price: Unavailable");
         } else {
-            foodTruckDataHolder.placePriceView.setText(String.valueOf("Price: " + foodTruck.getPriceLevel() + " of 4"));
+            foodTruckDataHolder.placePriceView.setText(String.valueOf("Price: " + (int) foodTruck.getPriceLevel() + " of 4"));
         }
 
         // for UI readability
-        if (String.valueOf((int) foodTruck.getRating()) == null) {
-            foodTruckDataHolder.placeRatingView.setText("- -");
+        if (foodTruck.getRating() == 9) {
+            foodTruckDataHolder.placeRatingView.setText("Rating: Unavailable");
         } else {
             foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating: " + foodTruck.getRating() + " of 5"));
         }
@@ -327,10 +321,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     public FoodTruckData getFoodTruckData(){
         FoodTruckData foodTruckNew = getFoodTruckData();
         return foodTruckNew;
-    }
-
-    public void launchIntent(){
-
     }
 
 }

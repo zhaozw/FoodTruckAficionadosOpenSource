@@ -19,41 +19,41 @@ import android.widget.Spinner;
 import java.util.List;
 
 
-public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener, FoodTruckListViewFragment.OnIntentSelectedListener{
+public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener{
     ProgressBar mProgressBar;
 
     private Button mReturnButton = null;
     private Button mPerformButton = null;
     private Spinner mSpinner = null;
-
-    @Override
-    public void setContentView(View view) {
-        init().addView(view);
-    }
-
-    @Override
-    public void setContentView(int layoutResID) {
-        getLayoutInflater().inflate(layoutResID,init(),true);
-    }
-
-    @Override
-    public void setContentView(View view, ViewGroup.LayoutParams params) {
-        init().addView(view,params);
-    }
-
-    private ViewGroup init(){
-        super.setContentView(R.layout.progress);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        return (ViewGroup) findViewById(R.id.activity_frame);
-    }
-
-    protected ProgressBar getProgressBar(){
-        return mProgressBar;
-    }
-
-    public void setProgressBar(ProgressBar mProgressBar) {
-        this.mProgressBar = mProgressBar;
-    }
+//
+//    @Override
+//    public void setContentView(View view) {
+//        init().addView(view);
+//    }
+//
+//    @Override
+//    public void setContentView(int layoutResID) {
+//        getLayoutInflater().inflate(layoutResID,init(),true);
+//    }
+//
+//    @Override
+//    public void setContentView(View view, ViewGroup.LayoutParams params) {
+//        init().addView(view,params);
+//    }
+//
+//    private ViewGroup init(){
+//        super.setContentView(R.layout.progress);
+//        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+//        return (ViewGroup) findViewById(R.id.activity_frame);
+//    }
+//
+//    protected ProgressBar getProgressBar(){
+//        return mProgressBar;
+//    }
+//
+//    public void setProgressBar(ProgressBar mProgressBar) {
+//        this.mProgressBar = mProgressBar;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,11 +153,6 @@ public class FoodTruckNearbyActivity extends Activity implements FoodTruckListVi
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void OnIntentReceived() {
-//        startActivity(FoodTruckData.getIntentMap());
     }
 
 
