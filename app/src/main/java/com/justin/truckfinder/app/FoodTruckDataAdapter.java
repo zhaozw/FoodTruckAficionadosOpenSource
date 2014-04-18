@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -30,7 +31,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     private MyCompassView.SensorDataRequestListener sensorListener;
     public int mPosition;
     public FoodTruckNearbyActivity foodTruckNearbyActivity;
-
+    protected String truckNamePhone;
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
         super(aContext, aResource);
@@ -92,14 +93,19 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
 
             int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 85, context.getResources().getDisplayMetrics());
+            int rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources().getDisplayMetrics());
 
             MyCompassView myCompassView;
             myCompassView = new MyCompassView(context);
             RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize, boxSize);
-            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
+//            android:layout_marginRight="10dp"
+//            android:layout_below="@id/phoneButtonImplicit"
+//            android:layout_alignParentRight="true"
+
+            compassLayout.setMargins(0,0,rightMargin,0);
+            compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             compassLayout.addRule(RelativeLayout.BELOW, R.id.phoneButtonImplicit);
-            compassLayout.addRule(RelativeLayout.ALIGN_RIGHT, R.id.mapsButtonImplicit);
 
             myCompassView.setLayoutParams(compassLayout);
             myCompassView.setBackgroundResource(R.drawable.newcompass);
@@ -133,115 +139,30 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             foodTruckDataHolder = (FoodTruckDataHolder) row.getTag();
         }
 
-        mPosition = aPosition;
 
-        final FoodTruckData foodTruck = this.foodTruckDataArrayList.get(mPosition);
+        FoodTruckData foodTruck = this.foodTruckDataArrayList.get(aPosition);
 
-        foodTruckDataHolder.mapsImageButton.setTag(foodTruckDataHolder);
-        foodTruckDataHolder.placePhoneView.setTag(foodTruckDataHolder);
-        foodTruckDataHolder.phoneImageButton.setTag(foodTruckDataHolder);
-        foodTruckDataHolder.myCompassView.setTag(foodTruckDataHolder);
-
-        // touching maps icon will offer option to launch to geo compatible implicit intent
-        foodTruckDataHolder.mapsImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO Auto-generated method stub
-                FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
-                foodTruckDataHolder.mapsImageButton.setImageResource(R.drawable.mapsiconcustom);
-//                Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
-//                        Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
+        Integer rowPosition = aPosition;
+        foodTruckDataHolder.mapsImageButton.setTag(rowPosition);
+        foodTruckDataHolder.mapsImageButton.setOnClickListener(mapClickListener);
+        foodTruckDataHolder.placePhoneView.setTag(rowPosition);
+        foodTruckDataHolder.placePhoneView.setOnClickListener(phoneNumberClickListener);
+        foodTruckDataHolder.phoneImageButton.setTag(rowPosition);
+        foodTruckDataHolder.mapsImageButton.setOnClickListener(phoneIconClickListener);
+        foodTruckDataHolder.myCompassView.setTag(rowPosition);
+        foodTruckDataHolder.myCompassView.setOnClickListener(compassClickListener);
 
 
-                String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), "LAbel");
-                Intent geoItent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
-                context.startActivity(geoItent);
 
-            }
-        });
-
-        // touching compass icon will offer option to launch to geo compatible implicit intent
-        foodTruckDataHolder.myCompassView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO Auto-generated method stub
-                FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
-                foodTruckDataHolder.myCompassView.setVisibility(View.VISIBLE);
-//                Toast.makeText(context, "Image Button Row # " + mPosition + " " + foodTruck.getPlaceName(),
-//                        Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
+        if(foodTruck.getPlaceName() != null){
+            truckNamePhone = foodTruck.getPlaceName();
+        }else{
+            truckNamePhone = foodTruck.getFourSquareName();
+        }
 
 
-                String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), "LAbel");
-                Intent geoItent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
-                context.startActivity(geoItent);
-
-            }
-        });
-
-        // touching displayed phone number will offer option to call via implicit intent
-        foodTruckDataHolder.placePhoneView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO Auto-generated method stub
-                FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
-                foodTruckDataHolder.mapsImageButton.setImageResource(R.id.placePhoneView);
-//                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
-//                        Toast.LENGTH_SHORT).show();
-
-                String phoneCall = "tel:" + foodTruck.getPhone();
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse(phoneCall));
-                context.startActivity(callIntent);
-
-            }
-        });
-
-        // touching displayed phone number will offer option to call via implicit intent
-        foodTruckDataHolder.phoneImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO Auto-generated method stub
-                FoodTruckDataHolder foodTruckDataHolder = (FoodTruckDataHolder) view.getTag();
-                foodTruckDataHolder.phoneImageButton.setImageResource(R.drawable.phonetemp);
-//                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
-//                        Toast.LENGTH_SHORT).show();
-                String phoneCall = "tel:" + foodTruck.getPhone();
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse(phoneCall));
-                context.startActivity(callIntent);
-
-            }
-        });
 
 
-        String foodTruckNameLineOne = "";
-        String foodTruckNameLineTwo = "";
-
-        // necessary to ensure that the UI isn't being widened too much by devices with smaller screens
-        // FOR ALL THE FOLLOWING SETTEXT, IT IS IMPERATIVE THAT "sp" be used as the textSize type in the XML
-        // TO ENSURE THAT THE SIZE OF THE TEXT WILL BE TRANSFORMED IN ACCORDANCE WITH ANY CHANGES IN ACCESSIBILITY SETTINGS
-        // FOR THE OS FONT SIZE
-//        if(foodTruck.getPlaceName().length() > 17){
-//            foodTruckNameLineOne = foodTruck.getPlaceName().substring(0,17);
-//            foodTruckNameLineTwo = foodTruck.getPlaceName().substring(17,foodTruck.getPlaceName().length());
-//            foodTruckDataHolder.placeNameView.setText(foodTruckNameLineOne + "...");
-//            foodTruckDataHolder.placeNameViewTwo.setText("..." + foodTruckNameLineTwo);
-//            foodTruckDataHolder.placeNameViewThree.setText("");
-//            // necessary otherwise other placeNames were being overwritten or scrambled
-//            foodTruckNameLineOne = "";
-//            foodTruckNameLineTwo = "";
-//        }else if (foodTruck.getPlaceName().length() <= 17){
-//            foodTruckDataHolder.placeNameViewThree.setText((foodTruck.getPlaceName()));
-//            // necessary otherwise other placeNames were being overwritten or scrambled
-//            foodTruckDataHolder.placeNameView.setText("");
-//            foodTruckDataHolder.placeNameViewTwo.setText("");
-//        }
         if (foodTruck.getPlaceName() != null) {
             foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getPlaceName());
         }else {
@@ -326,10 +247,90 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         return row;
     }
 
-    View.OnClickListener PopupListener = new View.OnClickListener(){
+    View.OnClickListener mapClickListener = new View.OnClickListener(){
         @Override
-        public void onClick(View view){
-            Integer viewPosition = (Integer) view.getTag();
+        public void onClick(View view) {
+            // TODO Auto-generated method stub
+            Integer rowPosition = (Integer) view.getTag();
+            FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
+
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
+
+            String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckNamePhone);
+            Intent geoItent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
+            context.startActivity(geoItent);
+
+        }
+    };
+
+    // touching maps icon will offer option to launch to geo compatible implicit intent
+
+
+    // touching compass icon will offer option to launch to geo compatible implicit intent
+    View.OnClickListener compassClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            // TODO Auto-generated method stub
+            Integer rowPosition = (Integer) view.getTag();
+            FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
+
+
+
+            String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckNamePhone);
+            Intent geoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
+            context.startActivity(geoIntent);
+
+        }
+    };
+
+    // touching displayed phone number will offer option to call via implicit intent
+    View.OnClickListener phoneNumberClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            // TODO Auto-generated method stub
+            Integer rowPosition = (Integer) view.getTag();
+            FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
+//                Toast.makeText(context, "TextView Row #" + mPosition + foodTruck.getPlaceName(),
+//                        Toast.LENGTH_SHORT).show();
+
+            if(foodTruck.getPhone().length() == 7) {
+                String phoneCall = "tel:" + foodTruck.getPhone();
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse(phoneCall));
+                context.startActivity(callIntent);
+            }else{
+                Toast.makeText(context, "Phone Number Unavailable", Toast.LENGTH_SHORT).show();
+            }
+
+//                String phoneCall = "tel:" + foodTruck.getPhone();
+//                Intent callIntent = new Intent(Intent.ACTION_CALL);
+//                callIntent.setData(Uri.parse(phoneCall));
+//                context.startActivity(callIntent);
+
+        }
+    };
+
+    // touching displayed phone number will offer option to call via implicit intent
+    View.OnClickListener phoneIconClickListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            // TODO Auto-generated method stub
+            Integer rowPosition = (Integer) view.getTag();
+            FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
+
+            if(foodTruck !=null && foodTruck.getPhone().length() == 7) {
+                String phoneCall = "tel:" + foodTruck.getPhone();
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse(phoneCall));
+                context.startActivity(callIntent);
+            }else {
+                Toast.makeText(context, "Phone Number Unavailable", Toast.LENGTH_SHORT).show();
+            }
         }
     };
 
@@ -338,5 +339,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         FoodTruckData foodTruckNew = getFoodTruckData();
         return foodTruckNew;
     }
+
+
 
 }

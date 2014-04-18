@@ -117,7 +117,7 @@ public class FoodTruckDataGetter {
 
                 myAPIFoursquare = stringBuilder.toString();
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                     myAPIFoursquare,
@@ -126,7 +126,7 @@ public class FoodTruckDataGetter {
                     errorListener);
             requestQueue.add(jsonObjectRequest); //hey go get the data
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -164,48 +164,48 @@ public class FoodTruckDataGetter {
                             String fsFoodTruckTwitter = aResult.getString("twitter");
                             foodTruckData.setFsTwitter(fsFoodTruckTwitter);
                         }catch (JSONException e){
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "fs Twitter error");
+                            //e.printStackTrace();
+                            //Log.v("VOLLEY", "fs Twitter error");
                         }
 
                         try{
                             double latitude = location.getDouble("lat");
                             foodTruckData.setLatitude(latitude);
                         }catch (JSONException e){
-                            e.printStackTrace();
-                            Log.v("FSVOLLEY", "FS Volley JSON Lat error");
+                           // e.printStackTrace();
+                            //Log.v("FSVOLLEY", "FS Volley JSON Lat error");
                         }
 
                         try{
                             double longitude = location.getDouble("lng");
                             foodTruckData.setLongitude(longitude);
                         }catch (JSONException e){
-                            e.printStackTrace();
-                            Log.v("FSVOLLEY", "FS Volley JSON Lng error");
+                            //e.printStackTrace();
+                            //Log.v("FSVOLLEY", "FS Volley JSON Lng error");
                         }
 
                         try {
                             String formattedPhone = contact.getString("formattedPhone");
                             foodTruckData.setPhoneNumberFormatted(formattedPhone);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "phoneNumberFormatted catch JSONException error");
+                            //e.printStackTrace();
+                            //Log.v("VOLLEY", "phoneNumberFormatted catch JSONException error");
                         }
 
                         try {
                             String phone = contact.getString("phone");
                             foodTruckData.setPhone(phone);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "phoneNumber catch JSONException error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "phoneNumber catch JSONException error");
                         }
 
                         try {
                             String fsId = aResult.getString("id");
                             foodTruckData.setFsId(fsId);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "fsID catch JSONException error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "fsID catch JSONException error");
                         }
 
                         try {
@@ -213,8 +213,8 @@ public class FoodTruckDataGetter {
                             String menuUrl = fsmenu.getString("url");
                             foodTruckData.setFsMenuUrl(menuUrl);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "fsMenuURL catch JSONException error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "fsMenuURL catch JSONException error");
                         }
 
                         try {
@@ -222,31 +222,31 @@ public class FoodTruckDataGetter {
                             String mobileUrl = fsmenu.getString("mobileUrl");
                             foodTruckData.setFsMobileUrl(mobileUrl);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "fsMobileURL catch JSONException error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "fsMobileURL catch JSONException error");
                         }
 
                         try {
                             String address = location.getString("address");
                             foodTruckData.setFoursquareAddress(address);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "Address catch JSONException error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "Address catch JSONException error");
                             foodTruckData.setFoursquareAddress("See Map");
                         }
 
                         try {
                             foodTruckData.setUserLatitude(userLatitude);
                         } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("USERLAT", "there was an error with USerLat");
+//                            e.printStackTrace();
+//                            Log.e("USERLAT", "there was an error with USerLat");
                         }
 
                         try {
                             foodTruckData.setUserLongitude(userLongitude);
                         } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("USERLONG", "there was an error with USerLong");
+//                            e.printStackTrace();
+//                            Log.e("USERLONG", "there was an error with USerLong");
                         }
 
                         listOfFoodTrucks.add(foodTruckData);
@@ -256,7 +256,7 @@ public class FoodTruckDataGetter {
                     performAdditionalGoogleSearches();
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
 
@@ -359,24 +359,24 @@ public class FoodTruckDataGetter {
                             String placeName = aResultArray.getString("name");
                             foodTruckData.setPlaceName(placeName);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "placeName Google Places error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "placeName Google Places error");
                         }
 
                         try {
                             Double latitude = location.getDouble("lat");
                             foodTruckData.setLatitude(latitude.doubleValue());
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "google latitude exception");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "google latitude exception");
                         }
 
                         try {
                             Double longitude = location.getDouble("lng");
                             foodTruckData.setLongitude(longitude.doubleValue());
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "google longitude exception");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "google longitude exception");
                         }
 
 
@@ -385,8 +385,8 @@ public class FoodTruckDataGetter {
                             boolean openNowBool = openingHours.getBoolean("open_now");
                             foodTruckData.setOpenNow(openNowBool);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "Google open_now error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "Google open_now error");
 
                         }
 
@@ -394,8 +394,8 @@ public class FoodTruckDataGetter {
                             Double ratingValue = aResultArray.getDouble("rating");
                             foodTruckData.setRating(ratingValue);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "rating error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "rating error");
                             foodTruckData.setRating(Integer.parseInt("--"));
                         }
 
@@ -403,16 +403,16 @@ public class FoodTruckDataGetter {
                             String vicinityAddress = aResultArray.getString("vicinity");
                             foodTruckData.setVicinityAddress(vicinityAddress);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "vicinity address error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "vicinity address error");
                         }
 
                         try {
                             String placeDetailsId = aResultArray.getString("reference");
                             foodTruckData.setPlaceDetailsReference(placeDetailsId);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "placeDetailsId error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "placeDetailsId error");
                             foodTruckData.setPriceLevel(Integer.valueOf("--"));
                         }
 
@@ -420,8 +420,8 @@ public class FoodTruckDataGetter {
                             int priceLevelInt = aResultArray.getInt("price_level");
                             foodTruckData.setPriceLevel(priceLevelInt);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "price_level error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "price_level error");
                             foodTruckData.setPriceLevel(Integer.valueOf("--"));
                         }
 
@@ -431,15 +431,15 @@ public class FoodTruckDataGetter {
                             String placesReferencePhoto = jsonObject.getString("photo_reference");
                             foodTruckData.setPhotoPlacesReference(placesReferencePhoto);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "new photo reference error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "new photo reference error");
                         }
 
                         try{
                             foodTruckData.setTagValue(intTag);
                         }catch (Exception e){
-                            e.printStackTrace();
-                            Log.v("JSONPARSE", "saveTagId error");
+//                            e.printStackTrace();
+//                            Log.v("JSONPARSE", "saveTagId error");
                         }
 
                     }
@@ -459,7 +459,7 @@ public class FoodTruckDataGetter {
 //                    Toast.makeText(context, "Updated Food Trucks with more information.", Toast.LENGTH_SHORT).show();
                     notifyOfDataChanged();
                 } catch (Exception e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
         };

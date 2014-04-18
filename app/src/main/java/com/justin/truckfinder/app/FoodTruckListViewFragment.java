@@ -14,8 +14,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
@@ -73,17 +75,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // Save custom values into the bundle
-        int someIntValue = 1;
-        String someStringValue = "string";
-
-        outState.putInt(SOME_VALUE, someIntValue);
-        outState.putString(SOME_OTHER_VALUE, someStringValue);
-
-        //
-        //
-        outState.putSerializable("MyKey",mTheDataReceived);
-        //
-        //
+        outState.putString("MyKey", currentLocation);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
     }
@@ -93,8 +85,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onViewStateRestored(savedInstanceState);
         //
         //
-        if (mTheDataReceived !=null) {
-            mTheDataReceived = (ArrayList<FoodTruckData>) savedInstanceState.getSerializable("MyKey");
+        if (savedInstanceState !=null) {
+           currentLocation = savedInstanceState.getString("MyKey", "No Location");
         }
         //
         //
@@ -109,18 +101,16 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
 //       get the progress bar and the quote
 
-//        if (theDataReceived != null) {
-//            myTextView.findViewById(R.id.progressTextId2).setVisibility(View.INVISIBLE);
-//            myProgress.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
-//        }
+        if(theDataReceived == null){
+            return;
+        }
+
+        myTextView.setVisibility(View.INVISIBLE);
+        myProgress.setVisibility(View.INVISIBLE);
 
         //if we now have data, kill the loading screen.
         mTheDataReceived = theDataReceived;
-        if (theDataReceived == null) {
-            foodTruckDataAdapter.setFoodTruckDataArrayList(FoodTruckStorage.getMyFoodTruckData(getActivity()));
-        }else {
-            foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
-        }
+        foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
     }
 
     @Override
@@ -154,8 +144,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     @Override
     public void onLocationChanged(Location location) {
-        if (retrievedLocation) {
-            retrievedLocation = true;
+
+        if (location != null) {
             Log.e("NEWLOC", "Got new location");
             setNewLocation(location);
             // Remove the listener you previously added
@@ -199,48 +189,25 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
                     valuesMagneticField);
 
             if (success) {
-//                if(ROTATE_90){
-//                    //this is the right one for 90
-//                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
-//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-//                }else if(ROTATE_270){
-//                    //this is the right one for 270
-//                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-//                }else if(ROTATE_180){
-//                    //this is the right one for 180
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
-//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-//                }else{
-//                    SensorManager.getOrientation(matrixR, matrixValues);
-//                }
-
-
                 switch (rotation) {
                     case Surface.ROTATION_90:
                         //this is the right one for 90
                         //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
                         SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
                         SensorManager.getOrientation(matrixRremapped, matrixValues);
-                        Log.e("ROT","ROTATION_90");
                         break;
                     case Surface.ROTATION_180:
                         //this is the right one for 180
                         SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
                         SensorManager.getOrientation(matrixRremapped, matrixValues);
-                        Log.e("ROT", "ROTATION_180");
                         break;
                     case Surface.ROTATION_270:
                         //this is the right one for 270
                         SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
                         SensorManager.getOrientation(matrixRremapped, matrixValues);
-                        Log.e("ROT", "ROTATION_270");
                         break;
                     case Surface.ROTATION_0:
                     default:
-                        Log.e("ROT", "ROTATION_0");
                         SensorManager.getOrientation(matrixR, matrixValues);
                         break;
                 }
@@ -276,6 +243,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onStart() {
         super.onStart();
+
         setNewLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
         try {
@@ -297,66 +265,43 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST);
 
+
+
+
         if(getActivity() != null){
             Object myObject = getActivity().getSystemService(Context.WINDOW_SERVICE);
             WindowManager windowManager = (WindowManager) myObject;
             Display display = windowManager.getDefaultDisplay();
             rotation = display.getRotation();
-            //Clean up this code to use a single int instead of multiple booleans.
-            rotateAppropriately(rotation);
-
-//            switch (rotation) {
-//                case Surface.ROTATION_90:
-//                    //this is the right one for 90
-//                    //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
-//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-////                    ROTATE_90 = true;
-////                    ROTATE_270 = false;
-////                    ROTATE_180 = false;
-//                    Log.e("ROT","ROTATION_90");
-//                    break;
-//                case Surface.ROTATION_180:
-//                    //this is the right one for 180
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
-//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-////                    ROTATE_90 = false;
-////                    ROTATE_270 = false;
-////                    ROTATE_180 = true;
-//                    Log.e("ROT", "ROTATION_180");
-//                    break;
-//                case Surface.ROTATION_270:
-//                    //this is the right one for 270
-//                    SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
-//                    SensorManager.getOrientation(matrixRremapped, matrixValues);
-////                    ROTATE_90 = false;
-////                    ROTATE_270 = true;
-////                    ROTATE_180 = false;
-//                    Log.e("ROT", "ROTATION_270");
-//                    break;
-//                case Surface.ROTATION_0:
-//                default:
-//                    Log.e("ROT", "ROTATION_0");
-//                    SensorManager.getOrientation(matrixR, matrixValues);
-////                    ROTATE_90 = false;
-////                    ROTATE_270 = false;
-////                    ROTATE_180 = false;
-//                    break;
-//            }
         }
+
+        ArrayList<FoodTruckData> savedData = FoodTruckStorage.getMyFoodTruckData(getActivity());
+        if(savedData != null && savedData.size() > 0){
+            onDataReceived(savedData);
+        }
+
+
+
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_food_truck_nearby, container, false);
+        myTextView = (TextView) rootView.findViewById(R.id.progressTextId2);
+        myProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        return rootView;
+    }
+
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //for the first time, see if they have data while you're waiting for new data.
-        if(savedInstanceState != null){
-
-        }
-        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_rows, new ArrayList<FoodTruckData>());
+        ArrayList<FoodTruckData> startData = new ArrayList<FoodTruckData>();
+        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_rows,startData);
         setListAdapter(foodTruckDataAdapter);
         foodTruckDataAdapter.setSensorListener(this);
-
     }
 
     @Override
@@ -404,12 +349,19 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         String latitudeString = String.valueOf(userLatitudeDouble);
         String longitudeString = String.valueOf(userLongitudeDouble);
 
+        latitudeString = String.format("%.3f", userLatitudeDouble);
+        longitudeString = String.format("%.3f", userLongitudeDouble);
         String latitudeLongitude = latitudeString + "," + longitudeString;
-        Log.v("gps", latitudeLongitude);
-        currentLocation = latitudeLongitude;
 
-        FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
-        FoodTruckData.setUserLatitude(userLatitudeDouble);
-        FoodTruckData.setUserLongitude(userLongitudeDouble);
+
+
+        if(!latitudeLongitude.equals(currentLocation) && getActivity() != null) {
+            currentLocation = latitudeLongitude;
+            FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
+            FoodTruckData.setUserLatitude(userLatitudeDouble);
+            FoodTruckData.setUserLongitude(userLongitudeDouble);
+        }else {
+            onDataReceived(FoodTruckStorage.getMyFoodTruckData(getActivity()));
+        }
     }
 }

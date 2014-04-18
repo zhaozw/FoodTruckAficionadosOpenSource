@@ -5,6 +5,16 @@ package com.justin.truckfinder.app;
  */
 public class TODO {
 
+
+
+    //TODO: Remove all logging from application. before you release it should not log anything
+    //TODO: fix and test all your listeners for map / ccalling / etc
+    //TODO: CLEAN UP UNUSED CODE
+    //TODO: REMOVE FEATURES SO YOU CAN SUBMIT
+
+
+
+
     //TODO 1. PROGRESS BAR NOT SHOWING UP, NEEDS FIXING.
     //TODO 2. ROTATION CAUSES VOLLEYS TO BE DONE AGAIN; CHECKED FRAGMENT, NEED TO CHECK ACTIVITY.
 

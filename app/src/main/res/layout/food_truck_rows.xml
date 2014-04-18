@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/cloudtransparenthalf"
+    android:background="#FFFFFF"
     android:id="@+id/mainRelativeLayout">
     <!--android:background="#b3cbef"-->
 
@@ -37,9 +37,10 @@
         android:id="@+id/mapsButtonImplicit"
         android:scaleX="1.5"
         android:scaleY="1.5"
+        android:layout_marginLeft="10dp"
         android:padding="7dp"
         android:layout_alignTop="@+id/phoneButtonImplicit"
-        android:layout_alignEnd="@+id/placeDistanceFeetView"
+        android:layout_toRightOf="@id/phoneButtonImplicit"
         />
     <!--<Spinner-->
         <!--android:layout_width="wrap_content"-->
@@ -71,7 +72,7 @@
         android:layout_width="100dp"
         android:layout_height="1dp"
         android:padding="7dp"
-
+        android:layout_marginRight="10dp"
         android:layout_below="@id/phoneButtonImplicit"
         android:layout_alignParentRight="true"
         android:id="@+id/imageView" />
@@ -82,10 +83,10 @@
         android:textColor="#2A53C1"
         android:padding="7dp"
         android:text="0.71 Miles"
-        android:layout_marginTop="30dp"
         android:textSize="13sp"
         android:textStyle="bold"
         android:layout_gravity="bottom"
+        android:layout_alignTop="@id/placeAddressView"
 
         android:textAlignment="textStart"
         android:layout_below="@+id/imageView2"
@@ -108,11 +109,7 @@
         android:layout_alignEnd="@id/imageView"
         />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/placeInformation"
-        android:layout_alignParentLeft="true">
+
         <TextView
             android:id="@+id/placeNameView"
             android:layout_width="wrap_content"
@@ -138,16 +135,16 @@
         />
         <TextView
             android:id="@+id/placeNameViewThree"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="7dp"
             android:textColor="#2A53C1"
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_centerInParent="true"
             android:layout_alignParentTop="true"
-            android:gravity="center_vertical"
+            android:gravity="center_horizontal|center_vertical"
             android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
 
             android:text="place name"
             />
@@ -235,6 +232,5 @@
 
 
 
-    </RelativeLayout>
 
 </RelativeLayout>
