@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/cloudtransparenthalf"
+    android:id="@+id/mainRelativeLayout">
+    <!--android:background="#b3cbef"-->
+
+    <!--android:background="#F5F6FA"-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/gradienttop"
+        android:id="@+id/imageView2" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/gradientbottom"/>
+    <com.android.volley.toolbox.NetworkImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/googlePlacesView"
+        android:padding="7dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_location_place"
+        android:id="@+id/mapsButtonImplicit"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:padding="7dp"
+        android:layout_alignTop="@+id/phoneButtonImplicit"
+        android:layout_alignEnd="@+id/placeDistanceFeetView"
+        />
+    <!--<Spinner-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/spinnerSelection"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:entries="@array/actions"-->
+        <!--android:layout_alignStart="@+id/mapsButtonImplicit" />-->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_device_access_call"
+        android:id="@+id/phoneButtonImplicit"
+        android:contentDescription="hello"
+        android:padding="7dp"
+
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+
+        android:layout_below="@+id/placeDistanceFeetView"
+        android:layout_alignStart="@+id/placeDistanceFeetView" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="1dp"
+        android:padding="7dp"
+
+        android:layout_below="@id/phoneButtonImplicit"
+        android:layout_alignParentRight="true"
+        android:id="@+id/imageView" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placeDistanceMilesView"
+        android:textColor="#2A53C1"
+        android:padding="7dp"
+        android:text="0.71 Miles"
+        android:layout_marginTop="30dp"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:layout_gravity="bottom"
+
+        android:textAlignment="textStart"
+        android:layout_below="@+id/imageView2"
+        android:layout_alignStart="@+id/placeDistanceFeetView" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="7dp"
+        android:id="@+id/placeDistanceFeetView"
+        android:layout_marginRight="20dp"
+        android:textColor="#2A53C1"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:layout_gravity="bottom"
+        android:text="9323 Feet"
+        android:textAlignment="textStart"
+        android:layout_below="@+id/placeDistanceMilesView"
+        android:layout_alignEnd="@id/imageView"
+        />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/placeInformation"
+        android:layout_alignParentLeft="true">
+        <TextView
+            android:id="@+id/placeNameView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="7dp"
+            android:textColor="#2A53C1"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:scrollHorizontally="false"
+            android:visibility="gone"
+            />
+
+        <TextView
+        android:id="@+id/placeNameViewTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="7dp"
+        android:textColor="#2A53C1"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_below="@id/placeNameView"
+        android:visibility="gone"
+        />
+        <TextView
+            android:id="@+id/placeNameViewThree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="7dp"
+            android:textColor="#2A53C1"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+
+            android:text="place name"
+            />
+        <TextView
+            android:id="@+id/placeAddressView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="7dp"
+            android:textColor="#2A53C1"
+            android:textSize="13sp"
+            android:text="address"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@id/placeNameViewThree"
+            />
+
+        <TextView
+            android:id="@+id/placePriceView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/placeAddressView"
+            android:padding="7dp"
+            android:text="price"
+            android:textColor="#2A53C1"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_alignLeft="@id/placeAddressView"/>
+
+        <TextView
+            android:id="@+id/placeRatingView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/placePriceView"
+            android:padding="7dp"
+            android:text="rating"
+            android:textColor="#2A53C1"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_alignLeft="@id/placeAddressView"/>
+        <TextView
+            android:id="@+id/placePhoneView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/placeRatingView"
+            android:padding="7dp"
+            android:text="placePhone"
+            android:textColor="#2A53C1"
+            android:textSize="12sp"
+            android:layout_alignLeft="@id/placeAddressView"
+            />
+
+        <TextView
+            android:id="@+id/placeOpenNowView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/placePhoneView"
+            android:padding="7dp"
+            android:text="placeOpen"
+            android:textColor="#2A53C1"
+            android:textSize="12sp"
+            android:layout_alignLeft="@id/placeAddressView"/>
+        <TextView
+            android:id="@+id/placePostalView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/placeOpenNowView"
+            android:padding="7dp"
+            android:textColor="#2A53C1"
+            android:textSize="12sp"
+            android:text="Menu"
+            android:layout_alignLeft="@id/placeAddressView"
+
+            />
+        <TextView
+            android:id="@+id/placeExtraView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/placePostalView"
+            android:padding="7dp"
+            android:layout_alignLeft="@id/placeAddressView"
+            android:textColor="#2A53C1"
+            android:text="twitter"
+            android:textSize="12sp"
+            />
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
