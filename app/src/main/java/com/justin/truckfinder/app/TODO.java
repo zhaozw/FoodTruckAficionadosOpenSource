@@ -28,7 +28,7 @@ public class TODO {
     //      TODO OR TO SIMPLY SOCIAL SHARE MY APP
 
     // TODO ERROR REPORT TO SUBMIT TO ME; FEEDBACK REGARDING WHICH TRUCKS WEREN'T THERE, FEATURES THEY WANT TO SEE, ETc.
-
+    
     // TODO WHAT IF SOMEONE LAUNCHES MY APP AND THERE ARE NO FOOD TRUCKS WITHIN A 750 METER VICINITY???
 
 
@@ -38,9 +38,9 @@ public class TODO {
     //TODO 4.2 DO NOT KNOW HOW TO SAVE INFORMATION FROM JSON PARSING TO ARRAYS YET
 
     //TODO MINOR FIXES
-    //TODO dialog box asking the user if they really want to call someone
-    //TODO implicit intent to share that they visited a food truck using the foodTruck's twitter handle
-    //TODO dialog boxes or Toasts where a launched implicit intent will error out or call a non-existent number
+        //TODO dialog box asking the user if they really want to call someone
+        //TODO implicit intent to share that they visited a food truck using the foodTruck's twitter handle
+        //TODO dialog boxes or Toasts where a launched implicit intent will error out or call a non-existent number
 
 
     //TODO FINE TUNING

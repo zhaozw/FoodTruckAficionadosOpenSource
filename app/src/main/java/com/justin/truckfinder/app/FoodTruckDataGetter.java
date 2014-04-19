@@ -150,6 +150,8 @@ public class FoodTruckDataGetter {
                         JSONObject location = aResult.getJSONObject("location");
                         JSONObject contact = aResult.getJSONObject("contact");
 
+//                        JSONArray resultArrayCategories = aResult.getJSONArray("categories");
+
                         try {
                             String fourSquareName = aResult.getString("name");
                             foodTruckData.setFourSquareName(fourSquareName);
@@ -246,11 +248,9 @@ public class FoodTruckDataGetter {
 //                            e.printStackTrace();
 //                            Log.e("USERLONG", "there was an error with USerLong");
                         }
-                        if(listOfFoodTrucks.size() > 0) {
-                            listOfFoodTrucks.add(foodTruckData);
-                        }else {
-                            // tell the fragment there is no list of food trucks
-                        }
+
+                        listOfFoodTrucks.add(foodTruckData);
+//                        storeJson(response, foodTruckData.getFourSquareName());
                     }
                     notifyOfDataChanged();
                     performAdditionalGoogleSearches();

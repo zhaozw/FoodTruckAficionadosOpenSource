@@ -52,14 +52,14 @@ public class FoodTruckStorage {
         return true;
     }
 
-    protected static ArrayList<FoodTruckData> getMyFoodTruckData(Context aContext) {
+        protected static ArrayList<FoodTruckData> getMyFoodTruckData(Context aContext) {
         try {
             FileInputStream mFileInputStream = aContext.openFileInput(DATA_FILE_ARRAY);
             ObjectInputStream mObjectInputStream = new ObjectInputStream(mFileInputStream);
             Object readObject = mObjectInputStream.readObject();
             mObjectInputStream.close();
 
-            if (readObject != null && readObject instanceof ArrayList) {
+            if(readObject != null && readObject instanceof ArrayList) {
                 return (ArrayList<FoodTruckData>) readObject;
             }
         } catch (IOException anIOException) {

@@ -8,7 +8,7 @@ import android.app.Fragment;
  *
  * Places API KEY  AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E
  */
-public class FoodTruckDetailsFragment extends Fragment implements FoodTruckListViewFragment.OnItemSelectedListener {
+public class FoodTruckDetailsFragment extends Fragment implements FoodTruckListViewFragment.OnItemSelectedListener{
 
     @Override
     public void OnItemSelected() {
