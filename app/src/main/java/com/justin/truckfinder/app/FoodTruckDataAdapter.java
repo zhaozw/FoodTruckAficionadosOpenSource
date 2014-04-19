@@ -286,7 +286,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             Integer rowPosition = (Integer) view.getTag();
             FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
 
-            if(foodTruck.getPhone() != null && foodTruck.getPhone().length() == 7) {
+            if(foodTruck.getPhone() != null) {
                 String phoneCall = "tel:" + foodTruck.getPhone();
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                 callIntent.setData(Uri.parse(phoneCall));

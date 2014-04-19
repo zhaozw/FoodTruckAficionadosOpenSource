@@ -26,7 +26,7 @@ public class FoodTruckData implements Serializable{
     private String foursquareAddress;
     private String postalCode;
     private String phoneNumberFormatted;
-    private String phone;
+    private String phone = null;
     private String photoPlacesReference;
     private String photoPlacesURL;
     private String placeDetailsReference;
