@@ -247,16 +247,16 @@ public class MyCompassView extends View {
 //        startDegree = (double) convertToDegreesOnCircle(startDegree);
 //        endDegree = (double) convertToDegreesOnCircle(endDegree);
 
-        double changeAbs = Math.abs (endDegree - startDegree);
-        if(changeAbs > 180){
-            if (endDegree > startDegree){
+        double changeAbs = Math.abs(endDegree - startDegree);
+        if (changeAbs > 180) {
+            if (endDegree > startDegree) {
                 startDegree += 360;
-            }else {
+            } else {
                 endDegree += 360;
             }
         }
 
-        double interpChange =  startDegree + ((endDegree - startDegree) * WEIGHT);
+        double interpChange = startDegree + ((endDegree - startDegree) * WEIGHT);
         float rangeZero = 360;
         if (interpChange >= 0 && interpChange < 360)
             return interpChange;
@@ -264,7 +264,6 @@ public class MyCompassView extends View {
         return (interpChange % rangeZero);
 //        Log.v("TAG", String.format("%.2f", startDegree) + ":" + String.format("%.2f", endDegree) + ":" + String.format("%.2f", (interpChange + startDegree)));
     }
-
 
 
     private class Arrow {

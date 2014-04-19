@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Created by justindelta on 3/17/14.
  */
-public class FoodTruckData implements Serializable{
+public class FoodTruckData implements Serializable {
 
 
     //This is the data i want to display. Encapsulating only the data that I need.
@@ -18,7 +18,7 @@ public class FoodTruckData implements Serializable{
     private double latitude = 0;
     private double longitude = 0;
     private String placeName; // google places name
-    private String fourSquareName = "--";
+    private String fourSquareName;
     private boolean openNow = Boolean.parseBoolean(null);
     private int priceLevel = 9;
     private double rating = 9;
@@ -90,7 +90,7 @@ public class FoodTruckData implements Serializable{
         return userLatitude;
     }
 
-    public static void  setUserLatitude(double userLat) {
+    public static void setUserLatitude(double userLat) {
         userLatitude = userLat;
     }
 
@@ -165,7 +165,6 @@ public class FoodTruckData implements Serializable{
     public void setPhoneNumberFormatted(String phoneNumberFormatted) {
         this.phoneNumberFormatted = phoneNumberFormatted;
     }
-
 
 
     public double getLongitude() {

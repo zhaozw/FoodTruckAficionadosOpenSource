@@ -34,7 +34,7 @@ public class GeoUtils {
 
     }
 
-    public static float getModifiedTrueNorth(Location myLocation , float heading){
+    public static float getModifiedTrueNorth(Location myLocation, float heading) {
 
         return heading;
 
@@ -68,7 +68,6 @@ public class GeoUtils {
             return heading;
         }
     }
-
 
 
 }
