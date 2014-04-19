@@ -1,9 +1,7 @@
 package com.justin.truckfinder.app;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
-import android.util.LruCache;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -250,7 +248,9 @@ public class FoodTruckDataGetter {
                         }
 
                         listOfFoodTrucks.add(foodTruckData);
-//                        storeJson(response, foodTruckData.getFourSquareName());
+                        if(listOfFoodTrucks.size() < 1){
+                            listOfFoodTrucks.ensureCapacity(80);
+                        }
                     }
                     notifyOfDataChanged();
                     performAdditionalGoogleSearches();
@@ -304,10 +304,17 @@ public class FoodTruckDataGetter {
             if(myAPIGoogle.contains("poop")){
                 myAPIGoogle = myAPIGoogle.replace("poop","");
             }
+            if(myAPIGoogle.contains("Corporate") && myAPIGoogle.contains("Headquarters")){
+                myAPIGoogle = myAPIGoogle.replace("Corporate", "");
+                myAPIGoogle = myAPIGoogle.replace("HeadQuarters", "");
+            }
+            if(myAPIGoogle.contains("Parking")){
+                myAPIGoogle = myAPIGoogle.replace("Parking","");
+            }
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         try {
@@ -324,7 +331,7 @@ public class FoodTruckDataGetter {
 
             requestQueue.add(jsonObjectRequest); //hey go get the data
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -336,9 +343,7 @@ public class FoodTruckDataGetter {
                 try {
                     // Extract the Place descriptions from the results
                     //Parsing the JSON
-                    Log.e("ERROR" , response.toString());
-
-
+//                    Log.e("ERROR" , response.toString());
                     JSONObject jsonInitial = response;
                     JSONObject jsonTag = response;
                     int intTag = jsonTag.getInt("RESPONSEKEY");
@@ -402,6 +407,7 @@ public class FoodTruckDataGetter {
                         try {
                             String vicinityAddress = aResultArray.getString("vicinity");
                             foodTruckData.setVicinityAddress(vicinityAddress);
+                            foodTruckData.setFoursquareAddress(vicinityAddress);
                         } catch (JSONException e) {
 //                            e.printStackTrace();
 //                            Log.v("VOLLEY", "vicinity address error");
@@ -435,28 +441,15 @@ public class FoodTruckDataGetter {
 //                            Log.v("VOLLEY", "new photo reference error");
                         }
 
-                        try{
+                        try {
                             foodTruckData.setTagValue(intTag);
-                        }catch (Exception e){
+                        } catch (Exception e) {
 //                            e.printStackTrace();
 //                            Log.v("JSONPARSE", "saveTagId error");
                         }
 
                     }
-                    //remove it from incomplete.
-
-                    ///OR
-                    //
-                    // dot use incomplete at all, just use listOfFoodTrucksOld. and then always just
-                    // pull in new data into it, pick items out, perform search, and then update THE SAME
-                    // OBJECT with extra data.
-
-
-
                     FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
-                    //TODO add feature that uses the code below to retrieve images
-//                    performGooglePhotosRequests();
-//                    Toast.makeText(context, "Updated Food Trucks with more information.", Toast.LENGTH_SHORT).show();
                     notifyOfDataChanged();
                 } catch (Exception e) {
 //                    e.printStackTrace();
@@ -465,86 +458,11 @@ public class FoodTruckDataGetter {
         };
     }
 
-
     protected static Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.v("VOLLEY", "ERROR WITH API");
         }
     };
-
-
-
-
-    //TODO delete after showing to spawrks
-    private static void performGooglePhotosRequests() {
-
-        Iterator<FoodTruckData> i = listOfFoodTrucks.iterator();
-        while (i.hasNext()) {
-            FoodTruckData foodTruckData = i.next();
-            volleyGooglePlacesGetter(foodTruckData);
-        }
-    }
-    // SANITY CHECK https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=CnRnAAAAYz2WamgLIFUvOUHss4JQlIm4UUeIx4hnTyZJnJVmAMDofX_JuAjFR5ZezzEMqykbcHOheCr3-OVCooEui8651Ah2fzmazGGiuPt_54qTdNQwLe9Azi6WRkQlOvRQMxx_Gf1heF9gMlXYrD8yXLKZEhIQ53kT8bhMLhVVB8vSf9v7ghoU5ZpLEMxMA3dzsm-SJ7Abzd_u14g&sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E
-
-    private static final String GOOGLE_PLACES_PHOTOS = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=";
-    private static final String GOOGLE_SENSOR = "&sensor=true";
-
-
-    public static void volleyGooglePlacesGetter(FoodTruckData aFoodTruckData) {
-
-        String aPlacesPhotoReferenceKey = aFoodTruckData.getPhotoPlacesURL();
-
-        String myGooglePlacesPhotoAPI = GOOGLE_PLACES_PHOTOS + aPlacesPhotoReferenceKey + GOOGLE_SENSOR + "&key=" + GOOGLE_PLACES_API_KEY;
-
-        RequestQueue queue = Volley.newRequestQueue(context);
-
-
-        JsonObjectRequest jsonObjRequest = new JsonObjectRequest(Request.Method.GET, myGooglePlacesPhotoAPI, null, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-                // TODO Auto-generated method stub
-
-                FoodTruckData foodTruckDataGooglePhotos = new FoodTruckData();
-                ArrayList<FoodTruckData> googlePlacePhotos;
-
-                googlePlacePhotos = new ArrayList<FoodTruckData>(listOfFoodTrucks.size());
-                try {
-                    foodTruckDataGooglePhotos.setPhotoPlacesURL(response.toString());
-                    foodTruckDataGooglePhotos.setImageLoader(mImageLoader);
-                    googlePlacePhotos.add(foodTruckDataGooglePhotos);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                listOfFoodTrucks.addAll(googlePlacePhotos);
-                FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
-                notifyOfDataChanged();
-            }
-
-
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        queue.add(jsonObjRequest);
-        mImageLoader = new ImageLoader(queue, new ImageLoader.ImageCache() {
-            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(10);
-
-            public void putBitmap(String url, Bitmap bitmap) {
-                mCache.put(url, bitmap);
-            }
-
-            public Bitmap getBitmap(String url) {
-                return mCache.get(url);
-            }
-        });
-    }
-
 
 }

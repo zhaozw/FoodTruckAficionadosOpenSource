@@ -19,10 +19,8 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -35,25 +33,17 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     ProgressBar myProgress;
     TextView myTextView;
-    static final String SOME_VALUE = "int_value";
-    static final String SOME_OTHER_VALUE = "string_value";
-    protected float from;
-    protected float  to;
+    TextView myTextViewNoTrucks;
     private FoodTruckDataAdapter foodTruckDataAdapter;
     private LocationManager locationManager;
     protected Location lastUserLocation;
     protected String currentLocation;  //Format: "30.12341234,-90.11341234"
     private boolean retrievedLocation = false;
-    private OnItemSelectedListener selectedListenerCallback;
+    protected OnItemSelectedListener selectedListenerCallback;
     private SensorManager sensorManager;
     protected Sensor mySensorAccelerometer;
     protected Sensor mySensorMagnetometer;
-    //protected Context context;
     protected ArrayList<FoodTruckData> mTheDataReceived;
-    protected Bundle mSavedState;
-    protected Button mReturnButton = null;
-    protected Button mPerformButton = null;
-    protected Spinner mSpinner = null;
     float[] matrixR = {};
     float[] matrixRremapped = {};
     float[] matrixI = {};
@@ -61,11 +51,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     float[] valuesMagneticField = {};
     float[] matrixValues = {};
     protected int rotation = 0;
-
-    boolean ROTATE_90 = false;
-    boolean ROTATE_270 = false;
-    boolean ROTATE_180 = false;
-
 
 
     public FoodTruckListViewFragment() {
@@ -101,8 +86,11 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
 //       get the progress bar and the quote
 
+
         if(theDataReceived == null){
             return;
+        }else if (theDataReceived.size() == 80){
+            myTextViewNoTrucks.setVisibility(View.VISIBLE);
         }
 
         myTextView.setVisibility(View.INVISIBLE);
@@ -222,15 +210,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         return matrixValues[0]; //this is from the sensor updating
     }
 
-    public void rotateAppropriately(int aRotation){
-        if (aRotation == 0){
-
-        }else if (aRotation == 1){
-
-        }
-
-    }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
@@ -262,11 +241,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     @Override
     public void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST);
-
-
-
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_UI);
 
         if(getActivity() != null){
             Object myObject = getActivity().getSystemService(Context.WINDOW_SERVICE);
@@ -290,6 +266,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         View rootView = inflater.inflate(R.layout.fragment_food_truck_nearby, container, false);
         myTextView = (TextView) rootView.findViewById(R.id.progressTextId2);
         myProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        myTextView = (TextView) rootView.findViewById(R.id.progressTextNoTrucks);
         return rootView;
     }
 
@@ -319,6 +296,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public void onPause() {
         super.onPause();
 
+        FoodTruckStorage.saveMyFoodTruckData(getActivity(), mTheDataReceived);
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
 
@@ -336,6 +314,12 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         }
     }
 
+    public void getFoodTruckStorageData(){
+        Log.v("methodToGetInstanceReferenceCalled", "Check for Error");
+        onDataReceived(FoodTruckStorage.getInstance().getMyFoodTruckData(getActivity()));
+
+    }
+
     public void setNewLocation(Location location) {
         if (location == null) {
             return;
@@ -346,22 +330,22 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         double userLatitudeDouble = location.getLatitude();
         double userLongitudeDouble = location.getLongitude();
 
-        String latitudeString = String.valueOf(userLatitudeDouble);
-        String longitudeString = String.valueOf(userLongitudeDouble);
-
-        latitudeString = String.format("%.3f", userLatitudeDouble);
-        longitudeString = String.format("%.3f", userLongitudeDouble);
+        String latitudeString = String.format("%.2f", userLatitudeDouble);
+        String longitudeString = String.format("%.2f", userLongitudeDouble);
         String latitudeLongitude = latitudeString + "," + longitudeString;
 
 
 
         if(!latitudeLongitude.equals(currentLocation) && getActivity() != null) {
+            Log.v("Location Definitely Changed", "Will Launch FoodTruckDataGetter");
             currentLocation = latitudeLongitude;
             FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
             FoodTruckData.setUserLatitude(userLatitudeDouble);
             FoodTruckData.setUserLongitude(userLongitudeDouble);
         }else {
+            Log.v("GETMYFOODTRUCKDATA", "REACHED AND CHECK FOR ERROR");
             onDataReceived(FoodTruckStorage.getMyFoodTruckData(getActivity()));
+            getFoodTruckStorageData();
         }
     }
 }

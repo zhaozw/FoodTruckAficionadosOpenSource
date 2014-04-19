@@ -43,7 +43,9 @@ public class FoodTruckStorage {
             FileOutputStream fos = aContext.openFileOutput(DATA_FILE_ARRAY, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(myData);
+            oos.flush();
             oos.close();
+            fos.close();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -53,20 +55,23 @@ public class FoodTruckStorage {
     }
 
         protected static ArrayList<FoodTruckData> getMyFoodTruckData(Context aContext) {
-        try {
-            FileInputStream mFileInputStream = aContext.openFileInput(DATA_FILE_ARRAY);
-            ObjectInputStream mObjectInputStream = new ObjectInputStream(mFileInputStream);
-            Object readObject = mObjectInputStream.readObject();
-            mObjectInputStream.close();
+        ArrayList<FoodTruckData> readObject;
+            try {
+            FileInputStream fileInputStream = aContext.openFileInput(DATA_FILE_ARRAY);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            readObject = (ArrayList<FoodTruckData>) objectInputStream.readObject();
+            objectInputStream.close();
 
             if(readObject != null && readObject instanceof ArrayList) {
-                return (ArrayList<FoodTruckData>) readObject;
+                return readObject;
             }
         } catch (IOException anIOException) {
             anIOException.printStackTrace();
         } catch (ClassNotFoundException aClassNotFoundException) {
             aClassNotFoundException.printStackTrace();
-        }
+        }catch (Exception e){
+                e.printStackTrace();
+            }
         return null;
     }
 }

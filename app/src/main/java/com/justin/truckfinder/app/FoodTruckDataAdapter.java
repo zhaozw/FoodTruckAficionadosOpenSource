@@ -32,6 +32,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
     public int mPosition;
     public FoodTruckNearbyActivity foodTruckNearbyActivity;
     protected String truckNamePhone;
+    protected String fsMenuURL;
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
         super(aContext, aResource);
@@ -106,7 +107,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 //            android:layout_below="@id/phoneButtonImplicit"
 //            android:layout_alignParentRight="true"
 
-            compassLayout.setMargins(0,0,rightMargin,0);
+            compassLayout.setMargins(0, 0, rightMargin, 0);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             compassLayout.addRule(RelativeLayout.BELOW, R.id.phoneButtonImplicit);
 
@@ -156,18 +157,22 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         foodTruckDataHolder.foursquareMenuView.setOnClickListener(foursquareMenuClickListener);
 
 
-
         if (foodTruck.getPlaceName() != null) {
             truckNamePhone = foodTruck.getPlaceName();
         } else {
             truckNamePhone = foodTruck.getFourSquareName();
         }
 
+        if (foodTruck.getFsMenuUrl() !=null){
+//            fsMenuURL = foodTruck.getFsMenuUrl();
+//        }else {
+            fsMenuURL = "http://www.google.com/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&btnI=1&q=" + "+" + truckNamePhone + "+Menu";
+        }
 
 
         if (foodTruck.getPlaceName() != null) {
             foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getPlaceName());
-        }else {
+        } else {
             foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getFourSquareName());
         }
         // String.format here is allowing me to use "%.2f" to indicate that the float will be converted to a string to 2 decimal places
@@ -189,14 +194,26 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
         // every string with vicinity address was ending with ", Austin" which is 8 characters in length, thus
         // the successful removal of a substring that is already too long
-        if (foodTruck.getVicinityAddress() == null && foodTruck.getFourSquareName() != null){
-            foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress());
-        }
 
-        if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", Austin")){
+        if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", Austin")) {
             foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - 8));
-        } else if (foodTruck.getVicinityAddress() !=null) {
+        } else if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", Austin, Texas")) {
+            foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - 14));
+        } else if (foodTruck.getVicinityAddress() != null) {
             foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
+        } else if (foodTruck.getVicinityAddress() == null && foodTruck.getFourSquareName() != null) {
+
+            if(foodTruck.getFoursquareAddress() != null && foodTruck.getFoursquareAddress().contains(", Austin, Texas")) {
+                foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress().substring(0, foodTruck.getFoursquareAddress().length() - 14));
+
+            }else if(foodTruck.getFoursquareAddress() != null && foodTruck.getFoursquareAddress().contains(", Austin, Texas 78704")) {
+                foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress().substring(0, foodTruck.getFoursquareAddress().length() - 14));
+
+            }else if(foodTruck.getFoursquareAddress() != null){
+                foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress());
+            }else {
+                foodTruckDataHolder.placeAddressView.setText("Address Unavailable");
+            }
         }
 
 
@@ -219,7 +236,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
 
 
         if(foodTruck.getFsMenuUrl() != null){
-            foodTruckDataHolder.foursquareMenuView.setText("See Foursquare Menu");
+            foodTruckDataHolder.foursquareMenuView.setText("Open Foursquare Menu");
         } else{
             foodTruckDataHolder.foursquareMenuView.setText("Menu Unavailable");
         }
@@ -237,10 +254,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
         return row;
     }
 
-
-
-
-
     // touching maps icon will offer option to launch to geo compatible implicit intent
     View.OnClickListener mapClickListener = new View.OnClickListener(){
         @Override
@@ -254,8 +267,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
 
             String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckNamePhone);
-            Intent geoItent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
-            context.startActivity(geoItent);
+            Intent geoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
+            context.startActivity(geoIntent);
 
         }
     };
@@ -307,7 +320,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData>{
             FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(foodTruck.getFsMenuUrl()));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fsMenuURL));
             context.startActivity(browserIntent);
 
         }
