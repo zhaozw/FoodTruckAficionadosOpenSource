@@ -103,7 +103,7 @@ public class FoodTruckDataGetter {
     private static final String categoryID = "4bf58dd8d48988d1cb941735"; // foursquare Food Truck category ID
     private static final String clientID = "MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY";
     private static final String clientSecret = "3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2";
-    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=750&categoryId=" + categoryID + "&client_id=" + clientID + "&client_secret=" + clientSecret;
+    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=650&categoryId=" + categoryID + "&client_id=" + clientID + "&client_secret=" + clientSecret;
 
     private static void performFoursquareFoodTruckRequestFoursquare() {
 
@@ -182,6 +182,14 @@ public class FoodTruckDataGetter {
                             //Log.v("FSVOLLEY", "FS Volley JSON Lng error");
                         }
 
+                        try{
+                            String postalCode = location.getString("postalCode");
+                            foodTruckData.setPostalCode(postalCode);
+                        }catch (JSONException e){
+                            //e.printStackTrace();
+                            //Log.v("FSVOLLEY", "FS Volley JSON Lng error");
+                        }
+
                         try {
                             String formattedPhone = contact.getString("formattedPhone");
                             foodTruckData.setPhoneNumberFormatted(formattedPhone);
@@ -230,7 +238,7 @@ public class FoodTruckDataGetter {
                         } catch (JSONException e) {
 //                            e.printStackTrace();
 //                            Log.v("VOLLEY", "Address catch JSONException error");
-                            foodTruckData.setFoursquareAddress("See Map");
+
                         }
 
                         try {
@@ -248,11 +256,8 @@ public class FoodTruckDataGetter {
                         }
 
                         listOfFoodTrucks.add(foodTruckData);
-                        if(listOfFoodTrucks.size() < 1){
-                            listOfFoodTrucks.ensureCapacity(80);
-                        }
                     }
-                    notifyOfDataChanged();
+//                    notifyOfDataChanged();
                     performAdditionalGoogleSearches();
 
                 } catch (Exception e) {

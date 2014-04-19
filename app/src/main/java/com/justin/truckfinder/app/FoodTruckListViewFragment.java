@@ -89,8 +89,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
         if(theDataReceived == null){
             return;
-        }else if (theDataReceived.size() == 80){
-            myTextViewNoTrucks.setVisibility(View.VISIBLE);
         }
 
         myTextView.setVisibility(View.INVISIBLE);
@@ -266,7 +264,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         View rootView = inflater.inflate(R.layout.fragment_food_truck_nearby, container, false);
         myTextView = (TextView) rootView.findViewById(R.id.progressTextId2);
         myProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        myTextView = (TextView) rootView.findViewById(R.id.progressTextNoTrucks);
+//        myTextView = (TextView) rootView.findViewById(R.id.progressTextNoTrucks);
         return rootView;
     }
 
@@ -314,12 +312,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         }
     }
 
-    public void getFoodTruckStorageData(){
-        Log.v("methodToGetInstanceReferenceCalled", "Check for Error");
-        onDataReceived(FoodTruckStorage.getInstance().getMyFoodTruckData(getActivity()));
-
-    }
-
     public void setNewLocation(Location location) {
         if (location == null) {
             return;
@@ -330,8 +322,8 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         double userLatitudeDouble = location.getLatitude();
         double userLongitudeDouble = location.getLongitude();
 
-        String latitudeString = String.format("%.2f", userLatitudeDouble);
-        String longitudeString = String.format("%.2f", userLongitudeDouble);
+        String latitudeString = String.format("%.3f", userLatitudeDouble);
+        String longitudeString = String.format("%.3f", userLongitudeDouble);
         String latitudeLongitude = latitudeString + "," + longitudeString;
 
 
@@ -345,7 +337,6 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         }else {
             Log.v("GETMYFOODTRUCKDATA", "REACHED AND CHECK FOR ERROR");
             onDataReceived(FoodTruckStorage.getMyFoodTruckData(getActivity()));
-            getFoodTruckStorageData();
         }
     }
 }
