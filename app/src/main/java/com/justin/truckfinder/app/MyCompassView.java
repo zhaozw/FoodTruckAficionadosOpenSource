@@ -198,17 +198,17 @@ public class MyCompassView extends View {
         currentRotationInDegrees = interpolatedDegrees;
         // draw debug info
 
-        if (DEBUG) {
-            //draw magNorth
-            canvas.rotate(-interpolatedDegrees, lineStartX, lineStartY);
-            paint.setColor(Color.argb(255, 255, 0, 0));
-            paint.setStrokeWidth(10);
-
-            canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndMagNorthX, getHeight() - lineEndMagNorthY, paint);
-            paint.setColor(Color.argb(255, 0, 255, 0));
-            paint.setStrokeWidth(10);
-            canvas.drawLine(0, getHeight(), 40, getHeight() - 40, paint);
-        }
+//        if (DEBUG) {
+//            //draw magNorth
+//            canvas.rotate(-interpolatedDegrees, lineStartX, lineStartY);
+//            paint.setColor(Color.argb(255, 255, 0, 0));
+//            paint.setStrokeWidth(10);
+//
+//            canvas.drawLine(lineStartX, getHeight() - lineStartY, lineEndMagNorthX, getHeight() - lineEndMagNorthY, paint);
+//            paint.setColor(Color.argb(255, 0, 255, 0));
+//            paint.setStrokeWidth(10);
+//            canvas.drawLine(0, getHeight(), 40, getHeight() - 40, paint);
+//        }
         invalidate();
     }
 
