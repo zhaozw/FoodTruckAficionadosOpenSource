@@ -97,10 +97,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             myCompassView = new MyCompassView(context);
             RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize, boxSize);
 
-//            android:layout_marginRight="10dp"
-//            android:layout_below="@id/phoneButtonImplicit"
-//            android:layout_alignParentRight="true"
-
             compassLayout.setMargins(0, 0, rightMargin, 0);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             compassLayout.addRule(RelativeLayout.BELOW, R.id.phoneButtonImplicit);
@@ -174,7 +170,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating: " + foodTruck.getRating() + " of 5"));
         }
 
-        // every string with vicinity address was ending with ", Austin" which is 8 characters in length, thus
+        // every string with vicinity address was ending with ", Austin" or , city which is 8 or city.length+2 characters in length, thus
         // the successful removal of a substring that is already too long
         String city = "";
         if(foodTruck.getFsCity() != null) {
@@ -341,7 +337,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             // TODO Auto-generated method stub
             String fsMenuURL = "";
             String truckName = "";
-            String address = "";
             Integer rowPosition = (Integer) view.getTag();
             FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
             Intent intent = new Intent();
@@ -352,12 +347,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             } else {
                 truckName = foodTruck.getFourSquareName();
             }
-            //TODO remove commented address portion if unnecessary
-//            if (foodTruck.getVicinityAddress() != null) {
-//                address = foodTruck.getVicinityAddress();
-//            } else {
-//                address = foodTruck.getFoursquareAddress();
-//            }
 
             if (foodTruck.getFsMobileUrl() != null) {
                 fsMenuURL = foodTruck.getFsMobileUrl();

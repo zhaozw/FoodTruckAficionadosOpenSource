@@ -34,6 +34,8 @@ public class FoodTruckData implements Serializable{
     private String fsId;
     private String fsMenuUrl;
     private String fsMobileUrl;
+    private String fsCity;
+    private String fsState;
     private static double userLatitude;
     private static double userLongitude;
     // necessary if using image network request (volley)
@@ -124,6 +126,22 @@ public class FoodTruckData implements Serializable{
 
     public void setFoursquareAddress(String foursquareAddress) {
         this.foursquareAddress = foursquareAddress;
+    }
+
+    public String getFsCity() {
+        return fsCity;
+    }
+
+    public void setFsCity(String fsCity) {
+        this.fsCity = fsCity;
+    }
+
+    public String getFsState() {
+        return fsState;
+    }
+
+    public void setFsState(String fsState) {
+        this.fsState = fsState;
     }
 
     public int[] getDayOfWeek() {
