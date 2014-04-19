@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.justin.truckfinder.app" >
-
-
-    <uses-feature android:name="android.hardware.sensor.accelerometer"
-        android:required="true" />
+    package="com.justin.truckfinder.app"
+    >
 
     <uses-permission android:name="android.permission.INTERNET">asdad</uses-permission>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION">sd</uses-permission>
@@ -31,8 +28,11 @@
                 <category android:name="android.intent.category.APP_MAPS"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version"/>
         </activity>
-
+        <activity android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
     </application>
 
 </manifest>
