@@ -151,6 +151,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         foodTruckDataHolder.foursquareMenuView.setOnClickListener(foursquareMenuClickListener);
 
 
+
         if (foodTruck.getPlaceName() != null) {
             foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getPlaceName());
         } else {
@@ -175,20 +176,21 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
 
         // every string with vicinity address was ending with ", Austin" which is 8 characters in length, thus
         // the successful removal of a substring that is already too long
+        String city = "";
+        if(foodTruck.getFsCity() != null) {
+            city = foodTruck.getFsCity();
+        }else {
+            city = " ";
+        }
+        if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", " + city)) {
+            foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - city.length()+2));
 
-        if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", Austin")) {
-            foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - 8));
-        } else if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", Austin, Texas")) {
-            foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - 14));
         } else if (foodTruck.getVicinityAddress() != null) {
             foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
         } else if (foodTruck.getVicinityAddress() == null && foodTruck.getFourSquareName() != null) {
 
-            if (foodTruck.getFoursquareAddress() != null && foodTruck.getFoursquareAddress().contains(", Austin, Texas")) {
-                foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress().substring(0, foodTruck.getFoursquareAddress().length() - 14));
-
-            } else if (foodTruck.getFoursquareAddress() != null && foodTruck.getFoursquareAddress().contains(", Austin, Texas 78704")) {
-                foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress().substring(0, foodTruck.getFoursquareAddress().length() - 14));
+            if (foodTruck.getFoursquareAddress() != null && foodTruck.getFoursquareAddress().contains(", " + city)) {
+                foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress().substring(0, foodTruck.getFoursquareAddress().length() - city.length()+2));
 
             } else if (foodTruck.getFoursquareAddress() != null) {
                 foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress());
@@ -217,16 +219,16 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
 
 
         if (foodTruck.getFsMenuUrl() != null) {
-            foodTruckDataHolder.foursquareMenuView.setText("Open Foursquare Menu");
+            foodTruckDataHolder.foursquareMenuView.setText("Open Menu");
         } else {
-            foodTruckDataHolder.foursquareMenuView.setText("Menu Unavailable");
+            foodTruckDataHolder.foursquareMenuView.setText("Open Browser Menu Search");
         }
 
         if (foodTruck.getFsTwitter() != null) {
             foodTruckDataHolder.placeExtraView.setText(foodTruck.getFsTwitter());
 
         } else {
-            foodTruckDataHolder.placeExtraView.setText("Twitter Handle Unavailable");
+            foodTruckDataHolder.placeExtraView.setText("");
         }
 
         foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude(), foodTruck.getLatitude(), foodTruck.getLongitude());
@@ -241,9 +243,10 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         public void onClick(View view) {
             // TODO Auto-generated method stub
             String truckName = "";
+            String address = "";
+            String postalCode = "";
             Integer rowPosition = (Integer) view.getTag();
             FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
-
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
             String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
@@ -252,11 +255,23 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             } else {
                 truckName = foodTruck.getFourSquareName();
             }
+            if (foodTruck.getVicinityAddress() != null) {
+                address = foodTruck.getVicinityAddress();
+            } else if (foodTruck.getFoursquareAddress() != null){
+                address = foodTruck.getFoursquareAddress();
+            }else {
+                address = "";
+            }
 
-            String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckName);
+            if (foodTruck.getPostalCode() !=null && foodTruck.getFsCity() != null && foodTruck.getFsState() != null){
+                postalCode = foodTruck.getFsCity() + "," + foodTruck.getFsState() + "," + foodTruck.getPostalCode();
+            }else {
+                postalCode = "";
+            }
+
+            String withQuery = start + String.format("?q=%s,%s(%s)", truckName, address, postalCode);
             Intent geoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
             context.startActivity(geoIntent);
-
         }
     };
 
@@ -266,6 +281,8 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         public void onClick(View view) {
             // TODO Auto-generated method stub
             String truckName = "";
+            String address = "";
+            String postalCode = "";
             Integer rowPosition = (Integer) view.getTag();
             FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
             Intent intent = new Intent();
@@ -276,8 +293,21 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             } else {
                 truckName = foodTruck.getFourSquareName();
             }
+            if (foodTruck.getVicinityAddress() != null) {
+                address = foodTruck.getVicinityAddress();
+            } else if (foodTruck.getFoursquareAddress() != null){
+                address = foodTruck.getFoursquareAddress();
+            }else {
+                address = "";
+            }
 
-            String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckName);
+            if (foodTruck.getPostalCode() !=null && foodTruck.getFsCity() != null && foodTruck.getFsState() != null){
+                postalCode = foodTruck.getFsCity() + "," + foodTruck.getFsState() + "," + foodTruck.getPostalCode();
+            }else {
+                postalCode = "";
+            }
+
+            String withQuery = start + String.format("?q=%s,%s(%s)", truckName, address, postalCode);
             Intent geoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
             context.startActivity(geoIntent);
 
@@ -333,7 +363,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
                 fsMenuURL = foodTruck.getFsMobileUrl();
             } else if (foodTruck.getFsMobileUrl() == null && foodTruck.getPostalCode() != null) {
                 String postalCode = foodTruck.getPostalCode();
-                fsMenuURL = "http://www.google.com/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&btnI=1&q=" + truckName + "+" + postalCode + "+Menu";
+                fsMenuURL = "http://www.google.com/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&btnI=1&q=" + truckName + "+Menu";
             }
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fsMenuURL));
             context.startActivity(browserIntent);

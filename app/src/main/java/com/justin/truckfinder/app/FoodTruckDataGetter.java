@@ -187,8 +187,26 @@ public class FoodTruckDataGetter {
                             foodTruckData.setPostalCode(postalCode);
                         }catch (JSONException e){
                             //e.printStackTrace();
-                            //Log.v("FSVOLLEY", "FS Volley JSON Lng error");
+                            //Log.v("FSVOLLEY", "FS Volley JSON postal error");
                         }
+
+                        try{
+                            String city = location.getString("city");
+                            foodTruckData.setFsCity(city);
+                        }catch (JSONException e){
+                            //e.printStackTrace();
+                            //Log.v("FSVOLLEY", "FS Volley JSON city error");
+                        }
+
+                        try{
+                            String state = location.getString("state");
+                            foodTruckData.setFsCity(state);
+                        }catch (JSONException e){
+                            //e.printStackTrace();
+                            //Log.v("FSVOLLEY", "FS Volley JSON state error");
+                        }
+
+
 
                         try {
                             String formattedPhone = contact.getString("formattedPhone");
