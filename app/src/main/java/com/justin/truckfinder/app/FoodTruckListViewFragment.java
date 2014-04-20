@@ -322,10 +322,10 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         double userLatitudeDouble = location.getLatitude();
         double userLongitudeDouble = location.getLongitude();
 
-        String latitudeString = String.format("%.3f", userLatitudeDouble);
-        String longitudeString = String.format("%.3f", userLongitudeDouble);
+        String latitudeString = String.format("%.4f", userLatitudeDouble);
+        String longitudeString = String.format("%.4f", userLongitudeDouble);
         String latitudeLongitude = latitudeString + "," + longitudeString;
-
+        String userLatLong = String.valueOf(userLatitudeDouble + "," + String.valueOf(userLongitudeDouble));
 
 
         if(!latitudeLongitude.equals(currentLocation) && getActivity() != null) {

@@ -2,7 +2,7 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
         android:id="@+id/activity_frame"
-        android:background="@drawable/cloudsmoon"
+        android:background="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

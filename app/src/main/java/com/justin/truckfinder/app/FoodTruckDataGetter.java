@@ -19,8 +19,12 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /*
  * Created by justindelta on 3/17/14.
@@ -41,6 +45,7 @@ import java.util.Iterator;
 public class FoodTruckDataGetter {
 
     private static ArrayList<FoodTruckData> listOfFoodTrucks;
+    private ArrayList<FoodTruckData> listOfFoodTrucksNotStatic;
     private static OnDataReceivedListener callback;
     private static String myAPIFoursquare;
     private static Context context;
@@ -148,15 +153,18 @@ public class FoodTruckDataGetter {
                         JSONObject location = aResult.getJSONObject("location");
                         JSONObject contact = aResult.getJSONObject("contact");
 
-//                        JSONArray resultArrayCategories = aResult.getJSONArray("categories");
+                        JSONArray resultArrayCategories = aResult.getJSONArray("categories");
+
+                        JSONObject categoryId = resultArrayCategories.getJSONObject(0);
 
                         try {
                             String fourSquareName = aResult.getString("name");
                             foodTruckData.setFourSquareName(fourSquareName);
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.v("VOLLEY", "foursquare name catch JSONException error");
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "foursquare name catch JSONException error");
                         }
+
 
                         try{
                             String fsFoodTruckTwitter = aResult.getString("twitter");
@@ -165,6 +173,16 @@ public class FoodTruckDataGetter {
                             //e.printStackTrace();
                             //Log.v("VOLLEY", "fs Twitter error");
                         }
+
+                        try{
+                            String fsCategoryId = categoryId.getString("id");
+                            foodTruckData.setFsCategoryId(fsCategoryId);
+
+                        }catch (JSONException e){
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "foursquare categoryID catch JSONException error");
+                        }
+
 
                         try{
                             double latitude = location.getDouble("lat");
@@ -224,9 +242,25 @@ public class FoodTruckDataGetter {
 //                            Log.v("VOLLEY", "phoneNumber catch JSONException error");
                         }
 
+                        try{
+                            String twitter = contact.getString("twitter");
+                            foodTruckData.setFsTwitter(twitter);
+                            }catch (JSONException e){
+//                            e.printStackTrace();
+//                            Log.v("VOLLEY", "Twitter catch JSONException error");
+                        }
+
+                        try{
+                            String truckUrl = aResult.getString("url");
+                            foodTruckData.setFsTruckWebsite(truckUrl);
+                        }catch (JSONException e){
+//                            e.printStackTrace();
+//                            Log.v("Volley", "fsWEBSITE url catch JSON error");
+                        }
+
                         try {
                             String fsId = aResult.getString("id");
-                            foodTruckData.setFsId(fsId);
+                            foodTruckData.setFsTruckId(fsId);
                         } catch (JSONException e) {
 //                            e.printStackTrace();
 //                            Log.v("VOLLEY", "fsID catch JSONException error");
@@ -275,7 +309,10 @@ public class FoodTruckDataGetter {
 
                         listOfFoodTrucks.add(foodTruckData);
                     }
+
+
 //                    notifyOfDataChanged();
+                    removeDuplicates();
                     performAdditionalGoogleSearches();
 
                 } catch (Exception e) {
@@ -284,16 +321,164 @@ public class FoodTruckDataGetter {
             }
 
         };
+
     }
+
 
     private static void performAdditionalGoogleSearches() {
 
         Iterator<FoodTruckData> i = listOfFoodTrucks.iterator();
         while (i.hasNext()) {
             FoodTruckData foodTruckData = i.next();
+
             nearbySearchGooglePlaces(foodTruckData);
         }
     }
+    public static HashMap<String,Integer> newHashMap;
+    private static void removeDuplicates(){
+        final String EMPTY_SPACE = " ";
+        for (Iterator<FoodTruckData> foodTruckDataIteratorLoop = listOfFoodTrucks.iterator(); foodTruckDataIteratorLoop.hasNext();){
+            FoodTruckData foodTruckDataInitial = foodTruckDataIteratorLoop.next();
+            FoodTruckData foodTruckDataNext = foodTruckDataIteratorLoop.next();
+            if (!foodTruckDataIteratorLoop.next().getFsCategoryId().equals(foodTruckDataIteratorLoop.next().getFsCategoryId())){
+                foodTruckDataIteratorLoop.remove();
+            }
+
+
+            String fourSquareNameInitial = foodTruckDataInitial.getFourSquareName();
+            String fourSquareNameNext = " " + foodTruckDataNext.getFourSquareName();
+
+//            if (fourSquareNameInitial.contains("Food")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("Food", " ");
+//            }
+//            if (fourSquareNameInitial.contains("food")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("food", " ");
+//            }
+//            if (fourSquareNameInitial.contains("Truck")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("Truck", " ");
+//            }
+//            if (fourSquareNameInitial.contains("truck")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("truck", " ");
+//            }
+//            if (fourSquareNameInitial.contains("Trailer")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("Trailer", " ");
+//            }
+//            if (fourSquareNameInitial.contains("trailer")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("trailer", " ");
+//            }
+//            if (fourSquareNameInitial.contains("Taco")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("Taco", " ");
+//            }
+//            if (fourSquareNameInitial.contains("taco")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("taco", " ");
+//            }
+//            if (fourSquareNameInitial.contains("Tacos")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("Tacos", " ");
+//            }
+//            if (fourSquareNameInitial.contains("tacos")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("tacos", " ");
+//            }
+//            if (fourSquareNameInitial.contains("Ice")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("Ice", " ");
+//            }
+//            if (fourSquareNameInitial.contains("ice")) {
+//                fourSquareNameNext = fourSquareNameNext.replace("ice", " ");
+//            }
+
+            String concatenatedFourSquareNames = foodTruckDataInitial.getFourSquareName().concat(fourSquareNameNext);
+            concatenatedFourSquareNames = concatenatedFourSquareNames.trim();
+
+            newHashMap = countWordAppearances(concatenatedFourSquareNames);
+            HashMap<String, Integer> myMap = new HashMap<String,Integer>();
+
+
+            newHashMap.put(concatenatedFourSquareNames, 1);
+
+
+            for (Map.Entry<String, Integer> e : myMap.entrySet()) {
+                String key    = e.getKey();
+                Integer value  = e.getValue();
+            }
+
+           class CustomComparator implements Comparator<FoodTruckData> {
+                @Override
+                public int compare(FoodTruckData foodTruckDataInitial, FoodTruckData foodTruckDataNext) {
+                    return String.valueOf(foodTruckDataInitial.getDistanceCalculatedFeet()).compareTo(String.valueOf(foodTruckDataNext.getDistanceCalculatedFeet()));
+                }
+            }
+
+           class CollectionsSorting{
+                Collections.s(Database.arrayList, new CustomComparator);
+           }
+////// or using an iterator:
+//
+//// retrieve a set of the entries
+//            Set<Entry<A, B>> entries = myMap.entrySet();
+//// parse the set
+//            Iterator<Entry<A, B>> it = entries.iterator();
+//            while(it.hasNext()) {
+//                Entry<A, B> e = it.next();
+//                A key   = e.getKey();
+//                B value = e.getValue();
+            }
+            Log.v("Stuff", "stuff");
+        }
+
+
+
+
+
+
+    private static HashMap<String, Integer> countWordAppearances(String aString) {
+        HashMap<String, Integer> count = new HashMap<String, Integer>();
+        String[] stringArray = aString.split(" ");
+        for (String string: stringArray) {
+            if (count.containsKey(string)) {
+                count.put(string, count.get(string) + 1);
+            } else {
+                count.put(string, 1);
+            }
+        }
+
+        return count;
+    }
+    private static void removeDuplicatesOLD(ArrayList<FoodTruckData> aFoodTruckList) {
+        final String EMPTY_SPACE = " ";
+        String fsNameInitial = "1";
+        String fsCheckCategoryIdInitial = "1";
+        String fsNameNext = "1";
+        String fsCheckCategoryIdNext = "1";
+        Iterator<FoodTruckData> i = aFoodTruckList.iterator();
+        while (i.hasNext()) {
+            FoodTruckData foodTruckData = i.next();
+            if (fsNameInitial.length() != 1) {
+                fsNameNext = foodTruckData.getFourSquareName();
+                if (fsNameNext.contains("A ")) {
+                    fsNameNext = fsNameNext.replace("A ", "");
+                    int indexStringPosition = fsNameNext.indexOf(EMPTY_SPACE);
+                    if (fsNameInitial.contains(fsNameNext.substring(0, indexStringPosition))) {
+                        i.remove();
+                    }
+                } else {
+                    int indexStringPosition = fsNameNext.indexOf(EMPTY_SPACE);
+                    if (fsNameInitial.contains(fsNameNext.substring(0, indexStringPosition))) {
+                        i.remove();
+                    }
+                }
+            }
+            if (fsCheckCategoryIdInitial.length() != 1) {
+                fsCheckCategoryIdNext = foodTruckData.getFsCategoryId();
+                if (!fsCheckCategoryIdInitial.equals(fsCheckCategoryIdNext)) {
+                    i.remove();
+                }
+            }
+            FoodTruckData foodTruckDataNext = i.next();
+            fsNameInitial = foodTruckDataNext.getFourSquareName();
+            fsCheckCategoryIdInitial = foodTruckDataNext.getFsCategoryId();
+        }
+
+    }
+
 
     // SANITY CHECK:
     // https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=1000&keyword=truck,food&name=torchys
@@ -302,12 +487,14 @@ public class FoodTruckDataGetter {
     private static final String SENSOR = "true";
     private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=" + SENSOR + "&key=" + GOOGLE_PLACES_API_KEY;
 
+
+
     private static void nearbySearchGooglePlaces(FoodTruckData partialFoodTruck) {
 
-        foursquareNameStatic = partialFoodTruck.getFourSquareName() + partialFoodTruck.getFsId();
+        foursquareNameStatic = partialFoodTruck.getFourSquareName() + partialFoodTruck.getFsTruckId();
 
         String aFoursquareName = partialFoodTruck.getFourSquareName();
-        String aFoursquareUniqueID = partialFoodTruck.getFsId();
+        String aFoursquareUniqueID = partialFoodTruck.getFsTruckId();
 
 
         String myAPIGoogle = "ERROR";

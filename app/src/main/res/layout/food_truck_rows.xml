@@ -42,14 +42,7 @@
         android:layout_alignTop="@+id/phoneButtonImplicit"
         android:layout_toRightOf="@id/phoneButtonImplicit"
         />
-    <!--<Spinner-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/spinnerSelection"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:entries="@array/actions"-->
-        <!--android:layout_alignStart="@+id/mapsButtonImplicit" />-->
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
