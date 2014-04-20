@@ -47,7 +47,7 @@ public class FoodTruckStorage {
             oos.close();
             fos.close();
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return false;
         }
 
@@ -66,11 +66,11 @@ public class FoodTruckStorage {
                 return readObject;
             }
         } catch (IOException anIOException) {
-            anIOException.printStackTrace();
+//            anIOException.printStackTrace();
         } catch (ClassNotFoundException aClassNotFoundException) {
-            aClassNotFoundException.printStackTrace();
+//            aClassNotFoundException.printStackTrace();
         }catch (Exception e){
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         return null;
     }

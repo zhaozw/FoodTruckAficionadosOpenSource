@@ -1,7 +1,6 @@
 package com.justin.truckfinder.app;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -319,7 +318,6 @@ public class FoodTruckDataGetter {
             }
 
         };
-
     }
 
 
@@ -337,9 +335,10 @@ public class FoodTruckDataGetter {
         for (Iterator<FoodTruckData> foodTruckDataIteratorLoop = listOfFoodTrucks.iterator(); foodTruckDataIteratorLoop.hasNext();) {
             FoodTruckData foodTruckDataInitial = foodTruckDataIteratorLoop.next();
             FoodTruckData foodTruckDataNext = foodTruckDataIteratorLoop.next();
-            if (!foodTruckDataInitial.getFsCategoryId().equals(foodTruckDataNext.getFsCategoryId()) || foodTruckDataInitial.getFourSquareName().trim().equals(foodTruckDataNext.getFourSquareName().trim())) {
+            if (!foodTruckDataInitial.getFsCategoryId().equals(foodTruckDataNext.getFsCategoryId()) || foodTruckDataInitial.getFourSquareName().trim().contains(foodTruckDataNext.getFourSquareName().trim())) {
                 foodTruckDataIteratorLoop.remove();
             }
+
 //            String fourSquareNameInitial = foodTruckDataInitial.getFourSquareName();
 //            String fourSquareNameNext = " " + foodTruckDataNext.getFourSquareName();
 //            String concatenatedFourSquareNames = fourSquareNameInitial.concat(fourSquareNameNext);
@@ -360,6 +359,20 @@ public class FoodTruckDataGetter {
 
     }
 
+    private static void removeDuplicatesPlaces() {
+        for (Iterator<FoodTruckData> foodTruckDataIteratorLoop = listOfFoodTrucks.iterator(); foodTruckDataIteratorLoop.hasNext(); ) {
+            FoodTruckData foodTruckDataInitial = foodTruckDataIteratorLoop.next();
+            FoodTruckData foodTruckDataNext = foodTruckDataIteratorLoop.next();
+            if (foodTruckDataInitial.getPlaceName() != null && foodTruckDataNext.getPlaceName() != null) {
+
+                if (foodTruckDataInitial.getPlaceName().trim().contains(foodTruckDataNext.getPlaceName().trim()) || foodTruckDataNext.getPlaceName().trim().contains(foodTruckDataInitial.getPlaceName().trim()) || foodTruckDataInitial.getPlaceName().trim().equals(foodTruckDataNext.getPlaceName().trim()) || foodTruckDataInitial.getFourSquareName().trim().contains(foodTruckDataNext.getPlaceName()) || foodTruckDataInitial.getPlaceName().contains("Headquarters")) {
+                    foodTruckDataIteratorLoop.remove();
+                }
+
+            }
+        }
+
+    }
 
     private static HashMap<String, Integer> countWordAppearances(String aString) {
         HashMap<String, Integer> count = new HashMap<String, Integer>();
@@ -399,7 +412,7 @@ public class FoodTruckDataGetter {
 
         try {
             stringBuilderGoog.append("&location=" + GPSLocation);
-            stringBuilderGoog.append("&radius=750");
+            stringBuilderGoog.append("&radius=675");
             stringBuilderGoog.append("&keyword=food");
             stringBuilderGoog.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
 
@@ -408,13 +421,19 @@ public class FoodTruckDataGetter {
                 myAPIGoogle = myAPIGoogle.replace("Poop","");
 
             }
+
             if(myAPIGoogle.contains("poop")){
                 myAPIGoogle = myAPIGoogle.replace("poop","");
             }
-            if(myAPIGoogle.contains("Corporate") && myAPIGoogle.contains("Headquarters")){
+
+            if(myAPIGoogle.contains("Corporate")) {
                 myAPIGoogle = myAPIGoogle.replace("Corporate", "");
-                myAPIGoogle = myAPIGoogle.replace("HeadQuarters", "");
             }
+
+            if(myAPIGoogle.contains("Headquarters")){
+                myAPIGoogle = myAPIGoogle.replace("Headquarters", "");
+            }
+
             if(myAPIGoogle.contains("Parking")){
                 myAPIGoogle = myAPIGoogle.replace("Parking","");
             }
@@ -556,7 +575,10 @@ public class FoodTruckDataGetter {
                         }
 
                     }
-                    FoodTruckStorage.saveMyFoodTruckData(context, listOfFoodTrucks);
+//                    Log.v("ERROR", "DUPE error");
+//
+//                    Log.v("CLEAR", "DUPE clear");
+                    FoodTruckStorage.getInstance().saveMyFoodTruckData(context, listOfFoodTrucks);
                     notifyOfDataChanged();
                 } catch (Exception e) {
 //                    e.printStackTrace();
@@ -568,7 +590,7 @@ public class FoodTruckDataGetter {
     protected static Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.v("VOLLEY", "ERROR WITH API");
+//            Log.v("VOLLEY", "ERROR WITH API");
         }
     };
 

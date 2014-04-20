@@ -204,24 +204,26 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         }
 
         if (foodTruck.getIsOpenNow() == true) {
-            foodTruckDataHolder.placeOpenNowView.setText("Hours: Open");
+            foodTruckDataHolder.placeOpenNowView.setText("Hours: Open Now");
         }
         if (foodTruck.getIsOpenNow() == false) {
-            foodTruckDataHolder.placeOpenNowView.setText("Hours: Closed");
+            foodTruckDataHolder.placeOpenNowView.setText("Hours: Currently Closed");
         }
         if (foodTruck.getIsOpenNow() == Boolean.parseBoolean(null)) {
-            foodTruckDataHolder.placeOpenNowView.setText("Hours: Unavailable");
+            foodTruckDataHolder.placeOpenNowView.setText("Hours: Currently Unavailable");
         }
 
 
-        if (foodTruck.getFsMenuUrl() != null) {
+        if(foodTruck.getFsMenuUrl() !=null && foodTruck.getFourSquareName() != null){
+            foodTruckDataHolder.foursquareMenuView.setText("Open " + foodTruck.getFourSquareName() + " Menu");
+        }else if (foodTruck.getFsMenuUrl() != null) {
             foodTruckDataHolder.foursquareMenuView.setText("Open Menu");
-        } else {
+        }else {
             foodTruckDataHolder.foursquareMenuView.setText("Open Browser Menu Search");
         }
 
         if (foodTruck.getFsTwitter() != null) {
-            foodTruckDataHolder.placeExtraView.setText(foodTruck.getFsTwitter());
+            foodTruckDataHolder.placeExtraView.setText("Twitter: " + foodTruck.getFsTwitter());
 
         } else {
             foodTruckDataHolder.placeExtraView.setText("");

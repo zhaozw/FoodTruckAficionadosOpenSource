@@ -294,7 +294,7 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public void onPause() {
         super.onPause();
 
-        FoodTruckStorage.saveMyFoodTruckData(getActivity(), mTheDataReceived);
+        FoodTruckStorage.getInstance().saveMyFoodTruckData(getActivity(), mTheDataReceived);
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
 
