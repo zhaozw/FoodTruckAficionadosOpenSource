@@ -19,12 +19,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /*
  * Created by justindelta on 3/17/14.
@@ -58,6 +55,7 @@ public class FoodTruckDataGetter {
     private static int indexPosition;
     private static String uniqueID;
     private static String foursquareNameStatic;
+    public static HashMap<String,Integer> newHashMap;
     //
     // Singleton pattern here:
     //
@@ -334,99 +332,33 @@ public class FoodTruckDataGetter {
             nearbySearchGooglePlaces(foodTruckData);
         }
     }
-    public static HashMap<String,Integer> newHashMap;
+
     private static void removeDuplicates(){
-        final String EMPTY_SPACE = " ";
-        for (Iterator<FoodTruckData> foodTruckDataIteratorLoop = listOfFoodTrucks.iterator(); foodTruckDataIteratorLoop.hasNext();){
+        for (Iterator<FoodTruckData> foodTruckDataIteratorLoop = listOfFoodTrucks.iterator(); foodTruckDataIteratorLoop.hasNext();) {
             FoodTruckData foodTruckDataInitial = foodTruckDataIteratorLoop.next();
             FoodTruckData foodTruckDataNext = foodTruckDataIteratorLoop.next();
-            if (!foodTruckDataIteratorLoop.next().getFsCategoryId().equals(foodTruckDataIteratorLoop.next().getFsCategoryId())){
+            if (!foodTruckDataInitial.getFsCategoryId().equals(foodTruckDataNext.getFsCategoryId()) || foodTruckDataInitial.getFourSquareName().trim().equals(foodTruckDataNext.getFourSquareName().trim())) {
                 foodTruckDataIteratorLoop.remove();
             }
-
-
-            String fourSquareNameInitial = foodTruckDataInitial.getFourSquareName();
-            String fourSquareNameNext = " " + foodTruckDataNext.getFourSquareName();
-
-//            if (fourSquareNameInitial.contains("Food")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("Food", " ");
-//            }
-//            if (fourSquareNameInitial.contains("food")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("food", " ");
-//            }
-//            if (fourSquareNameInitial.contains("Truck")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("Truck", " ");
-//            }
-//            if (fourSquareNameInitial.contains("truck")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("truck", " ");
-//            }
-//            if (fourSquareNameInitial.contains("Trailer")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("Trailer", " ");
-//            }
-//            if (fourSquareNameInitial.contains("trailer")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("trailer", " ");
-//            }
-//            if (fourSquareNameInitial.contains("Taco")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("Taco", " ");
-//            }
-//            if (fourSquareNameInitial.contains("taco")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("taco", " ");
-//            }
-//            if (fourSquareNameInitial.contains("Tacos")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("Tacos", " ");
-//            }
-//            if (fourSquareNameInitial.contains("tacos")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("tacos", " ");
-//            }
-//            if (fourSquareNameInitial.contains("Ice")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("Ice", " ");
-//            }
-//            if (fourSquareNameInitial.contains("ice")) {
-//                fourSquareNameNext = fourSquareNameNext.replace("ice", " ");
-//            }
-
-            String concatenatedFourSquareNames = foodTruckDataInitial.getFourSquareName().concat(fourSquareNameNext);
-            concatenatedFourSquareNames = concatenatedFourSquareNames.trim();
-
-            newHashMap = countWordAppearances(concatenatedFourSquareNames);
-            HashMap<String, Integer> myMap = new HashMap<String,Integer>();
-
-
-            newHashMap.put(concatenatedFourSquareNames, 1);
-
-
-            for (Map.Entry<String, Integer> e : myMap.entrySet()) {
-                String key    = e.getKey();
-                Integer value  = e.getValue();
-            }
-
-           class CustomComparator implements Comparator<FoodTruckData> {
-                @Override
-                public int compare(FoodTruckData foodTruckDataInitial, FoodTruckData foodTruckDataNext) {
-                    return String.valueOf(foodTruckDataInitial.getDistanceCalculatedFeet()).compareTo(String.valueOf(foodTruckDataNext.getDistanceCalculatedFeet()));
-                }
-            }
-
-           class CollectionsSorting{
-                Collections.s(Database.arrayList, new CustomComparator);
-           }
-////// or using an iterator:
+//            String fourSquareNameInitial = foodTruckDataInitial.getFourSquareName();
+//            String fourSquareNameNext = " " + foodTruckDataNext.getFourSquareName();
+//            String concatenatedFourSquareNames = fourSquareNameInitial.concat(fourSquareNameNext);
+//            concatenatedFourSquareNames = concatenatedFourSquareNames.trim();
+//            countWordAppearances(concatenatedFourSquareNames);
 //
-//// retrieve a set of the entries
-//            Set<Entry<A, B>> entries = myMap.entrySet();
-//// parse the set
-//            Iterator<Entry<A, B>> it = entries.iterator();
-//            while(it.hasNext()) {
-//                Entry<A, B> e = it.next();
-//                A key   = e.getKey();
-//                B value = e.getValue();
-            }
-            Log.v("Stuff", "stuff");
+//            newHashMap = countWordAppearances(concatenatedFourSquareNames);
+//            HashMap<String, Integer> myMap = new HashMap<String,Integer>();
+//
+//            newHashMap.put(concatenatedFourSquareNames, 1);
+//
+//            for (Map.Entry<String, Integer> entry : myMap.entrySet()) {
+//                String key = entry.getKey();
+//                Integer value  = entry.getValue();
+//            }
+
         }
 
-
-
-
+    }
 
 
     private static HashMap<String, Integer> countWordAppearances(String aString) {
@@ -442,42 +374,7 @@ public class FoodTruckDataGetter {
 
         return count;
     }
-    private static void removeDuplicatesOLD(ArrayList<FoodTruckData> aFoodTruckList) {
-        final String EMPTY_SPACE = " ";
-        String fsNameInitial = "1";
-        String fsCheckCategoryIdInitial = "1";
-        String fsNameNext = "1";
-        String fsCheckCategoryIdNext = "1";
-        Iterator<FoodTruckData> i = aFoodTruckList.iterator();
-        while (i.hasNext()) {
-            FoodTruckData foodTruckData = i.next();
-            if (fsNameInitial.length() != 1) {
-                fsNameNext = foodTruckData.getFourSquareName();
-                if (fsNameNext.contains("A ")) {
-                    fsNameNext = fsNameNext.replace("A ", "");
-                    int indexStringPosition = fsNameNext.indexOf(EMPTY_SPACE);
-                    if (fsNameInitial.contains(fsNameNext.substring(0, indexStringPosition))) {
-                        i.remove();
-                    }
-                } else {
-                    int indexStringPosition = fsNameNext.indexOf(EMPTY_SPACE);
-                    if (fsNameInitial.contains(fsNameNext.substring(0, indexStringPosition))) {
-                        i.remove();
-                    }
-                }
-            }
-            if (fsCheckCategoryIdInitial.length() != 1) {
-                fsCheckCategoryIdNext = foodTruckData.getFsCategoryId();
-                if (!fsCheckCategoryIdInitial.equals(fsCheckCategoryIdNext)) {
-                    i.remove();
-                }
-            }
-            FoodTruckData foodTruckDataNext = i.next();
-            fsNameInitial = foodTruckDataNext.getFourSquareName();
-            fsCheckCategoryIdInitial = foodTruckDataNext.getFsCategoryId();
-        }
 
-    }
 
 
     // SANITY CHECK:

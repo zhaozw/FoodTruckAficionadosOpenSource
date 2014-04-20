@@ -204,13 +204,13 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         }
 
         if (foodTruck.getIsOpenNow() == true) {
-            foodTruckDataHolder.placeOpenNowView.setText("Currently Open");
+            foodTruckDataHolder.placeOpenNowView.setText("Hours: Open");
         }
         if (foodTruck.getIsOpenNow() == false) {
-            foodTruckDataHolder.placeOpenNowView.setText("Currently Closed");
+            foodTruckDataHolder.placeOpenNowView.setText("Hours: Closed");
         }
         if (foodTruck.getIsOpenNow() == Boolean.parseBoolean(null)) {
-            foodTruckDataHolder.placeOpenNowView.setText("Status Unavailable");
+            foodTruckDataHolder.placeOpenNowView.setText("Hours: Unavailable");
         }
 
 
@@ -265,7 +265,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
                 postalCode = "";
             }
 
-            String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckName + address + postalCode);
+            String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckName + " " + address + postalCode);
             Intent geoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
             context.startActivity(geoIntent);
         }
@@ -303,7 +303,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
                 postalCode = "";
             }
 
-            String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckName + address + postalCode);
+            String withQuery = start + String.format("?q=%s,%s(%s)", foodTruck.getLatitude(), foodTruck.getLongitude(), truckName + " " + address + postalCode);
             Intent geoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(withQuery));
             context.startActivity(geoIntent);
 
@@ -361,7 +361,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
                 fsMenuURL = foodTruck.getFsMobileUrl();
             } else if (foodTruck.getFsMobileUrl() == null && foodTruck.getPostalCode() != null) {
                 String postalCode = foodTruck.getPostalCode();
-                fsMenuURL = "http://www.google.com/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&btnI=1&q=" + truckName + "+" + address + "+Menu";
+                fsMenuURL = "http://www.google.com/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&btnI=1&q=" + truckName + "+Menu" + "+" + address;
             }
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fsMenuURL));
             context.startActivity(browserIntent);
