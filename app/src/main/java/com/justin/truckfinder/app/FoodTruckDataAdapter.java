@@ -18,7 +18,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import java.util.ArrayList;
 
 /*
- * Created by justindelta on 3/17/14.
+ * Created by justin on 3/17/14.
  */
 public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
     // necessary?
@@ -203,10 +203,10 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
         }
 
-        if (foodTruck.getIsOpenNow() == true) {
+        if (foodTruck.getIsOpenNow()) {
             foodTruckDataHolder.placeOpenNowView.setText("Hours: Open Now");
         }
-        if (foodTruck.getIsOpenNow() == false) {
+        if (!foodTruck.getIsOpenNow()) {
             foodTruckDataHolder.placeOpenNowView.setText("Hours: Currently Closed");
         }
         if (foodTruck.getIsOpenNow() == Boolean.parseBoolean(null)) {
@@ -217,9 +217,9 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         if(foodTruck.getFsMenuUrl() !=null && foodTruck.getFourSquareName() != null){
             foodTruckDataHolder.foursquareMenuView.setText("Open " + foodTruck.getFourSquareName() + " Menu");
         }else if (foodTruck.getFsMenuUrl() != null) {
-            foodTruckDataHolder.foursquareMenuView.setText("Open Menu");
+            foodTruckDataHolder.foursquareMenuView.setText("Touch to Open Menu");
         }else {
-            foodTruckDataHolder.foursquareMenuView.setText("Open Browser Menu Search");
+            foodTruckDataHolder.foursquareMenuView.setText("Touch to Open Browser Menu Search");
         }
 
         if (foodTruck.getFsTwitter() != null) {

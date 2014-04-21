@@ -339,56 +339,9 @@ public class FoodTruckDataGetter {
                 foodTruckDataIteratorLoop.remove();
             }
 
-//            String fourSquareNameInitial = foodTruckDataInitial.getFourSquareName();
-//            String fourSquareNameNext = " " + foodTruckDataNext.getFourSquareName();
-//            String concatenatedFourSquareNames = fourSquareNameInitial.concat(fourSquareNameNext);
-//            concatenatedFourSquareNames = concatenatedFourSquareNames.trim();
-//            countWordAppearances(concatenatedFourSquareNames);
-//
-//            newHashMap = countWordAppearances(concatenatedFourSquareNames);
-//            HashMap<String, Integer> myMap = new HashMap<String,Integer>();
-//
-//            newHashMap.put(concatenatedFourSquareNames, 1);
-//
-//            for (Map.Entry<String, Integer> entry : myMap.entrySet()) {
-//                String key = entry.getKey();
-//                Integer value  = entry.getValue();
-//            }
-
         }
 
     }
-
-    private static void removeDuplicatesPlaces() {
-        for (Iterator<FoodTruckData> foodTruckDataIteratorLoop = listOfFoodTrucks.iterator(); foodTruckDataIteratorLoop.hasNext(); ) {
-            FoodTruckData foodTruckDataInitial = foodTruckDataIteratorLoop.next();
-            FoodTruckData foodTruckDataNext = foodTruckDataIteratorLoop.next();
-            if (foodTruckDataInitial.getPlaceName() != null && foodTruckDataNext.getPlaceName() != null) {
-
-                if (foodTruckDataInitial.getPlaceName().trim().contains(foodTruckDataNext.getPlaceName().trim()) || foodTruckDataNext.getPlaceName().trim().contains(foodTruckDataInitial.getPlaceName().trim()) || foodTruckDataInitial.getPlaceName().trim().equals(foodTruckDataNext.getPlaceName().trim()) || foodTruckDataInitial.getFourSquareName().trim().contains(foodTruckDataNext.getPlaceName()) || foodTruckDataInitial.getPlaceName().contains("Headquarters")) {
-                    foodTruckDataIteratorLoop.remove();
-                }
-
-            }
-        }
-
-    }
-
-    private static HashMap<String, Integer> countWordAppearances(String aString) {
-        HashMap<String, Integer> count = new HashMap<String, Integer>();
-        String[] stringArray = aString.split(" ");
-        for (String string: stringArray) {
-            if (count.containsKey(string)) {
-                count.put(string, count.get(string) + 1);
-            } else {
-                count.put(string, 1);
-            }
-        }
-
-        return count;
-    }
-
-
 
     // SANITY CHECK:
     // https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=1000&keyword=truck,food&name=torchys
