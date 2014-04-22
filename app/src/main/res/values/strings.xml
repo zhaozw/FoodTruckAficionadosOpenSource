@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">My Food Truck Finder</string>
+    <string name="app_name">Food Truck Aficionados</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="progressTextTwo"> \"Give it a second! It\'s going to space! Can you give a second to get back from space\?\" \- Louis C.K.  (or you\'re not in range of any nearby Food Trucks</string>
+    <string name="debugFalse">false</string>
+    <string name="debugTrue">false</string>
+    <string name="progressTextTwo"> \"Give it a second! It\'s going to space! Can you give a second to get back from space\?\" \- Louis C.K.</string>
+    <string name="fail">(You\'re not in range of any nearby Food Trucks)</string>
     <string-array name="actions">
         <item>Do Nothing</item>
         <item>Call Food Truck</item>
