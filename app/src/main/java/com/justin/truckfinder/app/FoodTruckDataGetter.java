@@ -105,8 +105,7 @@ public class FoodTruckDataGetter {
     private static final String categoryID = "4bf58dd8d48988d1cb941735"; // foursquare Food Truck category ID
     private static final String clientID = "MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY";
     private static final String clientSecret = "3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2";
-    private static int radiusInMeters = 650;
-    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=" + String.valueOf(radiusInMeters) +"&categoryId=" + categoryID + "&client_id=" + clientID + "&client_secret=" + clientSecret;
+    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=650&categoryId=" + categoryID + "&client_id=" + clientID + "&client_secret=" + clientSecret;
 
     private static void performFoursquareFoodTruckRequestFoursquare() {
 
@@ -307,25 +306,11 @@ public class FoodTruckDataGetter {
 
                         listOfFoodTrucks.add(foodTruckData);
                     }
-                    // starting at 650; 650 + 650 (done 29 times is 19500. 30 is 20,150; FS limits radius to 20,000 meters maximum, let's avoid errors in requests
-                    if(radiusInMeters < 19500) {
 
-                        if (listOfFoodTrucks.size() <= 0 || listOfFoodTrucks == null) {
-                            radiusInMeters++;
-                            performFoursquareFoodTruckRequestFoursquare();
-                        }else {
-                            removeDuplicates();
-                            performAdditionalGoogleSearches();
-                        }
-                    }else {
-                        if(listOfFoodTrucks.size() <= 0 || listOfFoodTrucks == null){
-                            // there are no food trucks available in the area
-                        }
-                    }
 
-//    wasn't using in original code notifyOfDataChanged();
-//                    removeDuplicates();
-//                    performAdditionalGoogleSearches();
+//                    notifyOfDataChanged();
+                    removeDuplicates();
+                    performAdditionalGoogleSearches();
 
                 } catch (Exception e) {
 //                    e.printStackTrace();
@@ -379,8 +364,8 @@ public class FoodTruckDataGetter {
         StringBuilder stringBuilderGoog = new StringBuilder(myAPIGooglePartial);
 
         try {
-            stringBuilderGoog.append("&location=" + partialFoodTruck.getLatitude() + "," + partialFoodTruck.getLongitude());
-            stringBuilderGoog.append("&radius=300");
+            stringBuilderGoog.append("&location=" + GPSLocation);
+            stringBuilderGoog.append("&radius=675");
             stringBuilderGoog.append("&keyword=food");
             stringBuilderGoog.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
 
@@ -392,6 +377,14 @@ public class FoodTruckDataGetter {
 
             if(myAPIGoogle.contains("poop")){
                 myAPIGoogle = myAPIGoogle.replace("poop","");
+            }
+
+            if(myAPIGoogle.contains("Corporate")) {
+                myAPIGoogle = myAPIGoogle.replace("Corporate", "");
+            }
+
+            if(myAPIGoogle.contains("Headquarters")){
+                myAPIGoogle = myAPIGoogle.replace("Headquarters", "");
             }
 
             if(myAPIGoogle.contains("Parking")){

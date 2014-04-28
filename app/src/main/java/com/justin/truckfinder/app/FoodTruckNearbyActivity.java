@@ -1,15 +1,17 @@
 package com.justin.truckfinder.app;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+
+import com.google.android.gms.ads.AdView;
 
 
-public class FoodTruckNearbyActivity extends FragmentActivity implements FoodTruckListViewFragment.OnItemSelectedListener{
-//    private AdView adView;
+public class FoodTruckNearbyActivity extends Activity implements FoodTruckListViewFragment.OnItemSelectedListener{
+    private AdView adView;
     /* Your ad unit id. Replace with your actual ad unit id. */
-//    private static final String AD_UNIT_ID = "ca-app-pub-0711386608786016/2778837213";
+    private static final String AD_UNIT_ID = "ca-app-pub-0711386608786016/2778837213";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,27 +24,12 @@ public class FoodTruckNearbyActivity extends FragmentActivity implements FoodTru
             }
             FoodTruckListViewFragment foodTruckListViewFragment = new FoodTruckListViewFragment();
             foodTruckListViewFragment.setArguments(getIntent().getExtras());
-
-            getSupportFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.container, new FoodTruckListViewFragment())
                     .commit();
         }
 
     }
-
-//    @Override
-//     public void onStart() {
-//        super.onStart();
-//        ... // The rest of your onStart() code.
-//        EasyTracker.getInstance(this).activityStart(this);  // Add this method.
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        ... // The rest of your onStop() code.
-//        EasyTracker.getInstance(this).activityStop(this);  // Add this method.
-//    }
 
     @Override
     public void OnItemSelected(){
