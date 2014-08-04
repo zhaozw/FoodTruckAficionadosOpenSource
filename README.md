@@ -1,4 +1,4 @@
-# This is my README for the Google Play Store app, Food Truck Aficionados Free
+# README https://play.google.com/store/apps/details?id=com.justin.freetruckfinder.app
 
 I've been asked about the name of my app. I'm a fan of irony.
 
