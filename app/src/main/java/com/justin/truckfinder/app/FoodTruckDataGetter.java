@@ -11,7 +11,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -26,8 +25,7 @@ import java.util.Iterator;
  * Created by justindelta on 3/17/14.
  * //
  * //    * FOURSQUARE API
- * //    * Client ID - foursquare app - MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY
- * //    * Client secret foursquare app - 3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2
+
  * //
  * //    * Access Token URL
  * //    * https://foursquare.com/oauth2/access_token
@@ -44,6 +42,7 @@ public class FoodTruckDataGetter {
     private ArrayList<FoodTruckData> listOfFoodTrucksNotStatic;
     private static OnDataReceivedListener callback;
     private static String myAPIFoursquare;
+    private static String myYelpApiUrl;
     private static Context context;
     private static String GPSLocation;
     private static RequestQueue requestQueue;
@@ -58,22 +57,21 @@ public class FoodTruckDataGetter {
     //
     // Singleton pattern here:
     //
-    private static FoodTruckDataGetter FOOD_GETTER_REFERENCE;
+    private static FoodTruckDataGetter foodTruckDataGetter;
 
     private FoodTruckDataGetter() {
     }
 
     protected static FoodTruckDataGetter getInstance() {
-        if (FOOD_GETTER_REFERENCE == null) {
-            FOOD_GETTER_REFERENCE = new FoodTruckDataGetter();
+        if (foodTruckDataGetter == null) {
+            foodTruckDataGetter = new FoodTruckDataGetter();
         }
-        return FOOD_GETTER_REFERENCE;
+        return foodTruckDataGetter;
     }
 
 
     // SANITY CHECK https://api.foursquare.com/v2/venues/search?ll=30.256496,-97.747128&radius=750&categoryId=4bf58dd8d48988d1cb941735&client_id=MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY&client_secret=3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2&v=20140310
-    // SANITY CHECK 2 (placement of parameters)
-    // String myAPI = "https://api.foursquare.com/v2/venues/search?&radius=750&categoryId=4bf58dd8d48988d1cb941735&client_id=MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY&client_secret=3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2&v=20140310&ll=30.256496,-97.74712";
+
 
     public interface OnDataReceivedListener {
         public void onDataReceived(ArrayList<FoodTruckData> theDataReceived);
@@ -96,23 +94,36 @@ public class FoodTruckDataGetter {
         GPSLocation = aDeviceLocation;
         listOfFoodTrucks = new ArrayList<FoodTruckData>();
         performFoursquareFoodTruckRequestFoursquare();
+
+        //TODO remove after attempt
+//        performYelpFoodTruckRequest();
     }
 
     private static void notifyOfDataChanged() {
         callback.onDataReceived(listOfFoodTrucks);
     }
 
-    private static final String categoryID = "4bf58dd8d48988d1cb941735"; // foursquare Food Truck category ID
+    private static final String foodTruckFScategoryID = "4bf58dd8d48988d1cb941735"; // foursquare Food Truck category ID
+
+    // THESE DON'T WORK, PROVIDE YOUR OWN
     private static final String clientID = "MEOCEVXLA0SLUOIMYMJLFEYERRFS0AQH0XS3N3OKSYXQ1ONY";
     private static final String clientSecret = "3UZ1VCKBDYULMTB24TUSS4BSJ3WO5X033X3WVS0QZ12OL3E2";
+
+
+
     private static int radiusInMeters = 650;
-    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=" + String.valueOf(radiusInMeters) +"&categoryId=" + categoryID + "&client_id=" + clientID + "&client_secret=" + clientSecret;
+    private static final String myAPIfoursquarePartial = "https://api.foursquare.com/v2/venues/search?&radius=" + String.valueOf(radiusInMeters) +"&categoryId=" + foodTruckFScategoryID + "&client_id=" + clientID + "&client_secret=" + clientSecret;
 
     private static void performFoursquareFoodTruckRequestFoursquare() {
 
         try {
             try {
                 StringBuilder stringBuilder = new StringBuilder(myAPIfoursquarePartial);
+
+                //
+                // TODO Foursquare's new API may result in errors for current parameter "v"
+                // TODO     probab
+                //
                 stringBuilder.append("&v=" + getCurrentDateString());
                 stringBuilder.append("&ll=" + URLEncoder.encode(GPSLocation, "utf8"));
 
@@ -137,179 +148,29 @@ public class FoodTruckDataGetter {
             public void onResponse(JSONObject response) {
                 try {
                     // Extract the Place descriptions from the results
-                    //Parsing the JSON
-                    JSONObject jsonInitial = response;
-                    JSONObject jsonResponse = jsonInitial.getJSONObject("response");
+                    // Parsing the JSON
+                    JSONObject jsonResponse = response.getJSONObject("response");
                     JSONArray resultArray = jsonResponse.getJSONArray("venues");
+
+                    //
+                    // Reset listOfFoodTrucks to a new array in case we're refreshing data
+                    //
                     listOfFoodTrucks = new ArrayList<FoodTruckData>(resultArray.length());
 
                     for (int i = 0; i < resultArray.length(); i++) {
-    //TODO DETERMINE WHAT DATA CAN BE CARRIED OVER AND USED WITH GOOGLE PLACES, ESPECIALLY PHONE NUMBER
-                        FoodTruckData foodTruckData = new FoodTruckData("unknown");
+
                         JSONObject aResult = resultArray.getJSONObject(i);
+                        FoodTruckData foodTruckData = FoodTruckDataFactory.createFromJSONFourSquare(aResult);
 
-                        JSONObject location = aResult.getJSONObject("location");
-                        JSONObject contact = aResult.getJSONObject("contact");
-
-                        JSONArray resultArrayCategories = aResult.getJSONArray("categories");
-
-                        JSONObject categoryId = resultArrayCategories.getJSONObject(0);
-
-                        try {
-                            String fourSquareName = aResult.getString("name");
-                            foodTruckData.setFourSquareName(fourSquareName);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "foursquare name catch JSONException error");
-                        }
-
-
-                        try{
-                            String fsFoodTruckTwitter = aResult.getString("twitter");
-                            foodTruckData.setFsTwitter(fsFoodTruckTwitter);
-                        }catch (JSONException e){
-                            //e.printStackTrace();
-                            //Log.v("VOLLEY", "fs Twitter error");
-                        }
-
-                        try{
-                            String fsCategoryId = categoryId.getString("id");
-                            foodTruckData.setFsCategoryId(fsCategoryId);
-
-                        }catch (JSONException e){
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "foursquare categoryID catch JSONException error");
-                        }
-
-
-                        try{
-                            double latitude = location.getDouble("lat");
-                            foodTruckData.setLatitude(latitude);
-                        }catch (JSONException e){
-                           // e.printStackTrace();
-                            //Log.v("FSVOLLEY", "FS Volley JSON Lat error");
-                        }
-
-                        try{
-                            double longitude = location.getDouble("lng");
-                            foodTruckData.setLongitude(longitude);
-                        }catch (JSONException e){
-                            //e.printStackTrace();
-                            //Log.v("FSVOLLEY", "FS Volley JSON Lng error");
-                        }
-
-                        try{
-                            String postalCode = location.getString("postalCode");
-                            foodTruckData.setPostalCode(postalCode);
-                        }catch (JSONException e){
-                            //e.printStackTrace();
-                            //Log.v("FSVOLLEY", "FS Volley JSON postal error");
-                        }
-
-                        try{
-                            String city = location.getString("city");
-                            foodTruckData.setFsCity(city);
-                        }catch (JSONException e){
-                            //e.printStackTrace();
-                            //Log.v("FSVOLLEY", "FS Volley JSON city error");
-                        }
-
-                        try{
-                            String state = location.getString("state");
-                            foodTruckData.setFsCity(state);
-                        }catch (JSONException e){
-                            //e.printStackTrace();
-                            //Log.v("FSVOLLEY", "FS Volley JSON state error");
-                        }
-
-
-
-                        try {
-                            String formattedPhone = contact.getString("formattedPhone");
-                            foodTruckData.setPhoneNumberFormatted(formattedPhone);
-                        } catch (JSONException e) {
-                            //e.printStackTrace();
-                            //Log.v("VOLLEY", "phoneNumberFormatted catch JSONException error");
-                        }
-
-                        try {
-                            String phone = contact.getString("phone");
-                            foodTruckData.setPhone(phone);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "phoneNumber catch JSONException error");
-                        }
-
-                        try{
-                            String twitter = contact.getString("twitter");
-                            foodTruckData.setFsTwitter(twitter);
-                            }catch (JSONException e){
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "Twitter catch JSONException error");
-                        }
-
-                        try{
-                            String truckUrl = aResult.getString("url");
-                            foodTruckData.setFsTruckWebsite(truckUrl);
-                        }catch (JSONException e){
-//                            e.printStackTrace();
-//                            Log.v("Volley", "fsWEBSITE url catch JSON error");
-                        }
-
-                        try {
-                            String fsId = aResult.getString("id");
-                            foodTruckData.setFsTruckId(fsId);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "fsID catch JSONException error");
-                        }
-
-                        try {
-                            JSONObject fsmenu = aResult.getJSONObject("menu");
-                            String menuUrl = fsmenu.getString("url");
-                            foodTruckData.setFsMenuUrl(menuUrl);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "fsMenuURL catch JSONException error");
-                        }
-
-                        try {
-                            JSONObject fsmenu = aResult.getJSONObject("menu");
-                            String mobileUrl = fsmenu.getString("mobileUrl");
-                            foodTruckData.setFsMobileUrl(mobileUrl);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "fsMobileURL catch JSONException error");
-                        }
-
-                        try {
-                            String address = location.getString("address");
-                            foodTruckData.setFoursquareAddress(address);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "Address catch JSONException error");
-
-                        }
-
-                        try {
-                            foodTruckData.setUserLatitude(userLatitude);
-                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            Log.e("USERLAT", "there was an error with USerLat");
-                        }
-
-                        try {
-                            foodTruckData.setUserLongitude(userLongitude);
-                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            Log.e("USERLONG", "there was an error with USerLong");
-                        }
+                        FoodTruckData.setUserLatitude(userLatitude);
+                        FoodTruckData.setUserLongitude(userLongitude);
 
                         listOfFoodTrucks.add(foodTruckData);
                     }
-                    // starting at 650; 650 + 650 (done 29 times is 19500. 30 is 20,150; FS limits radius to 20,000 meters maximum, let's avoid errors in requests
-                    if(radiusInMeters < 19500) {
 
+                    // starting at 650; 650 + 650 (done 29 times is 19500. 30 is 20,150;
+                    // FS limits radius to 20,000 meters maximum, let's avoid errors in requests
+                    if(radiusInMeters < 19500) {
                         if (listOfFoodTrucks.size() <= 0 || listOfFoodTrucks == null) {
                             radiusInMeters++;
                             performFoursquareFoodTruckRequestFoursquare();
@@ -320,6 +181,7 @@ public class FoodTruckDataGetter {
                     }else {
                         if(listOfFoodTrucks.size() <= 0 || listOfFoodTrucks == null){
                             // there are no food trucks available in the area
+                            notifyOfDataChanged();
                         }
                     }
 
@@ -328,13 +190,12 @@ public class FoodTruckDataGetter {
 //                    performAdditionalGoogleSearches();
 
                 } catch (Exception e) {
-//                    e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
 
         };
     }
-
 
     private static void performAdditionalGoogleSearches() {
 
@@ -347,21 +208,13 @@ public class FoodTruckDataGetter {
     }
 
     private static void removeDuplicates(){
-        for (Iterator<FoodTruckData> foodTruckDataIteratorLoop = listOfFoodTrucks.iterator(); foodTruckDataIteratorLoop.hasNext();) {
-            FoodTruckData foodTruckDataInitial = foodTruckDataIteratorLoop.next();
-            FoodTruckData foodTruckDataNext = foodTruckDataIteratorLoop.next();
-            if (!foodTruckDataInitial.getFsCategoryId().equals(foodTruckDataNext.getFsCategoryId()) || foodTruckDataInitial.getFourSquareName().trim().contains(foodTruckDataNext.getFourSquareName().trim())) {
-                foodTruckDataIteratorLoop.remove();
-            }
-
-        }
 
     }
 
     // SANITY CHECK:
-    // https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E&location=30.256496,-97.747128&radius=1000&keyword=truck,food&name=torchys
+    // https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=true&key=PROVIDE_YOUR_OWN_KEY&location=30.256496,-97.747128&radius=1000&keyword=truck,food&name=torchys
 
-    private static final String GOOGLE_PLACES_API_KEY = "AIzaSyDkyvjwKz4ZcJgUbDF7n-_OtLL0Rxe4M9E";
+    private static final String GOOGLE_PLACES_API_KEY = "PROVIDE_YOUR_OWN_KEY";
     private static final String SENSOR = "true";
     private static final String myAPIGooglePartial = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?sensor=" + SENSOR + "&key=" + GOOGLE_PLACES_API_KEY;
 
@@ -385,20 +238,6 @@ public class FoodTruckDataGetter {
             stringBuilderGoog.append("&name=" + URLEncoder.encode(aFoursquareName, "utf8"));
 
             myAPIGoogle = stringBuilderGoog.toString();
-            if(myAPIGoogle.contains("Poop")){
-                myAPIGoogle = myAPIGoogle.replace("Poop","");
-
-            }
-
-            if(myAPIGoogle.contains("poop")){
-                myAPIGoogle = myAPIGoogle.replace("poop","");
-            }
-
-            if(myAPIGoogle.contains("Parking")){
-                myAPIGoogle = myAPIGoogle.replace("Parking","");
-            }
-
-
         } catch (Exception e) {
 //            e.printStackTrace();
         }
@@ -428,7 +267,7 @@ public class FoodTruckDataGetter {
             public void onResponse(JSONObject response) {
                 try {
                     // Extract the Place descriptions from the results
-                    //Parsing the JSON
+                    // Parsing the JSON
 //                    Log.e("ERROR" , response.toString());
                     JSONObject jsonInitial = response;
                     JSONObject jsonTag = response;
@@ -443,101 +282,13 @@ public class FoodTruckDataGetter {
                         FoodTruckData foodTruckData = listOfFoodTrucks.set(intTag, foodTruckDataReference);
 
                         JSONObject aResultArray = resultArray.getJSONObject(i);
-                        JSONObject geometry = aResultArray.getJSONObject("geometry");
-                        JSONObject location = geometry.getJSONObject("location");
 
-                        try {
-                            String placeName = aResultArray.getString("name");
-                            foodTruckData.setPlaceName(placeName);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "placeName Google Places error");
-                        }
+                        FoodTruckDataFactory.createFromJSONGoogle(aResultArray);
 
-                        try {
-                            Double latitude = location.getDouble("lat");
-                            foodTruckData.setLatitude(latitude.doubleValue());
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "google latitude exception");
-                        }
+                        foodTruckData.setTagValue(intTag);
 
-                        try {
-                            Double longitude = location.getDouble("lng");
-                            foodTruckData.setLongitude(longitude.doubleValue());
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "google longitude exception");
-                        }
-
-
-                        try {
-                            JSONObject openingHours = aResultArray.getJSONObject("opening_hours");
-                            boolean openNowBool = openingHours.getBoolean("open_now");
-                            foodTruckData.setOpenNow(openNowBool);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "Google open_now error");
-
-                        }
-
-                        try {
-                            Double ratingValue = aResultArray.getDouble("rating");
-                            foodTruckData.setRating(ratingValue);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "rating error");
-                            foodTruckData.setRating(Integer.parseInt("--"));
-                        }
-
-                        try {
-                            String vicinityAddress = aResultArray.getString("vicinity");
-                            foodTruckData.setVicinityAddress(vicinityAddress);
-                            foodTruckData.setFoursquareAddress(vicinityAddress);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "vicinity address error");
-                        }
-
-                        try {
-                            String placeDetailsId = aResultArray.getString("reference");
-                            foodTruckData.setPlaceDetailsReference(placeDetailsId);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "placeDetailsId error");
-                            foodTruckData.setPriceLevel(Integer.valueOf("--"));
-                        }
-
-                        try {
-                            int priceLevelInt = aResultArray.getInt("price_level");
-                            foodTruckData.setPriceLevel(priceLevelInt);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "price_level error");
-                            foodTruckData.setPriceLevel(Integer.valueOf("--"));
-                        }
-
-                        try {
-                            JSONArray jsonArrayPhoto = aResultArray.getJSONArray("photos");
-                            JSONObject jsonObject = jsonArrayPhoto.getJSONObject(i);
-                            String placesReferencePhoto = jsonObject.getString("photo_reference");
-                            foodTruckData.setPhotoPlacesReference(placesReferencePhoto);
-                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.v("VOLLEY", "new photo reference error");
-                        }
-
-                        try {
-                            foodTruckData.setTagValue(intTag);
-                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            Log.v("JSONPARSE", "saveTagId error");
-                        }
 
                     }
-//                    Log.v("ERROR", "DUPE error");
-//
-//                    Log.v("CLEAR", "DUPE clear");
                     FoodTruckStorage.getInstance().saveMyFoodTruckData(context, listOfFoodTrucks);
                     notifyOfDataChanged();
                 } catch (Exception e) {

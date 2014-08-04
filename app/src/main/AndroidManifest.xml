@@ -3,12 +3,13 @@
     package="com.justin.truckfinder.app"
     >
 
-    <uses-permission android:name="android.permission.INTERNET">asdad</uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION">sd</uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION">dfs</uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE">add</uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>?
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!--ON FIRST DOWNLOAD, GET PERMISSION, FUTURE UPDATES WON'T REQUIRE APPROVAL AGAIN-->
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
     <application
         android:allowBackup="true"
@@ -17,7 +18,9 @@
         android:theme="@style/AppTheme">
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
+        <!--android:configChanges=orientation is experimental-->
         <activity
+
             android:configChanges="orientation"
             android:name="com.justin.truckfinder.app.FoodTruckNearbyActivity"
             android:label="@string/app_name" >

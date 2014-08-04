@@ -1,7 +1,5 @@
 package com.justin.truckfinder.app;
 
-import com.android.volley.toolbox.ImageLoader;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,8 +8,7 @@ import java.io.Serializable;
 /**
  * Created by justindelta on 3/17/14.
  */
-public class FoodTruckData implements Serializable{
-
+public class FoodTruckData implements Serializable {
 
     //This is the data i want to display. Encapsulating only the data that I need.
     //necessary
@@ -27,9 +24,6 @@ public class FoodTruckData implements Serializable{
     private String postalCode;
     private String phoneNumberFormatted;
     private String phone = null;
-    private String photoPlacesReference;
-    private String photoPlacesURL;
-    private String placeDetailsReference;
     private String fsTwitter;
     private String fsTruckId;
     private String fsCategoryId;
@@ -40,13 +34,6 @@ public class FoodTruckData implements Serializable{
     private String fsTruckWebsite;
     private static double userLatitude;
     private static double userLongitude;
-    // necessary if using image network request (volley)
-    private ImageLoader imageLoader;
-    private int dayOfWeek[];
-    private String openHoursEachDay[];
-    private String closedHoursEachDAy[];
-
-    //TODO add try/catch in Google FoodTruckDataGetter for future scalability using Place Details
     private int tagValue;
 
     public FoodTruckData() {
@@ -56,45 +43,12 @@ public class FoodTruckData implements Serializable{
         this.fourSquareName = fourSquareName;
     }
 
-    // TODO If using image volley, these are necessary.
-    public ImageLoader getImageLoader() {
-        return imageLoader;
-    }
-
-    public void setImageLoader(ImageLoader imageLoader) {
-        this.imageLoader = imageLoader;
-    }
-
-    public String getPhotoPlacesURL() {
-        return photoPlacesURL;
-    }
-
-    public void setPhotoPlacesURL(String photoPlacesURL) {
-        this.photoPlacesURL = photoPlacesURL;
-    }
-
-    public String getPhotoPlacesReference() {
-        return photoPlacesReference;
-    }
-
-    public String getPlaceDetailsReference() {
-        return placeDetailsReference;
-    }
-
-    public void setPlaceDetailsReference(String placeDetailsReference) {
-        this.placeDetailsReference = placeDetailsReference;
-    }
-
-    public void setPhotoPlacesReference(String photoPlacesReference) {
-        this.photoPlacesReference = photoPlacesReference;
-    }
-
-    // These are always necessary.
+    // These user latitude and longitude getters and setters are always necessary.
     public static double getUserLatitude() {
         return userLatitude;
     }
 
-    public static void  setUserLatitude(double userLat) {
+    public static void setUserLatitude(double userLat) {
         userLatitude = userLat;
     }
 
@@ -106,6 +60,10 @@ public class FoodTruckData implements Serializable{
         userLongitude = userLng;
     }
 
+    //
+    // Tag value sent w/ volley request to append foursquare results with Goog Places API results
+    // in the appropriate FoodTruckData object in the ArrayList<FoodTruckData>.
+    //
     public int getTagValue() {
         return tagValue;
     }
@@ -114,6 +72,9 @@ public class FoodTruckData implements Serializable{
         this.tagValue = tagValue;
     }
 
+    //
+    // FourSquare category ID from response to remove non-food truck categorization
+    //
     public String getFsCategoryId() {
         return fsCategoryId;
     }
@@ -122,6 +83,9 @@ public class FoodTruckData implements Serializable{
         this.fsCategoryId = fsCategoryId;
     }
 
+    //
+    // Food Truck Phone number, not formatted
+    //
     public String getPhone() {
         return phone;
     }
@@ -130,6 +94,9 @@ public class FoodTruckData implements Serializable{
         this.phone = phone;
     }
 
+    //
+    // FourSquare street address
+    //
     public String getFoursquareAddress() {
         return foursquareAddress;
     }
@@ -138,6 +105,9 @@ public class FoodTruckData implements Serializable{
         this.foursquareAddress = foursquareAddress;
     }
 
+    //
+    // FourSquare response with food truck website URL
+    //
     public String getFsTruckWebsite() {
         return fsTruckWebsite;
     }
@@ -146,6 +116,9 @@ public class FoodTruckData implements Serializable{
         this.fsTruckWebsite = fsTruckWebsite;
     }
 
+    //
+    // FourSquare Food Truck city
+    //
     public String getFsCity() {
         return fsCity;
     }
@@ -154,6 +127,9 @@ public class FoodTruckData implements Serializable{
         this.fsCity = fsCity;
     }
 
+    //
+    // FourSquare Food Truck state
+    //
     public String getFsState() {
         return fsState;
     }
@@ -162,30 +138,9 @@ public class FoodTruckData implements Serializable{
         this.fsState = fsState;
     }
 
-    public int[] getDayOfWeek() {
-        return dayOfWeek;
-    }
-
-    public void setDayOfWeek(int[] dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
-
-    public String[] getOpenHoursEachDay() {
-        return openHoursEachDay;
-    }
-
-    public void setOpenHoursEachDay(String[] openHoursEachDay) {
-        this.openHoursEachDay = openHoursEachDay;
-    }
-
-    public String[] getClosedHoursEachDAy() {
-        return closedHoursEachDAy;
-    }
-
-    public void setClosedHoursEachDAy(String[] closedHoursEachDAy) {
-        this.closedHoursEachDAy = closedHoursEachDAy;
-    }
-
+    //
+    // Zip code from foursquare or google
+    //
     public String getPostalCode() {
         return postalCode;
     }
@@ -194,6 +149,10 @@ public class FoodTruckData implements Serializable{
         this.postalCode = postalCode;
     }
 
+
+    //
+    // Formatted phone number for display purposes
+    //
     public String getPhoneNumberFormatted() {
         return phoneNumberFormatted;
     }
@@ -202,8 +161,9 @@ public class FoodTruckData implements Serializable{
         this.phoneNumberFormatted = phoneNumberFormatted;
     }
 
-
-
+    //
+    // Crucial longitude and latitude from FourSquare or Google
+    //
     public double getLongitude() {
         return longitude;
     }
@@ -220,6 +180,9 @@ public class FoodTruckData implements Serializable{
         this.latitude = latitude;
     }
 
+    //
+    // FourSquare response indicating Food Truck twitter handle
+    //
     public String getFsTwitter() {
         return fsTwitter;
     }
@@ -228,6 +191,9 @@ public class FoodTruckData implements Serializable{
         this.fsTwitter = fsTwitter;
     }
 
+    //
+    // Foursquare food truck id for truck-specific API requests
+    //
     public String getFsTruckId() {
         return fsTruckId;
     }
@@ -236,6 +202,9 @@ public class FoodTruckData implements Serializable{
         this.fsTruckId = fsTruckId;
     }
 
+    //
+    // Foursquare-provided url link to food truck menu (most often uses UrbanSpoon)
+    //
     public String getFsMenuUrl() {
         return fsMenuUrl;
     }
@@ -244,6 +213,9 @@ public class FoodTruckData implements Serializable{
         this.fsMenuUrl = fsMenuUrl;
     }
 
+    //
+    // Foursquare-provided MOBILE url link to food truck
+    //
     public String getFsMobileUrl() {
         return fsMobileUrl;
     }
@@ -252,6 +224,10 @@ public class FoodTruckData implements Serializable{
         this.fsMobileUrl = fsMobileUrl;
     }
 
+    //
+    // Separately saved Google Places name (vs. Foursquare name)
+    // TODO optimize since only one name is needed
+    //
     public String getPlaceName() {
         return placeName;
     }
@@ -260,6 +236,10 @@ public class FoodTruckData implements Serializable{
         this.placeName = placeName;
     }
 
+    //
+    // Separately saved Foursquare Venues Food Truck name (vs. Foursquare name)
+    // IMPORTANT, FS name is used to make Google Places API request per food truck
+    //
     public String getFourSquareName() {
         return fourSquareName;
     }
@@ -268,6 +248,10 @@ public class FoodTruckData implements Serializable{
         this.fourSquareName = fourSquareName;
     }
 
+
+    //
+    // Returns true if open at time of API response, false if closed
+    //
     public boolean getIsOpenNow() {
         return openNow;
     }
@@ -276,6 +260,10 @@ public class FoodTruckData implements Serializable{
         this.openNow = openNow;
     }
 
+
+    //
+    // Google Places price-level rating 1-4
+    //
     public double getPriceLevel() {
         return priceLevel;
     }
@@ -284,6 +272,10 @@ public class FoodTruckData implements Serializable{
         this.priceLevel = priceLevel;
     }
 
+
+    //
+    // Google Places rating uses 10th decimal place 0-4
+    //
     public double getRating() {
         return rating;
     }
@@ -292,6 +284,10 @@ public class FoodTruckData implements Serializable{
         this.rating = rating;
     }
 
+
+    //
+    // Google Places "vicinity" street address for returned place result/response
+    //
     public String getVicinityAddress() {
         return vicinityAddress;
     }
@@ -308,10 +304,19 @@ public class FoodTruckData implements Serializable{
         return (radians * 180 / Math.PI);
     }
 
+
+    //
+    // Calculate distance in miles and convert to return in feet
+    //
     public double getDistanceCalculatedFeet() {
         return getDistanceCalculatedMiles() * 5280;
     }
 
+
+    //
+    // Calculate distance using the Spherical Law of Cosines
+    // Known to produce inaccurate results of place is within a few feet or thousands of miles away
+    //
     public double getDistanceCalculatedMiles() {
 
         // Location of Destination in GPS coordinates
@@ -331,30 +336,36 @@ public class FoodTruckData implements Serializable{
         calculateDistanceMiles = Math.acos(calculateDistanceMiles);
 
         calculateDistanceMiles = radiansToDegrees(calculateDistanceMiles);
-        // here it actually is converted into miles
+
+        // Here it actually is converted into miles
         calculateDistanceMiles = calculateDistanceMiles * 60 * 1.1515;
+
         // Statute Miles (NOT Nautical) are what we consider "miles" (i.e. mph).
         // Note: Nautical = distance * 0.8684.
-        String units = "Miles";
+        //        String units = "Miles";
+        //
         // not necessary unless people outside the USA want Kilometers.
-//        if (units.equals("Kilometers")) {
-//            calculateDistanceKilometers = calculateDistanceMiles * 1.609344;
-//        }
+        // if (units.equals("Kilometers")) {
+        //    calculateDistanceKilometers = calculateDistanceMiles * 1.609344;
+        // }
 
         return calculateDistanceMiles;
 
     }
 
 
+    //
+    // This is the default implementation of readObject. Customise if necessary.
+    //
     private void readObject(ObjectInputStream anInputStream)
             throws ClassNotFoundException, IOException {
         // always perform the default de-serialization first
         anInputStream.defaultReadObject();
     }
 
-    /**
-     * This is the default implementation of writeObject. Customise if necessary.
-     */
+    //
+    // This is the default implementation of writeObject. Customise if necessary.
+    //
     private void writeObject(ObjectOutputStream anOutputStream)
             throws IOException {
         // perform the default serialization for all non-transient, non-static fields

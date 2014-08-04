@@ -12,7 +12,11 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 
 /*
- * Created by justindelta on 4/9/14.
+ * Created by justin on 4/9/14
+ *
+ * This class is a customized version of the corresponding class from the Volley library
+ * Customized was necessary since the Volley Library (as of March 2014) did not provide
+ * built-in functionality to setTag for individual requests (only supports batch request tagging)
  */
 public class CustomJSONRequest extends JsonObjectRequest {
 

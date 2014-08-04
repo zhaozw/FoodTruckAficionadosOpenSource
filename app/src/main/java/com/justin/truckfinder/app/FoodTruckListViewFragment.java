@@ -1,8 +1,6 @@
 package com.justin.truckfinder.app;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -21,55 +19,49 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
 /*
- * Created by justindelta on 3/17/14.
+ * Created by justin on 3/17/14.
  */
-//TODO ROTATION FIX FOR ALL 4 DIFFERENT ORIENTATIONS. IMPLICIT INTENT TO MAPS. UI ADJUSTMENTS. OPTIMIZATIONS
-public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, MyCompassView.SensorDataRequestListener{
 
-    ProgressBar myProgress;
-    TextView myTextView;
-    TextView myTextViewNoTrucks;
+public class FoodTruckListViewFragment extends ListFragment implements LocationListener, FoodTruckDataGetter.OnDataReceivedListener, SensorEventListener, RealCompassView.SensorDataRequestListener{
+
+    private ProgressBar myProgress;
+    private TextView myTextView;
+    private TextView myTextViewNoTrucks;
+
     private FoodTruckDataAdapter foodTruckDataAdapter;
+
     private LocationManager locationManager;
     protected Location lastUserLocation;
     protected String currentLocation;  //Format: "30.12341234,-90.11341234"
-    private boolean retrievedLocation = false;
-    protected OnItemSelectedListener selectedListenerCallback;
+
     private SensorManager sensorManager;
     protected Sensor mySensorAccelerometer;
     protected Sensor mySensorMagnetometer;
+
     protected ArrayList<FoodTruckData> mTheDataReceived;
-    float[] matrixR = {};
-    float[] matrixRremapped = {};
-    float[] matrixI = {};
-    float[] valuesAccelerometer = {};
-    float[] valuesMagneticField = {};
-    float[] matrixValues = {};
+
+    private float[] matrixR = {};
+    private float[] matrixRremapped = {};
+    private float[] matrixI = {};
+    private float[] valuesAccelerometer = {};
+    private float[] valuesMagneticField = {};
+    private float[] matrixValues = {};
     protected int rotation = 0;
 
-    //AdMob variables
-    /** The view to show the ad. */
-    private AdView adView;
+    //  AdMob
+    protected AdView adView;
 
-    /* Your ad unit id. Replace with your actual ad unit id. */
-    private static final String AD_UNIT_ID = "INSERT_YOUR_AD_UNIT_ID_HERE";
-
-
-
-    public FoodTruckListViewFragment() {
-    }
-
-
+    //
+    // Save the current location as a bundle, for landscape <--> portrait changes
+    //
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // Save custom values into the bundle
@@ -78,6 +70,9 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
         super.onSaveInstanceState(outState);
     }
 
+    //
+    // Restore the state when fragment is re-created for landscape <--> portrait changes
+    //
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
@@ -91,27 +86,46 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     }
 
+    //
+    // Callback to change visibility of the appropriate view if we have data
+    // else inform the user there are no nearby food trucks.
+    //
     @Override
     public void onDataReceived(ArrayList<FoodTruckData> theDataReceived) {
         //
         //  Check to see if you have more than 0 data. if so, then
+        //  set the progress bar and the paired quote (Louis CK) to visible.
         //
-
-//       get the progress bar and the quote
-
-
         if(theDataReceived == null){
+            myTextView.setVisibility(View.INVISIBLE);
+            myProgress.setVisibility(View.INVISIBLE);
+            myTextViewNoTrucks.setVisibility(View.VISIBLE);
             return;
+        }else {
+            //
+            // If we now have data, set the progress and "no nearby trucks" view to
+            //  be invisible to prevent obstructing the ListView of trucks.
+            //
+            myTextViewNoTrucks.setVisibility(View.INVISIBLE);
+            myTextView.setVisibility(View.INVISIBLE);
+            myProgress.setVisibility(View.INVISIBLE);
         }
 
-        myTextView.setVisibility(View.INVISIBLE);
-        myProgress.setVisibility(View.INVISIBLE);
-
-        //if we now have data, kill the loading screen.
+        //
+        // Set the dataReceived as a member variable
+        //
         mTheDataReceived = theDataReceived;
+
+        //
+        // Refresh the adapter with the new data to populate the view
+        //
         foodTruckDataAdapter.setFoodTruckDataArrayList(theDataReceived);
     }
 
+
+    //
+    // Initialize the locationManager and sensorManager in onCreate
+    //
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,37 +135,37 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
         valuesAccelerometer = new float[3];
         valuesMagneticField = new float[3];
+
+        //
+        // Set the matrix float[] sizes to utilize the remapOrientationMatrix method
+        //
         matrixR = new float[9];
         matrixI = new float[9];
         matrixValues = new float[3];
         matrixRremapped = new float[9];
-//        setRetainInstance(true);
-
-    }
-
-    @Override
-    public void setListShown(boolean shown) {
-        super.setListShown(shown);
-    }
-
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
     }
 
     @Override
     public void onLocationChanged(Location location) {
 
         if (location != null) {
-            Log.e("NEWLOC", "Got new location");
+            Log.d("NEWLOC", "Got new location");
+
+            //
+            //launches the network request(s)
+            //
             setNewLocation(location);
+
+            //
             // Remove the listener you previously added
+            //
             locationManager.removeUpdates(this);
         }
     }
 
+    //
+    // LocationListener interface methods
+    //
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
@@ -164,14 +178,28 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
     public void onProviderDisabled(String provider) {
     }
 
+    //
+    // Set float values for the ACCELEROMETER and the TYPE_MAGNETIC_FIELD
+    // rather ROTATION_VECTOR because not everyone has a fancy phone.
+    //
+    //TODO: explain how using getRotation is deprecated and wrong, and your method below is better
+    //
+
     @Override
     public void onSensorChanged(SensorEvent event) {
-
+        //
+        // Ensure proper mathematical sequence to properly remap the new rotation matrix
+        // based on user device's current rotation
+        //
         synchronized (this) {
+            //
+            // Set X, Y, and Z sensor values per sensor
+            // float[] valuesAccelerometer
+            // float[] valuesMagneticField
+            //
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 for (int i = 0; i < 3; i++) {
                     valuesAccelerometer[i] = event.values[i];
-
                 }
             }
 
@@ -181,43 +209,87 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
                 }
             }
 
+            //
+            // success = true if we get the rotation matrix
+            //
             boolean success = SensorManager.getRotationMatrix(
                     matrixR,
                     matrixI,
                     valuesAccelerometer,
                     valuesMagneticField);
 
+            //
+            // if successfully get rotation matrix
+            //
             if (success) {
+                //
+                // determine the rotation of the device by using the Surface interface
+                // located in Android's view package
+                //
                 switch (rotation) {
+                    //
+                    //  Note: Counter-intuitive use of each axis to ensure accurate remapping
+                    //        of coordinate system for each of the 4 possible device rotations
+                    //
+                    //  Also, the comments below apply to each rotation - differences:
+                    //      1) Current device rotation retrieved using Surface.ROTATION_X
+                    //      2) The values for X and Y (sign, and order) depend on the rotation
+                    //         relative to the default coordinate system of the device (getRotationMatrix)
+                    //         determined by user's device sensor values (accelerometer and magnetic_field)
+                    //
+                    //
+                    // Once Surface orientation is detected, call appropriate method "remapCoordinateSystem" by passing:
+                    //  the rotation matrix,
+                    //  the rotation-appropriate "X value" = (-)X-axis or (-)Y-axis,
+                    //  the rotation-appropriate "Y value" = (-)X-axis or (-)Y-axis,
+                    //  and an empty float[9] matrixRremapped
+                    //
+                    //  Method SensorManager.remapCoordinateSystem when called SETS
+                    //      the empty initialized float[9] matrixRremapped to
+                    //          the new matrix (remapped coordinate system)
+                    //          depending on the current device rotation [90, 180, 270, 0]
+                    //
+                    //  After, call getOrientation and pass remapped matrix, along with empty float[3]
+                    //  so getOrientation sets appropriate axis values to float[3] matrixValues
+                    //
+                    // ROTATION_0 is the default orientation (rotation)
+                    // Note: This is regardless of device, since
+                    // some devices (e.g. some tablets)
+                    // have a native LANDSCAPE orientation (vs. Portrait)
+                    // Android's SensorManager.getRotationMatrix,
+                    //           SensorManager.remapRotationMatrix,
+                    //           SensorManager.getOrientation, and
+                    //           Sensor.ROTATION_X
+                    //  is designed to account for the device's native orientation (landscape or portrait)
+                    //  to properly remap the coordinate system for reliable results.
+                    //
                     case Surface.ROTATION_90:
-                        //this is the right one for 90
-                        //SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
                         SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, matrixRremapped);
                         SensorManager.getOrientation(matrixRremapped, matrixValues);
                         break;
                     case Surface.ROTATION_180:
-                        //this is the right one for 180
                         SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_X, SensorManager.AXIS_MINUS_Y, matrixRremapped);
                         SensorManager.getOrientation(matrixRremapped, matrixValues);
                         break;
                     case Surface.ROTATION_270:
-                        //this is the right one for 270
                         SensorManager.remapCoordinateSystem(matrixR, SensorManager.AXIS_MINUS_Y, SensorManager.AXIS_X, matrixRremapped);
                         SensorManager.getOrientation(matrixRremapped, matrixValues);
                         break;
                     case Surface.ROTATION_0:
+                        //default rotation, continue to default case:
                     default:
                         SensorManager.getOrientation(matrixR, matrixValues);
                         break;
                 }
-
             }
         }
     }
 
     @Override
     public float getDirection() {
-//        return GeoUtils.getModifiedTrueNorth(lastUserLocation,matrixValues[0]);
+        //
+        // Obtain and return the azimuth (azimuth = direction = rotation around the Z-axis)
+        //
         return matrixValues[0]; //this is from the sensor updating
     }
 
@@ -226,35 +298,52 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
 
     }
 
-    protected interface OnItemSelectedListener {
-        public void OnItemSelected();
-    }
-
     @Override
     public void onStart() {
         super.onStart();
 
-        setNewLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
-        try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, this);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.v("ONSTART", "network provider location ERROR");
+        // Used for Analytics
+//        EasyTracker.getInstance(getActivity()).activityStart(getActivity());
+
+        // Make sure we can get the location
+        if(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null) {
+            setNewLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        }else if (locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null){
+            setNewLocation(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+        }else{
+            setNewLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         }
-        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1, 1, this);
+        //get updates to user location with the following settings:
+        //
+        //* @param minTime minimum time interval between location updates: 1 millisecond
+        //* @param minDistance minimum distance between location updates: 1 meter
+        //
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, this);
+
         //Sensor stuff
         mySensorAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mySensorMagnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-// Moved code registerListeners to onResume because it will only notice both registered listeners if it is in OnResume
+
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        //
+        // adView needs its own lifecycle method called here before the super method is called
+        //
         if (adView != null) {
             adView.resume();
         }
+
+        //
+        // Register listeners with sensorManager
+        //      make sure registerListeners to onResume and not
+        //      onStart() because it will only notice both registered listeners if it is in OnResume
+        //
+
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_UI);
 
@@ -265,137 +354,157 @@ public class FoodTruckListViewFragment extends ListFragment implements LocationL
             rotation = display.getRotation();
         }
 
+        // Retrieve persistent storage and use it if we have it.
+        retrievePersistenceAndUse();
+    }
+
+    private void retrievePersistenceAndUse(){
+        // Retrieve persistent storage and use it if we have it.
         ArrayList<FoodTruckData> savedData = FoodTruckStorage.getMyFoodTruckData(getActivity());
         if(savedData != null && savedData.size() > 0){
             onDataReceived(savedData);
         }
+    }
 
-
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Used for Analytics
+//        EasyTracker.getInstance(getActivity()).activityStop(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_food_truck_nearby, container, false);
+
         myTextView = (TextView) rootView.findViewById(R.id.progressTextId2);
         myProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
-//        myTextView = (TextView) rootView.findViewById(R.id.progressTextNoTrucks);
-        addAdMobToRootView(rootView);
+        myTextViewNoTrucks = (TextView) rootView.findViewById(R.id.failMessage);
+        AdView adView = (AdView) rootView.findViewById(R.id.adView);
+
+        AdRequest adRequest = new AdRequest.Builder()
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+//                .addTestDevice("D149CABC89242EE6DC2A3A6F61908262")
+                .build();
+        adView.loadAd(adRequest);
+//        addAdMobToRootView(rootView);
         return rootView;
     }
-
-    private void addAdMobToRootView(View rootView){
-
-        // Create an ad.
-        adView = new AdView(getActivity());
-        adView.setAdSize(AdSize.BANNER);
-        adView.setAdUnitId(AD_UNIT_ID);
-
-        // Add the AdView to the view hierarchy. The view will have no size
-        // until the ad is loaded.
-
-
-        //RelativeLayout.LayoutParams adLayout = new RelativeLayout.LayoutParams(adView.getWidth(), adView.getHeight());
-        //adLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        //adView.setLayoutParams(adLayout);
-        RelativeLayout aRelativeLayout = (RelativeLayout) rootView;
-        aRelativeLayout.addView(adView);
-
-
-        // Create an ad request. Check logcat output for the hashed device ID to
-        // get test ads on a physical device.
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("INSERT_YOUR_HASHED_DEVICE_ID_HERE")
-                .build();
-
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest);
-
-
-    }
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //for the first time, see if they have data while you're waiting for new data.
+        //
+        //  For the first time, start with blank data.
+        //
         ArrayList<FoodTruckData> startData = new ArrayList<FoodTruckData>();
-        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_rows,startData);
+        foodTruckDataAdapter = new FoodTruckDataAdapter(getActivity(), R.layout.food_truck_rows, startData);
         setListAdapter(foodTruckDataAdapter);
+
+        //
+        // Setter for sensorListener to FoodTruckDataAdapter that will display RealCompassView
+        //
         foodTruckDataAdapter.setSensorListener(this);
     }
 
-    @Override
-    public void startActivity(Intent intent) {
-        super.startActivity(intent);
-    }
 
+    //
+    // TODO future implementation of ExpandableListView will require use of this method or
+    // TODO a custom method that functions similarly to this ListFragment method
+    //
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-
     }
-
 
     @Override
     public void onPause() {
+        //
+        // adView needs its own lifecycle method called here before the super method is called
+        //
         if (adView != null) {
             adView.pause();
         }
         super.onPause();
 
-        FoodTruckStorage.getInstance().saveMyFoodTruckData(getActivity(), mTheDataReceived);
+        //
+        // Remove location updates and unregister sensor changes
+        //  because we don't need either one when the app is not in focus
+        //  and we dont want to waste battery
+        //
         locationManager.removeUpdates(this);
         sensorManager.unregisterListener(this);
-
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            selectedListenerCallback = (OnItemSelectedListener) activity;
-            // if a class cast exception is thrown, catch it and
-        } catch (ClassCastException e) {
-            //throw a new error indicating the following, AND don't break the app
-            throw new ClassCastException(activity.toString() + "meet implement OnItemSelectedListener!");
-        }
     }
 
     @Override
     public void onDestroyView() {
+        //
+        // adView needs its own lifecycle method called here before the super method is called
+        //
         if (adView != null) {
             adView.destroy();
         }
         super.onDestroyView();
     }
 
-    public void setNewLocation(Location location) {
-        if (location == null) {
+
+    public void setNewLocation(Location aLocation) {
+        //
+        // return if we don't have a location to work with
+        //
+        if (aLocation == null) {
             return;
         }
 
-        lastUserLocation = location;
+        lastUserLocation = aLocation;
 
-        double userLatitudeDouble = location.getLatitude();
-        double userLongitudeDouble = location.getLongitude();
 
-        String latitudeString = String.format("%.4f", userLatitudeDouble);
-        String longitudeString = String.format("%.4f", userLongitudeDouble);
+        //
+        // Use double's 64-bit precision when setting the user's current latitude and longitude.
+        //
+        double userLatitudeDouble = aLocation.getLatitude();
+        double userLongitudeDouble = aLocation.getLongitude();
+
+
+        //
+        // Use String manipulation to create String representation of latitude and longitude
+        //  to the 2nd decimal place.
+        //
+        String latitudeString = String.format("%.2f", userLatitudeDouble);
+        String longitudeString = String.format("%.2f", userLongitudeDouble);
         String latitudeLongitude = latitudeString + "," + longitudeString;
-        String userLatLong = String.valueOf(userLatitudeDouble + "," + String.valueOf(userLongitudeDouble));
 
-
+        // Check if the manipulated "latitude,longitude" is different at the 2nd decimal place
+        // AND ensure there is a context.
         if(!latitudeLongitude.equals(currentLocation) && getActivity() != null) {
-            Log.v("Location Definitely Changed", "Will Launch FoodTruckDataGetter");
+//            Log.v("Location Definitely Changed", "Will Launch FoodTruckDataGetter");
+
+            //
+            // Set the currentLocation to String (manipulated) latitudeLongitude.
+            // Next pass will compare the previously set userLocation.
+            //
             currentLocation = latitudeLongitude;
+
+            //
+            // We only need 1 network request per location change.
+            // Utilize singleton and call method to start the first network request.
+            //
             FoodTruckDataGetter.getInstance().performSearchRequest(getActivity(), this, currentLocation, userLatitudeDouble, userLongitudeDouble);
+
+            //
+            // only one device and one user means we don't need more than one value for the
+            //  user's latitude and longitude.
+            // Set lat and lng using static setter and original double value from Location.
+            // User location needed to calculate distance using spherical law of cosines.
+            //
             FoodTruckData.setUserLatitude(userLatitudeDouble);
             FoodTruckData.setUserLongitude(userLongitudeDouble);
         }else {
-            Log.v("GETMYFOODTRUCKDATA", "REACHED AND CHECK FOR ERROR");
-            onDataReceived(FoodTruckStorage.getMyFoodTruckData(getActivity()));
+//            Log.v("GETMYFOODTRUCKDATA", "REACHED AND CHECK FOR ERROR");
+            if (getActivity() != null) {
+                retrievePersistenceAndUse();
+            }
         }
     }
+
 }

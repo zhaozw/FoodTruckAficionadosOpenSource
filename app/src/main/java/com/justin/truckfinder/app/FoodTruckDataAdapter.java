@@ -21,19 +21,18 @@ import java.util.ArrayList;
  * Created by justin on 3/17/14.
  */
 public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
+
     // necessary?
     private static final String TAG = FoodTruckDataAdapter.class.getSimpleName();
     // necessary.
     private Context context;
     private int mLayoutResourceId;
     private ArrayList<FoodTruckData> foodTruckDataArrayList;
-    private LayoutInflater layoutInflater;
-    private MyCompassView.SensorDataRequestListener sensorListener;
+    private RealCompassView.SensorDataRequestListener sensorListener;
 
     public FoodTruckDataAdapter(Context aContext, int aResource, ArrayList<FoodTruckData> aFoodTruckList) {
         super(aContext, aResource);
         this.context = aContext;
-        this.layoutInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         this.mLayoutResourceId = aResource;
         this.foodTruckDataArrayList = aFoodTruckList;
     }
@@ -43,7 +42,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         notifyDataSetChanged();
     }
 
-    public void setSensorListener(MyCompassView.SensorDataRequestListener listener) {
+    public void setSensorListener(RealCompassView.SensorDataRequestListener listener) {
         sensorListener = listener;
     }
 
@@ -65,8 +64,11 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         public TextView placeOpenNowView;
         public TextView foursquareMenuView;
         public TextView placeExtraView;
-        public MyCompassView myCompassView;
+
+        public RealCompassView realCompassView;
+
         public NetworkImageView placeNetworkImageView;
+
         public ImageButton mapsImageButton;
         public ImageButton phoneImageButton;
     }
@@ -79,6 +81,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
 
     @Override
     public View getView(int aPosition, View aConvertView, ViewGroup aParent) {
+
         FoodTruckDataHolder foodTruckDataHolder;
 
         View row = aConvertView;
@@ -86,6 +89,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         //inflate layout for a single view
 
         if (aConvertView == null) {
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
             row = layoutInflater.inflate(mLayoutResourceId, aParent, false);
 
             RelativeLayout aRelativeLayout = (RelativeLayout) row;
@@ -93,22 +97,21 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             int boxSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 85, context.getResources().getDisplayMetrics());
             int rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources().getDisplayMetrics());
 
-            MyCompassView myCompassView;
-            myCompassView = new MyCompassView(context);
+            RealCompassView realCompassView;
+            realCompassView = new RealCompassView(context);
             RelativeLayout.LayoutParams compassLayout = new RelativeLayout.LayoutParams(boxSize, boxSize);
 
             compassLayout.setMargins(0, 0, rightMargin, 0);
             compassLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             compassLayout.addRule(RelativeLayout.BELOW, R.id.phoneButtonImplicit);
 
-            myCompassView.setLayoutParams(compassLayout);
-            myCompassView.setBackgroundResource(R.drawable.newcompass);
-            myCompassView.setSensorDataCallback(sensorListener);
-            aRelativeLayout.addView(myCompassView);
+            realCompassView.setLayoutParams(compassLayout);
+            realCompassView.setBackgroundResource(R.drawable.newcompass);
+            realCompassView.setSensorDataCallback(sensorListener);
+            aRelativeLayout.addView(realCompassView);
 
             // new class that draws something (line point or square) to screen FIRST. then add
             // how I want it to draw
-
             foodTruckDataHolder = new FoodTruckDataHolder();
             foodTruckDataHolder.placeNameView = (TextView) row.findViewById(R.id.placeNameView);
             foodTruckDataHolder.placeNameViewTwo = (TextView) row.findViewById(R.id.placeNameViewTwo);
@@ -123,7 +126,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             foodTruckDataHolder.foursquareMenuView = (TextView) row.findViewById(R.id.placePostalView);
             foodTruckDataHolder.placeExtraView = (TextView) row.findViewById(R.id.placeExtraView);
             foodTruckDataHolder.placeNetworkImageView = (NetworkImageView) row.findViewById(R.id.googlePlacesView);
-            foodTruckDataHolder.myCompassView = myCompassView;
+            foodTruckDataHolder.realCompassView = realCompassView;
             foodTruckDataHolder.mapsImageButton = (ImageButton) row.findViewById(R.id.mapsButtonImplicit);
             foodTruckDataHolder.phoneImageButton = (ImageButton) row.findViewById(R.id.phoneButtonImplicit);
 
@@ -133,7 +136,6 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             foodTruckDataHolder = (FoodTruckDataHolder) row.getTag();
         }
 
-
         FoodTruckData foodTruck = this.foodTruckDataArrayList.get(aPosition);
 
         Integer rowPosition = aPosition;
@@ -141,99 +143,112 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         foodTruckDataHolder.mapsImageButton.setOnClickListener(mapClickListener);
         foodTruckDataHolder.phoneImageButton.setTag(rowPosition);
         foodTruckDataHolder.phoneImageButton.setOnClickListener(phoneIconClickListener);
-        foodTruckDataHolder.myCompassView.setTag(rowPosition);
-        foodTruckDataHolder.myCompassView.setOnClickListener(compassClickListener);
+        foodTruckDataHolder.realCompassView.setTag(rowPosition);
+        foodTruckDataHolder.realCompassView.setOnClickListener(compassClickListener);
         foodTruckDataHolder.foursquareMenuView.setTag(rowPosition);
         foodTruckDataHolder.foursquareMenuView.setOnClickListener(foursquareMenuClickListener);
 
 
+        //
+        // TODO: rather than do a bunch of if else, nest your if else in another method that describes the overall process
+        // (take a foodtruckdataholder and the data as parameters, call it "applyDataToViewHolder" and have it do all this junk.)
+        //
 
-        if (foodTruck.getPlaceName() != null) {
-            foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getPlaceName());
+        applyDataToViewHolder(foodTruckDataHolder, foodTruck);
+
+        return row;
+    }
+
+    // TODO MAKE VIEWS INVISIBLE IF THERE IS NO DATA FROM EITHER API
+    private FoodTruckDataHolder applyDataToViewHolder(FoodTruckDataHolder aFoodTruckDataHolder, FoodTruckData aFoodTruck){
+
+        if (aFoodTruck.getPlaceName() != null) {
+            aFoodTruckDataHolder.placeNameViewThree.setText(aFoodTruck.getPlaceName());
         } else {
-            foodTruckDataHolder.placeNameViewThree.setText(foodTruck.getFourSquareName());
+            aFoodTruckDataHolder.placeNameViewThree.setText(aFoodTruck.getFourSquareName());
         }
         // String.format here is allowing me to use "%.2f" to indicate that the float will be converted to a string to 2 decimal places
-        foodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", foodTruck.getDistanceCalculatedMiles()) + " Miles");
-        foodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) foodTruck.getDistanceCalculatedFeet()) + " Feet");
+        aFoodTruckDataHolder.placeDistanceMilesView.setText(String.format("%.2f", aFoodTruck.getDistanceCalculatedMiles()) + " Miles");
+        aFoodTruckDataHolder.placeDistanceFeetView.setText(Integer.valueOf((int) aFoodTruck.getDistanceCalculatedFeet()) + " Feet");
 
-        if (foodTruck.getPriceLevel() == 9) {
-            foodTruckDataHolder.placePriceView.setText("Price: Unavailable");
+        if (aFoodTruck.getPriceLevel() == 9) {
+            aFoodTruckDataHolder.placePriceView.setText("Price: Unavailable");
         } else {
-            foodTruckDataHolder.placePriceView.setText(String.valueOf("Price: " + (int) foodTruck.getPriceLevel() + " of 4"));
+            aFoodTruckDataHolder.placePriceView.setText(String.valueOf("Price: " + (int) aFoodTruck.getPriceLevel() + " of 4"));
         }
 
         // for UI readability
-        if (foodTruck.getRating() == 9) {
-            foodTruckDataHolder.placeRatingView.setText("Rating: Unavailable");
+        if (aFoodTruck.getRating() == 9) {
+            aFoodTruckDataHolder.placeRatingView.setText("Rating: Unavailable");
         } else {
-            foodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating: " + foodTruck.getRating() + " of 5"));
+            aFoodTruckDataHolder.placeRatingView.setText(String.valueOf("Rating: " + aFoodTruck.getRating() + " of 5"));
         }
 
         // every string with vicinity address was ending with ", Austin" or , city which is 8 or city.length+2 characters in length, thus
         // the successful removal of a substring that is already too long
         String city = "";
-        if(foodTruck.getFsCity() != null) {
-            city = foodTruck.getFsCity();
+        if(aFoodTruck.getFsCity() != null) {
+            city = aFoodTruck.getFsCity();
         }else {
             city = " ";
         }
-        if (foodTruck.getVicinityAddress() != null && foodTruck.getVicinityAddress().contains(", " + city)) {
-            foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress().substring(0, foodTruck.getVicinityAddress().length() - city.length()+2));
+        if (aFoodTruck.getVicinityAddress() != null && aFoodTruck.getVicinityAddress().contains(", " + city)) {
+            aFoodTruckDataHolder.placeAddressView.setText(aFoodTruck.getVicinityAddress().substring(0, aFoodTruck.getVicinityAddress().length() - city.length()+2));
 
-        } else if (foodTruck.getVicinityAddress() != null) {
-            foodTruckDataHolder.placeAddressView.setText(foodTruck.getVicinityAddress());
-        } else if (foodTruck.getVicinityAddress() == null && foodTruck.getFourSquareName() != null) {
+        } else if (aFoodTruck.getVicinityAddress() != null) {
+            aFoodTruckDataHolder.placeAddressView.setText(aFoodTruck.getVicinityAddress());
+        } else if (aFoodTruck.getVicinityAddress() == null && aFoodTruck.getFourSquareName() != null) {
 
-            if (foodTruck.getFoursquareAddress() != null && foodTruck.getFoursquareAddress().contains(", " + city)) {
-                foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress().substring(0, foodTruck.getFoursquareAddress().length() - city.length()+2));
+            if (aFoodTruck.getFoursquareAddress() != null && aFoodTruck.getFoursquareAddress().contains(", " + city)) {
+                aFoodTruckDataHolder.placeAddressView.setText(aFoodTruck.getFoursquareAddress().substring(0, aFoodTruck.getFoursquareAddress().length() - city.length()+2));
 
-            } else if (foodTruck.getFoursquareAddress() != null) {
-                foodTruckDataHolder.placeAddressView.setText(foodTruck.getFoursquareAddress());
+            } else if (aFoodTruck.getFoursquareAddress() != null) {
+                aFoodTruckDataHolder.placeAddressView.setText(aFoodTruck.getFoursquareAddress());
             } else {
-                foodTruckDataHolder.placeAddressView.setText("Address Unavailable");
+                aFoodTruckDataHolder.placeAddressView.setText("Address Unavailable");
             }
         }
 
 
         //TODO need to make sure that phone numbers provided by fourSquare are being saved to the ArrayList for each corresponding foodTruckData object
-        if (foodTruck.getPhoneNumberFormatted() == null) {
-            foodTruckDataHolder.placePhoneView.setText("Phone Unavailable");
+        if (aFoodTruck.getPhoneNumberFormatted() == null) {
+            aFoodTruckDataHolder.placePhoneView.setText("Phone Unavailable");
         } else {
-            foodTruckDataHolder.placePhoneView.setText(foodTruck.getPhoneNumberFormatted());
+            aFoodTruckDataHolder.placePhoneView.setText(aFoodTruck.getPhoneNumberFormatted());
         }
 
-        if (foodTruck.getIsOpenNow()) {
-            foodTruckDataHolder.placeOpenNowView.setText("Hours: Open Now");
+        if (aFoodTruck.getIsOpenNow()) {
+            aFoodTruckDataHolder.placeOpenNowView.setText("Hours: Open Now");
         }
-        if (!foodTruck.getIsOpenNow()) {
-            foodTruckDataHolder.placeOpenNowView.setText("Hours: Currently Closed");
+        if (!aFoodTruck.getIsOpenNow()) {
+            aFoodTruckDataHolder.placeOpenNowView.setText("Hours: Currently Closed");
         }
-        if (foodTruck.getIsOpenNow() == Boolean.parseBoolean(null)) {
-            foodTruckDataHolder.placeOpenNowView.setText("Hours: Currently Unavailable");
+        if (aFoodTruck.getIsOpenNow() == Boolean.parseBoolean(null)) {
+            aFoodTruckDataHolder.placeOpenNowView.setText("Hours: Currently Unavailable");
         }
 
 
-        if(foodTruck.getFsMenuUrl() !=null && foodTruck.getFourSquareName() != null){
-            foodTruckDataHolder.foursquareMenuView.setText("Open " + foodTruck.getFourSquareName() + " Menu");
-        }else if (foodTruck.getFsMenuUrl() != null) {
-            foodTruckDataHolder.foursquareMenuView.setText("Touch to Open Menu");
+        if(aFoodTruck.getFsMenuUrl() !=null && aFoodTruck.getFourSquareName() != null){
+            aFoodTruckDataHolder.foursquareMenuView.setText("Open " + aFoodTruck.getFourSquareName() + " Menu");
+        }else if (aFoodTruck.getFsMenuUrl() != null) {
+            aFoodTruckDataHolder.foursquareMenuView.setText("Touch to Open Menu");
         }else {
-            foodTruckDataHolder.foursquareMenuView.setText("Touch to Open Browser Menu Search");
+            aFoodTruckDataHolder.foursquareMenuView.setText("Touch to Open Browser Menu Search");
         }
 
-        if (foodTruck.getFsTwitter() != null) {
-            foodTruckDataHolder.placeExtraView.setText("Twitter: " + foodTruck.getFsTwitter());
+        if (aFoodTruck.getFsTwitter() != null) {
+            aFoodTruckDataHolder.placeExtraView.setText("Twitter: " + aFoodTruck.getFsTwitter());
 
         } else {
-            foodTruckDataHolder.placeExtraView.setText("");
+            aFoodTruckDataHolder.placeExtraView.setText("");
         }
 
-        foodTruckDataHolder.myCompassView.setDirections(FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude(), foodTruck.getLatitude(), foodTruck.getLongitude());
-        //todo: give myCompassView the sensor data to do the calculation (you already gave it the vectors)
+        aFoodTruckDataHolder.realCompassView.setDirections(FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude(), aFoodTruck.getLatitude(), aFoodTruck.getLongitude());
 
-        return row;
+        return aFoodTruckDataHolder;
     }
+
+
 
     // touching maps icon will offer option to launch to geo compatible implicit intent
     View.OnClickListener mapClickListener = new View.OnClickListener() {
@@ -247,7 +262,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
+            String start = String.format("geo:%s,%s", FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude());
             if (foodTruck.getPlaceName() != null) {
                 truckName = foodTruck.getPlaceName();
             } else {
@@ -285,7 +300,7 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             FoodTruckData foodTruck = foodTruckDataArrayList.get(rowPosition);
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            String start = String.format("geo:%s,%s", foodTruck.getUserLatitude(), foodTruck.getUserLongitude());
+            String start = String.format("geo:%s,%s", FoodTruckData.getUserLatitude(), FoodTruckData.getUserLongitude());
             if (foodTruck.getPlaceName() != null) {
                 truckName = foodTruck.getPlaceName();
             } else {
@@ -368,11 +383,10 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fsMenuURL));
             context.startActivity(browserIntent);
 
+
         }
     };
 
-
-    //TODO find out why there is a recursion warning and a better way of implementing the following, if any
     public FoodTruckData getFoodTruckData() {
         FoodTruckData foodTruckNew = getFoodTruckData();
         return foodTruckNew;
