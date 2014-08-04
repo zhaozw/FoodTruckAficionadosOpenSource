@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TruckFinder.iml" filepath="$PROJECT_DIR$/TruckFinder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FoodTruckAficionadosOpenSource.iml" filepath="$PROJECT_DIR$/FoodTruckAficionadosOpenSource.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/foodtruckaficionadosgithub.iml" filepath="$PROJECT_DIR$/foodtruckaficionadosgithub.iml" />
-      <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratch.iml" filepath="$PROJECT_DIR$/foodtruckfromscratch.iml" />
-      <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratch2.iml" filepath="$PROJECT_DIR$/foodtruckfromscratch2.iml" />
       <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratch3.iml" filepath="$PROJECT_DIR$/foodtruckfromscratch3.iml" />
-      <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratchDesktop.iml" filepath="$PROJECT_DIR$/foodtruckfromscratchDesktop.iml" />
-      <module fileurl="file://$PROJECT_DIR$/foodtruckfromscratchimport.iml" filepath="$PROJECT_DIR$/foodtruckfromscratchimport.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib/lib.iml" filepath="$PROJECT_DIR$/lib/lib.iml" />
     </modules>
   </component>
