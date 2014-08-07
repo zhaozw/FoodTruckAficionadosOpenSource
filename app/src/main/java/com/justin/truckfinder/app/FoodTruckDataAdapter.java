@@ -387,10 +387,4 @@ public class FoodTruckDataAdapter extends ArrayAdapter<FoodTruckData> {
         }
     };
 
-    public FoodTruckData getFoodTruckData() {
-        FoodTruckData foodTruckNew = getFoodTruckData();
-        return foodTruckNew;
-    }
-
-
 }
